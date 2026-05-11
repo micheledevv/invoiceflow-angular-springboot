@@ -1,0 +1,151 @@
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-field__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-label {
+  font-size: 13px;
+  line-height: 15px;
+  letter-spacing: -0.1px;
+  font-weight: 500;
+  color: var(--color-muted-blue);
+}
+
+.form-label--error {
+  color: var(--color-danger);
+}
+
+.form-error {
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: -0.21px;
+  font-weight: 700;
+  color: var(--color-danger);
+}
+
+.form-control {
+  width: 100%;
+  min-height: 48px;
+
+  padding: 0 20px;
+
+  border: 1px solid var(--color-light-purple);
+  border-radius: 4px;
+
+  background-color: var(--color-white);
+  color: var(--color-black);
+
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: -0.25px;
+  font-weight: 700;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.form-control:hover,
+.form-control:focus {
+  border-color: var(--color-primary);
+}
+
+.form-control::placeholder {
+  color: var(--color-black);
+  opacity: 0.4;
+}
+
+.form-control--error {
+  border-color: var(--color-danger);
+}
+
+.form-textarea {
+  min-height: 96px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  resize: vertical;
+}
+
+.form-select {
+  appearance: none;
+
+  background-image: url('/assets/images/icon-arrow-down.svg');
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 10px 6px;
+
+  padding-right: 48px;
+  cursor: pointer;
+}
+
+.form-control--number {
+  text-align: left;
+  appearance: textfield;
+}
+
+.form-control--number::-webkit-outer-spin-button,
+.form-control--number::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.form-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.form-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.theme-dark {
+  .form-label {
+    color: var(--color-light-purple);
+  }
+
+  .form-label--error {
+    color: var(--color-danger);
+  }
+
+  .form-control {
+    border-color: var(--color-dark-blue-light);
+    background-color: var(--color-dark-blue);
+    color: var(--color-white);
+  }
+
+  .form-control:hover,
+  .form-control:focus {
+    border-color: var(--color-primary);
+  }
+
+  .form-control::placeholder {
+    color: var(--color-white);
+    opacity: 0.4;
+  }
+
+  .form-select {
+    background-color: var(--color-dark-blue);
+  }
+}
+
+@media (max-width: 640px) {
+  .form-grid--2,
+  .form-grid--3 {
+    grid-template-columns: 1fr;
+  }
+}

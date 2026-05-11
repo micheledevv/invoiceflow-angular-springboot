@@ -1,0 +1,121 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 48px;
+  padding: 0 24px;
+
+  border: 0;
+  border-radius: 999px;
+
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-primary-icon {
+  padding: 0 16px 0 8px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+
+  &:hover {
+    background-color: var(--color-primary-light);
+  }
+}
+
+.btn-primary-icon__circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: 50%;
+  background-color: var(--color-white);
+  color: var(--color-primary);
+
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+
+  &:hover {
+    background-color: var(--color-primary-light);
+  }
+}
+
+.btn-edit-light {
+  background-color: var(--color-light-bg);
+  color: var(--color-muted-blue);
+
+  &:hover {
+    background-color: var(--color-light-purple);
+  }
+}
+
+.btn-edit-dark {
+  background-color: var(--color-dark-blue-light);
+  color: var(--color-white);
+
+  &:hover {
+    background-color: var(--color-white);
+    color: var(--color-muted-blue);
+  }
+}
+
+.btn-draft-light {
+  background-color: var(--color-status-draft);
+  color: var(--color-muted-purple);
+
+  &:hover {
+    background-color: var(--color-black);
+    color: var(--color-muted-purple);
+  }
+}
+
+.btn-draft-dark {
+  background-color: var(--color-dark-blue-light);
+  color: var(--color-white);
+
+  &:hover {
+    background-color: var(--color-dark-blue);
+  }
+}
+
+.btn-danger {
+  background-color: var(--color-danger);
+  color: var(--color-white);
+
+  &:hover {
+    background-color: var(--color-danger-light);
+  }
+}
+
+.btn-add-item {
+  width: 100%;
+  background-color: var(--color-light-bg);
+  color: var(--color-muted-blue);
+
+  &:hover {
+    background-color: var(--color-light-purple);
+  }
+}

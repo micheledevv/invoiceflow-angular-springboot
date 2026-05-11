@@ -1,0 +1,231 @@
+[
+  {
+    "id": "RT3080",
+    "createdAt": "2021-08-18",
+    "paymentDue": "2021-08-19",
+    "description": "Rebranding",
+    "paymentTerms": 1,
+    "clientName": "Giovanni Rossi",
+    "clientEmail": "giovanni.rossi@mail.com",
+    "status": "paid",
+    "senderAddress": {
+      "street": "Via Roma 19",
+      "city": "Milano",
+      "postCode": "20121",
+      "country": "Italia"
+    },
+    "clientAddress": {
+      "street": "Via Verdi 106",
+      "city": "Torino",
+      "postCode": "10121",
+      "country": "Italia"
+    },
+    "items": [
+      {
+        "name": "Linee guida del brand",
+        "quantity": 1,
+        "price": 1800.90,
+        "total": 1800.90
+      }
+    ],
+    "total": 1800.90
+  },
+  {
+    "id": "XM9141",
+    "createdAt": "2021-08-21",
+    "paymentDue": "2021-09-20",
+    "description": "Progettazione grafica",
+    "paymentTerms": 30,
+    "clientName": "Alessandro Greco",
+    "clientEmail": "alessandro.greco@mail.com",
+    "status": "pending",
+    "senderAddress": {
+      "street": "Via Roma 19",
+      "city": "Milano",
+      "postCode": "20121",
+      "country": "Italia"
+    },
+    "clientAddress": {
+      "street": "Via Chiesa 84",
+      "city": "Bologna",
+      "postCode": "40121",
+      "country": "Italia"
+    },
+    "items": [
+      {
+        "name": "Design banner",
+        "quantity": 1,
+        "price": 156.00,
+        "total": 156.00
+      },
+      {
+        "name": "Design email",
+        "quantity": 2,
+        "price": 200.00,
+        "total": 400.00
+      }
+    ],
+    "total": 556.00
+  },
+  {
+    "id": "RG0314",
+    "createdAt": "2021-09-24",
+    "paymentDue": "2021-10-01",
+    "description": "Restyling sito web",
+    "paymentTerms": 7,
+    "clientName": "Marco Bianchi",
+    "clientEmail": "marco.bianchi@azienda.it",
+    "status": "paid",
+    "senderAddress": {
+      "street": "Via Roma 19",
+      "city": "Milano",
+      "postCode": "20121",
+      "country": "Italia"
+    },
+    "clientAddress": {
+      "street": "Via Dante 79",
+      "city": "Firenze",
+      "postCode": "50122",
+      "country": "Italia"
+    },
+    "items": [
+      {
+        "name": "Restyling sito web",
+        "quantity": 1,
+        "price": 14002.33,
+        "total": 14002.33
+      }
+    ],
+    "total": 14002.33
+  },
+  {
+    "id": "RT2080",
+    "createdAt": "2021-10-11",
+    "paymentDue": "2021-10-12",
+    "description": "Concept logo",
+    "paymentTerms": 1,
+    "clientName": "Alice Ferri",
+    "clientEmail": "alice.ferri@email.it",
+    "status": "pending",
+    "senderAddress": {
+      "street": "Via Roma 19",
+      "city": "Milano",
+      "postCode": "20121",
+      "country": "Italia"
+    },
+    "clientAddress": {
+      "street": "Via Garibaldi 63",
+      "city": "Verona",
+      "postCode": "37121",
+      "country": "Italia"
+    },
+    "items": [
+      {
+        "name": "Bozze logo",
+        "quantity": 1,
+        "price": 102.04,
+        "total": 102.04
+      }
+    ],
+    "total": 102.04
+  },
+  {
+    "id": "AA1449",
+    "createdAt": "2021-10-07",
+    "paymentDue": "2021-10-14",
+    "description": "Rebranding",
+    "paymentTerms": 7,
+    "clientName": "Melissa Conti",
+    "clientEmail": "melissa.conti@example.com",
+    "status": "pending",
+    "senderAddress": {
+      "street": "Via Roma 19",
+      "city": "Milano",
+      "postCode": "20121",
+      "country": "Italia"
+    },
+    "clientAddress": {
+      "street": "Via Abbazia 46",
+      "city": "Padova",
+      "postCode": "35121",
+      "country": "Italia"
+    },
+    "items": [
+      {
+        "name": "Nuovo logo",
+        "quantity": 1,
+        "price": 1532.33,
+        "total": 1532.33
+      },
+      {
+        "name": "Linee guida del brand",
+        "quantity": 1,
+        "price": 2500.00,
+        "total": 2500.00
+      }
+    ],
+    "total": 4032.33
+  },
+  {
+    "id": "TY9141",
+    "createdAt": "2021-10-01",
+    "paymentDue": "2021-10-31",
+    "description": "Design landing page",
+    "paymentTerms": 30,
+    "clientName": "Tommaso De Luca",
+    "clientEmail": "tommaso.deluca@azienda.it",
+    "status": "pending",
+    "senderAddress": {
+      "street": "Via Roma 19",
+      "city": "Milano",
+      "postCode": "20121",
+      "country": "Italia"
+    },
+    "clientAddress": {
+      "street": "Viale Europa 39",
+      "city": "Roma",
+      "postCode": "00144",
+      "country": "Italia"
+    },
+    "items": [
+      {
+        "name": "Web design",
+        "quantity": 1,
+        "price": 6155.91,
+        "total": 6155.91
+      }
+    ],
+    "total": 6155.91
+  },
+  {
+    "id": "FV2353",
+    "createdAt": "2021-11-05",
+    "paymentDue": "2021-11-12",
+    "description": "Restyling logo",
+    "paymentTerms": 7,
+    "clientName": "Anna Rinaldi",
+    "clientEmail": "",
+    "status": "draft",
+    "senderAddress": {
+      "street": "Via Roma 19",
+      "city": "Milano",
+      "postCode": "20121",
+      "country": "Italia"
+    },
+    "clientAddress": {
+      "street": "",
+      "city": "",
+      "postCode": "",
+      "country": ""
+    },
+    "items": [
+      {
+        "name": "Restyling logo",
+        "quantity": 1,
+        "price": 3102.04,
+        "total": 3102.04
+      }
+    ],
+    "total": 3102.04
+  }
+]

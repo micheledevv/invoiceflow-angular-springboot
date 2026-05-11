@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="little-box">
+
+    <div class="little-box__header">
+      <div class="text">
+        <div class="text">
+          <h1 class="heading-m">Fatture</h1>
+          <p class="body-text-variant">Ci sono in totale {{allInvoices.length}} Fatture</p>
+        </div>
+      </div>
+
+      <div class="bo">
+      <select class="invoice-filter" name="status" id="status">
+        <option value="all">Filtra per Stato</option>
+        <option value="paid">Paid</option>
+        <option value="pending">Pending</option>
+        <option value="draft">Draft</option>
+     </select>
+
+       <button class="btn btn-primary-icon" type="button">
+          <span class="btn-primary-icon__circle">+</span>
+          Nuova Fattura
+       </button>
+      </div>
+    </div>
+
+    <app-invoice-records [invoices]="allInvoices"></app-invoice-records>
+
+  </div>
+</div>

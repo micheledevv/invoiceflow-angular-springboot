@@ -1,0 +1,30 @@
+<div class="invoice-records" style="margin-top: 18px;">
+  @for (invoice of invoices; track invoice.id) {
+    <article class="invoice-record">
+      <p class="invoice-record__id">
+        <span>#</span>{{ invoice.id }}
+      </p>
+
+      <p class="invoice-record__date">
+        {{ invoice.createdAt }}
+      </p>
+
+      <p class="invoice-record__client">
+        {{ invoice.clientName }}
+      </p>
+
+      <p class="invoice-record__total">
+        €{{ invoice.total }}
+      </p>
+
+      <div class="invoice-record__status invoice-record__status--{{ invoice.status }}">
+        <span></span>
+        {{ invoice.status }}
+      </div>
+
+      <button class="invoice-record__arrow" type="button" aria-label="Apri fattura">
+        <img src="assets/images/icon-arrow-right.svg" alt="">
+      </button>
+    </article>
+  }
+</div>

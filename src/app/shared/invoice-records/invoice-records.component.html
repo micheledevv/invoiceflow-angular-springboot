@@ -1,6 +1,6 @@
 <div class="invoice-records" style="margin-top: 18px;">
   @for (invoice of invoices; track invoice.id) {
-    <article class="invoice-record">
+    <article class="invoice-record" (click)="detailInvoice(invoice)">
       <p class="invoice-record__id">
         <span>#</span>{{ invoice.id }}
       </p>
@@ -22,7 +22,7 @@
         {{ invoice.status }}
       </div>
 
-      <button class="invoice-record__arrow" type="button" aria-label="Apri fattura">
+      <button type="button" class="invoice-record__arrow" aria-label="Apri fattura">
         <img src="assets/images/icon-arrow-right.svg" alt="">
       </button>
     </article>

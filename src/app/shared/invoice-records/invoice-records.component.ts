@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Invoice } from '../../models/invoice.model';
+import { InvoiceRecordsService } from './invoice-records.service';
 
 @Component({
   selector: 'app-invoice-records',
@@ -8,6 +9,14 @@ import { Invoice } from '../../models/invoice.model';
   styleUrl: './invoice-records.component.scss'
 })
 export class InvoiceRecordsComponent {
+  constructor(private itemService: InvoiceRecordsService){}
   @Input() invoices:Invoice[] = []
+  @Output() invoiceDetail = new EventEmitter<any>();
+
+  detailInvoice(invoice:Invoice){
+    this.itemService.sendItemm(invoice)
+    this.invoiceDetail.emit(invoice)
+
+  }
 
 }

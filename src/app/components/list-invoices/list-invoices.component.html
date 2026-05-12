@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <app-invoice-records [invoices]="allInvoices"></app-invoice-records>
+    <app-invoice-records [invoices]="allInvoices" (invoiceDetail)="goToDetail($event)"></app-invoice-records>
 
   </div>
 </div>

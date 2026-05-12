@@ -3,6 +3,7 @@ import { InvoiceRecordsComponent } from '../../shared/invoice-records/invoice-re
 import { ListInvoicesService } from './list-invoices.service';
 import { tap } from 'rxjs';
 import { Invoice } from '../../models/invoice.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-invoices',
@@ -11,7 +12,7 @@ import { Invoice } from '../../models/invoice.model';
   styleUrl: './list-invoices.component.scss'
 })
 export class ListInvoicesComponent implements OnInit {
-  constructor(private listInvoicesService: ListInvoicesService){
+  constructor(private listInvoicesService: ListInvoicesService, private router: Router){
 
   }
   allInvoices:Invoice[] = [];
@@ -24,6 +25,10 @@ export class ListInvoicesComponent implements OnInit {
       })
       
     ).subscribe()
+  }
+
+  goToDetail(invoice: Invoice): void {
+    this.router.navigate(['/detail-invoice', invoice.id]);
   }
 
 }

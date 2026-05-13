@@ -10,11 +10,17 @@
         <button class="btn btn-draft-light">Salva in bozza</button>
         }
         @if (saveAndSendIsVisible()) {
-        <button (click)="saveAndSend.emit()" class="btn btn-primary">Salva e Invia</button>
+        <button (click)="saveAndSendClicked.emit()" class="btn btn-primary">Salva e Invia</button>
         }
 
         @if (saveChangesIsVisible()) {
         <button class="btn btn-primary">Salva i cambiamenti</button>
+        }
+        @if (deleteIsVisible()) {
+        <button class="btn btn-primary">Elimina</button>
+        }
+        @if (editIsVisible()) {
+        <button (click)="editClicked.emit()" class="btn btn-primary">Modifica</button>
         }
 
     </div>

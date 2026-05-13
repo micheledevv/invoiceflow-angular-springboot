@@ -1,9 +1,14 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { form } from '@angular/forms/signals';
+
 import { GenericInputComponent } from '../../shared/components/generic-input/generic-input.component';
 import { SelectInputComponent, SelectOption } from '../../shared/components/select-input/select-input.component';
 import { CalendarInputComponent } from '../../shared/components/calendar-input/calendar-input.component';
 import { ActionsButtonComponent } from '../../shared/components/actions-button/actions-button.component';
 import { InvoiceFormService } from './invoice-form.service';
+import { InvoiceFormModel } from '../../models/invoice.form.model';
+import { DetailInvoiceService } from '../detail-invoice/detail-invoice.service';
+import { Invoice } from '../../models/invoice.model';
 
 @Component({
   selector: 'app-invoice-form',
@@ -16,20 +21,33 @@ import { InvoiceFormService } from './invoice-form.service';
   templateUrl: './invoice-form.component.html',
   styleUrl: './invoice-form.component.scss'
 })
-export class InvoiceFormComponent {
-  constructor(){}
+export class InvoiceFormComponent implements OnInit {
   private invoiceFormService = inject(InvoiceFormService);
+  private detailInvoiceService = inject(DetailInvoiceService)
+
+  ngOnInit(): void {
+    if (this.mode() === 'edit') {
+      const invoice = this.detailInvoiceService.singleInvoice();
+
+      if (!invoice) {
+        return;
+      }
+
+      this.patchFormWithInvoice(invoice);
+    }
+  }
 
   mode = this.invoiceFormService.mode;
+  singleInvoice = this.detailInvoiceService.singleInvoice
 
-  paymentTermsOptions: SelectOption<number>[] = [
-    { label: 'Net 1 Giorno', value: 1 },
-    { label: 'Net 7 Giorni', value: 7 },
-    { label: 'Net 14 Giorni', value: 14 },
-    { label: 'Net 30 Giorni', value: 30 }
+  paymentTermsOptions: SelectOption<string>[] = [
+    { label: 'Net 1 Giorno', value: '1' },
+    { label: 'Net 7 Giorni', value: '7' },
+    { label: 'Net 14 Giorni', value: '14' },
+    { label: 'Net 30 Giorni', value: '30' }
   ];
 
-  form = signal({
+  invoiceModel = signal<InvoiceFormModel>({
     senderAddress: {
       street: '',
       city: '',
@@ -45,57 +63,51 @@ export class InvoiceFormComponent {
       country: ''
     },
     createdAt: '',
-    paymentTerms: 30,
+    paymentTerms: '30',
     description: ''
   });
 
-  updateSenderAddressField(
-    field: 'street' | 'city' | 'postCode' | 'country',
-    value: string
-  ): void {
-    this.form.update(current => ({
-      ...current,
+  invoiceForm = form(this.invoiceModel);
+
+  protected closeForm(): void {
+    console.log('chiuso il form');
+    this.invoiceFormService.closeForm();
+  }
+
+  protected saveAndSend(): void {
+    const formValue = this.invoiceModel();
+
+    const invoiceToSave = {
+      ...formValue,
+      paymentTerms: Number(formValue.paymentTerms)
+    };
+
+    console.log(invoiceToSave);
+  }
+
+  protected title = computed(() => {
+    return this.mode() === 'create' ? 'Crea fattura' : 'Modifica fattura';
+  });
+
+  private patchFormWithInvoice(invoice: Invoice): void {
+    this.invoiceModel.set({
       senderAddress: {
-        ...current.senderAddress,
-        [field]: value
-      }
-    }));
-  }
-
-  updateClientAddressField(
-    field: 'street' | 'city' | 'postCode' | 'country',
-    value: string
-  ): void {
-    this.form.update(current => ({
-      ...current,
+        street: invoice.senderAddress.street,
+        city: invoice.senderAddress.city,
+        postCode: invoice.senderAddress.postCode,
+        country: invoice.senderAddress.country
+      },
+      clientName: invoice.clientName,
+      clientEmail: invoice.clientEmail,
       clientAddress: {
-        ...current.clientAddress,
-        [field]: value
-      }
-    }));
+        street: invoice.clientAddress.street,
+        city: invoice.clientAddress.city,
+        postCode: invoice.clientAddress.postCode,
+        country: invoice.clientAddress.country
+      },
+      createdAt: invoice.createdAt,
+      paymentTerms: String(invoice.paymentTerms),
+      description: invoice.description
+    });
   }
-
-  updateField<K extends keyof ReturnType<typeof this.form>>(
-    field: K,
-    value: ReturnType<typeof this.form>[K]
-  ): void {
-    this.form.update(current => ({
-      ...current,
-      [field]: value
-    }));
-  }
-
-  updatePaymentTerms(value: string | number): void {
-    this.updateField('paymentTerms', Number(value));
-  }
-
-  closeForm(){
-    console.log('chiuso il form')
-    this.invoiceFormService.closeForm()
-  }
-
-  saveAndSend(){
-    console.log(this.form())
-  }
-  
 }

@@ -2,7 +2,9 @@
   <aside class="invoice-form-panel">
     <div class="invoice-form-content">
 
-      <h1 class="heading-m">{{mode() == 'create' ? 'Crea fattura' : 'Modifica fattura'}}</h1>
+      <h1 class="heading-m">
+        {{ title() }}
+      </h1>
 
       <section class="invoice-form-section">
         <h2 class="invoice-form-section__title">Da chi viene emessa</h2>
@@ -10,30 +12,26 @@
         <app-generic-input
           label="Indirizzo"
           id="sender-street"
-          [value]="form().senderAddress.street"
-          (valueChange)="updateSenderAddressField('street', $event)">
+          [field]="invoiceForm.senderAddress.street">
         </app-generic-input>
 
         <div class="invoice-form-grid invoice-form-grid--3">
           <app-generic-input
             label="Città"
             id="sender-city"
-            [value]="form().senderAddress.city"
-            (valueChange)="updateSenderAddressField('city', $event)">
+            [field]="invoiceForm.senderAddress.city">
           </app-generic-input>
 
           <app-generic-input
             label="CAP"
             id="sender-post-code"
-            [value]="form().senderAddress.postCode"
-            (valueChange)="updateSenderAddressField('postCode', $event)">
+            [field]="invoiceForm.senderAddress.postCode">
           </app-generic-input>
 
           <app-generic-input
             label="Paese"
             id="sender-country"
-            [value]="form().senderAddress.country"
-            (valueChange)="updateSenderAddressField('country', $event)">
+            [field]="invoiceForm.senderAddress.country">
           </app-generic-input>
         </div>
       </section>
@@ -44,45 +42,39 @@
         <app-generic-input
           label="Nome cliente"
           id="client-name"
-          [value]="form().clientName"
-          (valueChange)="updateField('clientName', $event)">
+          [field]="invoiceForm.clientName">
         </app-generic-input>
 
         <app-generic-input
           label="Email cliente"
           id="client-email"
           type="email"
-          [value]="form().clientEmail"
-          (valueChange)="updateField('clientEmail', $event)">
+          [field]="invoiceForm.clientEmail">
         </app-generic-input>
 
         <app-generic-input
           label="Indirizzo"
           id="client-street"
-          [value]="form().clientAddress.street"
-          (valueChange)="updateClientAddressField('street', $event)">
+          [field]="invoiceForm.clientAddress.street">
         </app-generic-input>
 
         <div class="invoice-form-grid invoice-form-grid--3">
           <app-generic-input
             label="Città"
             id="client-city"
-            [value]="form().clientAddress.city"
-            (valueChange)="updateClientAddressField('city', $event)">
+            [field]="invoiceForm.clientAddress.city">
           </app-generic-input>
 
           <app-generic-input
             label="CAP"
             id="client-post-code"
-            [value]="form().clientAddress.postCode"
-            (valueChange)="updateClientAddressField('postCode', $event)">
+            [field]="invoiceForm.clientAddress.postCode">
           </app-generic-input>
 
           <app-generic-input
             label="Paese"
             id="client-country"
-            [value]="form().clientAddress.country"
-            (valueChange)="updateClientAddressField('country', $event)">
+            [field]="invoiceForm.clientAddress.country">
           </app-generic-input>
         </div>
       </section>
@@ -92,24 +84,21 @@
           <app-calendar-input
             label="Data fattura"
             id="created-at"
-            [value]="form().createdAt"
-            (valueChange)="updateField('createdAt', $event)">
+            [field]="invoiceForm.createdAt">
           </app-calendar-input>
 
           <app-select-input
             label="Termini di pagamento"
             id="payment-terms"
-            [value]="form().paymentTerms"
-            [options]="paymentTermsOptions"
-            (valueChange)="updatePaymentTerms($event)">
+            [field]="invoiceForm.paymentTerms"
+            [options]="paymentTermsOptions">
           </app-select-input>
         </div>
 
         <app-generic-input
           label="Descrizione progetto"
           id="description"
-          [value]="form().description"
-          (valueChange)="updateField('description', $event)">
+          [field]="invoiceForm.description">
         </app-generic-input>
       </section>
 
@@ -120,14 +109,13 @@
       </section>
 
       <app-actions-button
-       [discardIsVisible]="true"
-       [saveAndSendIsVisible]="true" 
-       [saveChangesIsVisible]="false" 
-       [saveAsDraftIsVisible]="true"
-       (discardClicked)="closeForm()"
-       (saveAndSend)="saveAndSend()"
-       >
-    </app-actions-button>
+        [discardIsVisible]="true"
+        [saveAndSendIsVisible]="true"
+        [saveChangesIsVisible]="false"
+        [saveAsDraftIsVisible]="true"
+        (discardClicked)="closeForm()"
+        (saveAndSend)="saveAndSend()">
+      </app-actions-button>
 
     </div>
   </aside>

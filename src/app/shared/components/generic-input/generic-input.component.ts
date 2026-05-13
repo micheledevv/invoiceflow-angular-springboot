@@ -1,24 +1,27 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
+import { FieldTree, FormField } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-generic-input',
-  imports: [],
+  imports: [FormField],
   templateUrl: './generic-input.component.html',
   styleUrl: './generic-input.component.scss'
 })
 export class GenericInputComponent {
   label = input.required<string>();
+  field = input.required<FieldTree<string>>();
 
-  value = input<string>('');
   type = input<string>('text');
   id = input<string>('');
   placeholder = input<string>('');
-  error = input<string>('');
 
-  valueChange = output<string>();
+  firstError = computed(() => {
+    const state = this.field()();
 
-  onInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.valueChange.emit(input.value);
-  }
+    if (!state.touched() || !state.invalid()) {
+      return '';
+    }
+
+    return state.errors()[0]?.message ?? 'Campo non valido';
+  });
 }

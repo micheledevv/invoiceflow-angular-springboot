@@ -2,26 +2,27 @@
   <div class="form-field__header">
     <label
       class="form-label"
-      [class.form-label--error]="error()"
+      [class.form-label--error]="firstError()"
       [attr.for]="id()">
       {{ label() }}
     </label>
 
-    @if (error()) {
-      <p class="form-error">{{ error() }}</p>
+    @if (firstError()) {
+      <p class="form-error">{{ firstError() }}</p>
     }
   </div>
 
   <select
     class="form-control form-select"
-    [class.form-control--error]="error()"
+    [class.form-control--error]="firstError()"
     [id]="id()"
-    [value]="value()"
-    (change)="onChange($event)">
+    [formField]="field()">
+
     @for (option of options(); track option.value) {
       <option [value]="option.value">
         {{ option.label }}
       </option>
     }
+
   </select>
 </div>

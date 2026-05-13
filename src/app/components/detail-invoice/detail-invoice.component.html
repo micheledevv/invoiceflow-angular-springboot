@@ -17,9 +17,12 @@
       </div>
 
       <div class="detail-buttons">
-        <button (click)="openEditForm()" type="button" class="btn btn-edit-light">Modifica</button>
-        <button type="button" class="btn btn-danger">Elimina</button>
-        <button type="button" class="btn btn-primary">Segna come pagata</button>
+        <app-actions-button
+        [deleteIsVisible]="true"
+        [saveAsDraftIsVisible]="true"
+        [editIsVisible]="true"
+        (editClicked)="editInvoice()"
+        ></app-actions-button>
       </div>
     </section>
 

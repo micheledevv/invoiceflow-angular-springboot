@@ -1,32 +1,31 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
+import { FieldTree, FormField } from '@angular/forms/signals';
 
-export interface SelectOption<T = string | number> {
+export interface SelectOption<T = string> {
   label: string;
   value: T;
 }
 
 @Component({
   selector: 'app-select-input',
-  imports: [],
+  imports: [FormField],
   templateUrl: './select-input.component.html',
   styleUrl: './select-input.component.scss'
 })
 export class SelectInputComponent {
   label = input.required<string>();
+  field = input.required<FieldTree<string>>();
 
-  value = input<string | number>('');
   id = input<string>('');
-  error = input<string>('');
-  options = input<SelectOption[]>([]);
+  options = input<SelectOption<string>[]>([]);
 
-  valueChange = output<string | number>();
+  firstError = computed(() => {
+    const state = this.field()();
 
-  onChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const selectedValue = select.value;
+    if (!state.touched() || !state.invalid()) {
+      return '';
+    }
 
-    const option = this.options().find(option => String(option.value) === selectedValue);
-
-    this.valueChange.emit(option?.value ?? selectedValue);
-  }
+    return state.errors()[0]?.message ?? 'Campo non valido';
+  });
 }

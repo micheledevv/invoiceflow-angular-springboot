@@ -1,22 +1,25 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
+import { FieldTree, FormField } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-calendar-input',
-  imports: [],
+  imports: [FormField],
   templateUrl: './calendar-input.component.html',
   styleUrl: './calendar-input.component.scss'
 })
 export class CalendarInputComponent {
   label = input.required<string>();
+  field = input.required<FieldTree<string>>();
 
-  value = input<string>('');
   id = input<string>('');
-  error = input<string>('');
 
-  valueChange = output<string>();
+  firstError = computed(() => {
+    const state = this.field()();
 
-  onChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.valueChange.emit(input.value);
-  }
+    if (!state.touched() || !state.invalid()) {
+      return '';
+    }
+
+    return state.errors()[0]?.message ?? 'Campo non valido';
+  });
 }

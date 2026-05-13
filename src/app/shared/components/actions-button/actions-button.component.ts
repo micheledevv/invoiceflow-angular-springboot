@@ -11,7 +11,10 @@ export class ActionsButtonComponent {
   saveAsDraftIsVisible = input<boolean>(false);
   saveAndSendIsVisible = input<boolean>(false);
   saveChangesIsVisible = input<boolean>(false);
+  editIsVisible = input<boolean>(false)
+  deleteIsVisible = input<boolean>(false)
   discardClicked = output<void>();
-  saveAndSend = output<void>();
+  saveAndSendClicked = output<void>();
+  editClicked = output<void>();
 
 }

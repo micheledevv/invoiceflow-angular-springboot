@@ -2,6 +2,12 @@
   display: flex;
   min-height: 100vh;
   background-color: var(--color-page-bg);
+  position: relative;
+}
+app-invoice-form{
+  position: absolute;
+  top: 0;
+  left: 9%;
 }
 
 .app-layout__content {

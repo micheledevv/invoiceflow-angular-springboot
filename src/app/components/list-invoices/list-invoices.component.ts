@@ -4,6 +4,7 @@ import { ListInvoicesService } from './list-invoices.service';
 import { tap } from 'rxjs';
 import { Invoice } from '../../models/invoice.model';
 import { Router } from '@angular/router';
+import { InvoiceFormService } from '../invoice-form/invoice-form.service';
 
 @Component({
   selector: 'app-list-invoices',
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
   styleUrl: './list-invoices.component.scss'
 })
 export class ListInvoicesComponent implements OnInit {
-  constructor(private listInvoicesService: ListInvoicesService, private router: Router){
+  constructor(private listInvoicesService: ListInvoicesService, private router: Router, private invoiceFormService: InvoiceFormService){
 
   }
   allInvoices:Invoice[] = [];
@@ -29,6 +30,12 @@ export class ListInvoicesComponent implements OnInit {
 
   goToDetail(invoice: Invoice): void {
     this.router.navigate(['/detail-invoice', invoice.id]);
+  }
+
+  openFormCreate(){
+    this.invoiceFormService.openForm();
+    this.invoiceFormService.setCreateMode()
+
   }
 
 }

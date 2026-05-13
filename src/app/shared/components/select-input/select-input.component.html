@@ -1,0 +1,27 @@
+<div class="form-field">
+  <div class="form-field__header">
+    <label
+      class="form-label"
+      [class.form-label--error]="error()"
+      [attr.for]="id()">
+      {{ label() }}
+    </label>
+
+    @if (error()) {
+      <p class="form-error">{{ error() }}</p>
+    }
+  </div>
+
+  <select
+    class="form-control form-select"
+    [class.form-control--error]="error()"
+    [id]="id()"
+    [value]="value()"
+    (change)="onChange($event)">
+    @for (option of options(); track option.value) {
+      <option [value]="option.value">
+        {{ option.label }}
+      </option>
+    }
+  </select>
+</div>

@@ -1,0 +1,134 @@
+<div class="invoice-form-backdrop">
+  <aside class="invoice-form-panel">
+    <div class="invoice-form-content">
+
+      <h1 class="heading-m">{{mode() == 'create' ? 'Crea fattura' : 'Modifica fattura'}}</h1>
+
+      <section class="invoice-form-section">
+        <h2 class="invoice-form-section__title">Da chi viene emessa</h2>
+
+        <app-generic-input
+          label="Indirizzo"
+          id="sender-street"
+          [value]="form().senderAddress.street"
+          (valueChange)="updateSenderAddressField('street', $event)">
+        </app-generic-input>
+
+        <div class="invoice-form-grid invoice-form-grid--3">
+          <app-generic-input
+            label="Città"
+            id="sender-city"
+            [value]="form().senderAddress.city"
+            (valueChange)="updateSenderAddressField('city', $event)">
+          </app-generic-input>
+
+          <app-generic-input
+            label="CAP"
+            id="sender-post-code"
+            [value]="form().senderAddress.postCode"
+            (valueChange)="updateSenderAddressField('postCode', $event)">
+          </app-generic-input>
+
+          <app-generic-input
+            label="Paese"
+            id="sender-country"
+            [value]="form().senderAddress.country"
+            (valueChange)="updateSenderAddressField('country', $event)">
+          </app-generic-input>
+        </div>
+      </section>
+
+      <section class="invoice-form-section">
+        <h2 class="invoice-form-section__title">Cliente</h2>
+
+        <app-generic-input
+          label="Nome cliente"
+          id="client-name"
+          [value]="form().clientName"
+          (valueChange)="updateField('clientName', $event)">
+        </app-generic-input>
+
+        <app-generic-input
+          label="Email cliente"
+          id="client-email"
+          type="email"
+          [value]="form().clientEmail"
+          (valueChange)="updateField('clientEmail', $event)">
+        </app-generic-input>
+
+        <app-generic-input
+          label="Indirizzo"
+          id="client-street"
+          [value]="form().clientAddress.street"
+          (valueChange)="updateClientAddressField('street', $event)">
+        </app-generic-input>
+
+        <div class="invoice-form-grid invoice-form-grid--3">
+          <app-generic-input
+            label="Città"
+            id="client-city"
+            [value]="form().clientAddress.city"
+            (valueChange)="updateClientAddressField('city', $event)">
+          </app-generic-input>
+
+          <app-generic-input
+            label="CAP"
+            id="client-post-code"
+            [value]="form().clientAddress.postCode"
+            (valueChange)="updateClientAddressField('postCode', $event)">
+          </app-generic-input>
+
+          <app-generic-input
+            label="Paese"
+            id="client-country"
+            [value]="form().clientAddress.country"
+            (valueChange)="updateClientAddressField('country', $event)">
+          </app-generic-input>
+        </div>
+      </section>
+
+      <section class="invoice-form-section">
+        <div class="invoice-form-grid invoice-form-grid--2">
+          <app-calendar-input
+            label="Data fattura"
+            id="created-at"
+            [value]="form().createdAt"
+            (valueChange)="updateField('createdAt', $event)">
+          </app-calendar-input>
+
+          <app-select-input
+            label="Termini di pagamento"
+            id="payment-terms"
+            [value]="form().paymentTerms"
+            [options]="paymentTermsOptions"
+            (valueChange)="updatePaymentTerms($event)">
+          </app-select-input>
+        </div>
+
+        <app-generic-input
+          label="Descrizione progetto"
+          id="description"
+          [value]="form().description"
+          (valueChange)="updateField('description', $event)">
+        </app-generic-input>
+      </section>
+
+      <section class="invoice-form-section">
+        <h2 class="invoice-form-items-title">Lista articoli</h2>
+
+        <!-- Qui poi ci mettiamo la sezione Item List -->
+      </section>
+
+      <app-actions-button
+       [discardIsVisible]="true"
+       [saveAndSendIsVisible]="true" 
+       [saveChangesIsVisible]="false" 
+       [saveAsDraftIsVisible]="true"
+       (discardClicked)="closeForm()"
+       (saveAndSend)="saveAndSend()"
+       >
+    </app-actions-button>
+
+    </div>
+  </aside>
+</div>

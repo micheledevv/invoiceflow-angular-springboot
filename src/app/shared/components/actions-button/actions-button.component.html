@@ -1,0 +1,23 @@
+<div class="container">
+    <div class="box-discard">
+        @if (discardIsVisible()) {
+        <button (click)="discardClicked.emit()" class="btn btn-edit-light" >Annulla</button>
+        }
+
+    </div>
+    <div class="box-other-actions">
+        @if (saveAsDraftIsVisible()) {
+        <button class="btn btn-draft-light">Salva in bozza</button>
+        }
+        @if (saveAndSendIsVisible()) {
+        <button (click)="saveAndSend.emit()" class="btn btn-primary">Salva e Invia</button>
+        }
+
+        @if (saveChangesIsVisible()) {
+        <button class="btn btn-primary">Salva i cambiamenti</button>
+        }
+
+    </div>
+
+
+</div>

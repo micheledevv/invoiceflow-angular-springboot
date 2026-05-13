@@ -1,0 +1,23 @@
+<div class="form-field">
+  <div class="form-field__header">
+    <label
+      class="form-label"
+      [class.form-label--error]="error()"
+      [attr.for]="id()">
+      {{ label() }}
+    </label>
+
+    @if (error()) {
+      <p class="form-error">{{ error() }}</p>
+    }
+  </div>
+
+  <input
+    class="form-control form-control--date"
+    [class.form-control--error]="error()"
+    [id]="id()"
+    type="date"
+    [value]="value()"
+    (change)="onChange($event)"
+  />
+</div>

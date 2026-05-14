@@ -3,10 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './core/layout/sidebar/sidebar.component';
 import { InvoiceFormComponent } from './components/invoice-form/invoice-form.component';
 import { InvoiceFormService } from './components/invoice-form/invoice-form.service';
+import { LoaderComponent } from './shared/components/loader/loader.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SidebarComponent, InvoiceFormComponent],
+  imports: [RouterOutlet, SidebarComponent, InvoiceFormComponent, LoaderComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

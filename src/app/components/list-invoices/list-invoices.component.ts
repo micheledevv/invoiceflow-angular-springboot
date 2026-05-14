@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { InvoiceFormService } from '../invoice-form/invoice-form.service';
 import { SelectInputComponent } from '../../shared/components/select-input/select-input.component';
 import { form, FormField } from '@angular/forms/signals';
+import { LoaderService } from '../../shared/components/loader/loader.service';
 
 type InvoiceFiltersForm = {
   selectedStatus: string;
@@ -38,7 +39,7 @@ export class ListInvoicesComponent implements OnInit {
   constructor(
     private listInvoicesService: ListInvoicesService,
     private router: Router,
-    private invoiceFormService: InvoiceFormService
+    private invoiceFormService: InvoiceFormService,
   ) {}
 
   ngOnInit(): void {

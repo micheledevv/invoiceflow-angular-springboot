@@ -10,12 +10,13 @@
       </div>
 
       <div class="bo">
-      <select class="invoice-filter" name="status" id="status">
-        <option value="all">Filtra per Stato</option>
-        <option value="paid">Paid</option>
-        <option value="pending">Pending</option>
-        <option value="draft">Draft</option>
-     </select>
+   
+        <select (change)="filteredByStatus()" [formField]="modelForm.selectedStatus" class="invoice-filter" id="status">
+          @for (item of filtersStatusInvoice; track $index) {
+          <option [value]="item.value">{{item.label}}</option>
+          }
+        </select>
+
 
        <button (click)="openFormCreate()" class="btn btn-primary-icon" type="button">
           <span class="btn-primary-icon__circle">+</span>
@@ -24,7 +25,7 @@
       </div>
     </div>
 
-    <app-invoice-records [invoices]="allInvoices" (invoiceDetail)="goToDetail($event)"></app-invoice-records>
+    <app-invoice-records [invoices]="filteredInvoices" (invoiceDetail)="goToDetail($event)"></app-invoice-records>
 
   </div>
 </div>

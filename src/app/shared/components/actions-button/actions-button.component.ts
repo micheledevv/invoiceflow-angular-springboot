@@ -16,5 +16,6 @@ export class ActionsButtonComponent {
   discardClicked = output<void>();
   saveAndSendClicked = output<void>();
   editClicked = output<void>();
+  deleteClicked = output<void>()
 
 }

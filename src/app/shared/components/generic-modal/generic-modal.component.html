@@ -1,0 +1,28 @@
+@if (modalService.modalIsOpen()) {
+  <div class="container">
+    <div class="box-modal">
+      <div class="main-modal">
+
+        <div class="title">
+          <p class="heading-m">
+            {{ modalService.title() }}
+          </p>
+        </div>
+        
+        <div class="description">
+          <p class="body-text-variant muted">
+            {{ modalService.description() }}
+          </p>
+        </div>
+
+        <app-actions-button-modal
+          [deleteIsVisible]="true"
+          [discardIsVisible]="true"
+          (deleteClicked)="modalService.confirm()"
+          (discardClicked)="modalService.cancel()">
+        </app-actions-button-modal>
+
+      </div>
+    </div>
+  </div>
+}

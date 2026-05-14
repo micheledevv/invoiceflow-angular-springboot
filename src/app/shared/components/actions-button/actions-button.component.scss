@@ -2,4 +2,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .box-other-actions{
+        display: flex;
+        gap: 5px;
+
+    }
 }

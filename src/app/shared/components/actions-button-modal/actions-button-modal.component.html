@@ -1,0 +1,11 @@
+<div class="container">
+
+    @if (discardIsVisible()) {
+        <button (click)="discardClicked.emit()" type="button" class="btn btn-edit-light">Annulla</button>
+    }
+
+    @if (deleteIsVisible()) {
+        <button (click)="deleteClicked.emit()" type="button" class="btn btn-danger">Elimina</button>
+
+    }
+</div>

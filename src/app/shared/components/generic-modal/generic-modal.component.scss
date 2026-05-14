@@ -1,0 +1,39 @@
+.container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(20, 22, 37, 0.35);
+    backdrop-filter: blur(8px);
+
+
+    .box-modal{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40%;
+        height: 40vh;
+        background-color: var(--color-light-bg);
+        border-radius: 20px;
+
+        
+
+        .main-modal {
+            width: 80%;
+            height: 80%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+    }
+
+    
+}
+
+.muted {
+  color: var(--color-muted-blue);
+}

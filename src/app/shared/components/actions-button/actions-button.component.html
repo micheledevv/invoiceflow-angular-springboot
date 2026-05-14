@@ -17,7 +17,7 @@
         <button class="btn btn-primary">Salva i cambiamenti</button>
         }
         @if (deleteIsVisible()) {
-        <button class="btn btn-primary">Elimina</button>
+        <button (click)="deleteClicked.emit()" class="btn btn-danger">Elimina</button>
         }
         @if (editIsVisible()) {
         <button (click)="editClicked.emit()" class="btn btn-primary">Modifica</button>

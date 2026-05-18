@@ -4,7 +4,7 @@
   background-color: var(--color-light-bg);
   display: flex;
   justify-content: center;
-  padding: 48px 24px;
+  padding-top: 30px;
 }
 
 .invoice-detail {
@@ -128,8 +128,7 @@
 
 .invoice-card {
   width: 100%;
-  padding: 48px;
-
+  padding: 18px;
   background-color: var(--color-white);
   border-radius: 8px;
   box-shadow: 0 10px 10px -10px rgba(72, 84, 159, 0.1);
@@ -139,7 +138,7 @@
   display: flex;
   justify-content: space-between;
   gap: 32px;
-  margin-bottom: 48px;
+  margin-bottom: 28px;
 }
 
 .invoice-id {

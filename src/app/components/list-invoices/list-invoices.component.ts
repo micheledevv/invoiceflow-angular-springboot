@@ -60,16 +60,40 @@ export class ListInvoicesComponent implements OnInit {
     this.invoiceFormService.setCreateMode();
   }
 
+  statusLabel = 'Tutte le fatture';
+  totalInvoice: number = 0;
+
   filteredByStatus(): void {
     const valueSelect = this.modelForm.selectedStatus().value();
 
+    this.statusLabel = this.getStatusLabel(valueSelect);
+
     if (valueSelect === 'all') {
       this.filteredInvoices = this.allInvoices;
+      this.totalInvoice = this.filteredInvoices.length;
       return;
     }
 
     this.filteredInvoices = this.allInvoices.filter((invoice) => {
       return invoice.status === valueSelect;
     });
+
+    this.totalInvoice = this.filteredInvoices.length;
+  }
+
+  private getStatusLabel(status: string): string {
+    switch (status) {
+      case 'paid':
+        return 'in stato: Pagato';
+
+      case 'draft':
+        return 'in stato: In bozza';
+
+      case 'pending':
+        return 'in stato: In attesa';
+
+      default:
+        return '';
+    }
   }
 }

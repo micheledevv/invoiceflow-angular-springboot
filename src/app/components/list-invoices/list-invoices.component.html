@@ -5,7 +5,7 @@
       <div class="text">
         <div class="text">
           <h1 class="heading-m">Fatture</h1>
-          <p class="body-text-variant">Ci sono in totale {{allInvoices.length}} Fatture</p>
+          <p class="body-text-variant">{{totalInvoice == 1 ? 'Ce un totale' : 'Ci sono in totale'}} {{totalInvoice}} {{totalInvoice == 1 ? 'Fattura' : 'Fatture'}} {{statusLabel}}</p>
         </div>
       </div>
 
@@ -24,8 +24,21 @@
        </button>
       </div>
     </div>
+    @if (filteredInvoices.length == 0) {
+      <div class="container-no-invoice">
+        <div class="box-image">
+          <img src="assets/images/illustration-empty.svg" alt="">
+        </div>
+        <h2>Non ci sono Fatture</h2>
+        <p class="body-text-variant">Crea una Fattura cliccando nell'apposito pulsante sopra a destra.</p>
+      </div>
 
+    }@else {
     <app-invoice-records [invoices]="filteredInvoices" (invoiceDetail)="goToDetail($event)"></app-invoice-records>
+
+
+    }
+
 
   </div>
 </div>

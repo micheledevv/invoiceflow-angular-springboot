@@ -1,0 +1,35 @@
+<div class="not-found-page">
+  <section class="not-found-card">
+
+    <div class="not-found-card__icon">
+      <span>!</span>
+    </div>
+
+    <p class="not-found-card__eyebrow">Errore 404</p>
+
+    <h1 class="not-found-card__title">
+      Pagina non trovata
+    </h1>
+
+    <p class="not-found-card__description">
+      La pagina che stai cercando non esiste, è stata spostata oppure l’indirizzo inserito non è corretto.
+    </p>
+
+    <div class="not-found-card__actions">
+      <button 
+        type="button" 
+        class="btn btn-edit-light"
+        (click)="goBack()">
+        Torna indietro
+      </button>
+
+      <button 
+        type="button" 
+        class="btn btn-primary"
+        (click)="goHome()">
+        Vai alle fatture
+      </button>
+    </div>
+
+  </section>
+</div>

@@ -3,6 +3,10 @@
   min-height: 100vh;
   background-color: var(--color-page-bg);
   position: relative;
+
+  .app-layout__content{
+    width: 100%;
+  }
 }
 app-invoice-form{
   position: absolute;
@@ -10,7 +14,3 @@ app-invoice-form{
   left: 9%;
 }
 
-.app-layout__content {
-  flex: 1;
-  padding: 72px 48px 0 60px;
-}

@@ -1,5 +1,10 @@
-.container{
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-discard-spacer {
+  margin-right: auto;
 }

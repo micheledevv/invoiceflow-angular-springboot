@@ -96,4 +96,16 @@ export class ListInvoicesComponent implements OnInit {
         return '';
     }
   }
+
+  get invoicesSummary(): string {
+    const totalText = this.totalInvoice === 1
+      ? "C'è un totale di"
+      : 'Ci sono in totale';
+
+    const invoiceText = this.totalInvoice === 1
+      ? 'fattura'
+      : 'fatture';
+
+    return `${totalText} ${this.totalInvoice} ${invoiceText} ${this.statusLabel}`;
+  }
 }

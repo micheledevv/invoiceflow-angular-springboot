@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ThemeService } from '../theme/theme.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -7,5 +8,9 @@ import { Component } from '@angular/core';
   styleUrl: './sidebar.component.scss'
 })
 export class SidebarComponent {
+  themeService = inject(ThemeService);
 
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
 }

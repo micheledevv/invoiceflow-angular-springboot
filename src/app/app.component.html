@@ -1,4 +1,4 @@
-<div class="app-layout">
+<div class="app-layout" [class.theme-dark]="isDarkMode()">
   <app-sidebar></app-sidebar>
 
   @if (isFormOpen()) {
@@ -8,7 +8,7 @@
   <main class="app-layout__content">
     <router-outlet></router-outlet>
   </main>
-</div>
 
-<app-loader></app-loader>
-<app-generic-modal></app-generic-modal>
+  <app-loader></app-loader>
+  <app-generic-modal></app-generic-modal>
+</div>

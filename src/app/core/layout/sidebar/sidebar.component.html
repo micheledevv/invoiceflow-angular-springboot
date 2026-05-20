@@ -4,8 +4,18 @@
   </div>
 
   <div class="sidebar__footer">
-    <button class="sidebar__theme-toggle" type="button" aria-label="Attiva tema scuro">
-      <img src="assets/images/icon-moon.svg" alt="">
+    <button
+      class="sidebar__theme-toggle"
+      type="button"
+      aria-label="Cambia tema"
+      (click)="toggleTheme()">
+
+      @if (themeService.isDarkMode()) {
+        <img src="assets/images/icon-sun.svg" alt="">
+      } @else {
+        <img src="assets/images/icon-moon.svg" alt="">
+      }
+
     </button>
     
     <hr>

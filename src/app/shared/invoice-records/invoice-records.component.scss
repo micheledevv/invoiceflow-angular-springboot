@@ -6,17 +6,21 @@
   grid-template-columns: 90px 130px 1fr 120px 104px 16px;
   align-items: center;
   column-gap: 24px;
+  padding: 20px;
 
-  background-color: #ffffff;
+  background-color: var(--color-card-bg);
   border-radius: 8px;
   border: 1px solid transparent;
   box-shadow: 0 10px 10px -10px rgba(72, 84, 159, 0.10);
 
   cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
-    border-color: #7c5dfa;
+    border-color: var(--color-primary);
   }
 
   p {
@@ -26,30 +30,30 @@
   &__id {
     font-size: 12px;
     font-weight: 700;
-    color: #0c0e16;
+    color: var(--color-text-primary);
 
     span {
-      color: #7e88c3;
+      color: var(--color-muted-blue);
     }
   }
 
   &__date {
     font-size: 12px;
     font-weight: 500;
-    color: #7e88c3;
+    color: var(--color-text-secondary);
   }
 
   &__client {
     font-size: 12px;
     font-weight: 500;
-    color: #858bb2;
+    color: var(--color-text-muted);
   }
 
   &__total {
     justify-self: end;
     font-size: 12px;
     font-weight: 700;
-    color: #0c0e16;
+    color: var(--color-text-primary);
   }
 
   &__status {
@@ -72,29 +76,29 @@
     }
 
     &--paid {
-      color: #33d69f;
+      color: var(--color-status-paid);
       background-color: rgba(51, 214, 159, 0.06);
 
       span {
-        background-color: #33d69f;
+        background-color: var(--color-status-paid);
       }
     }
 
     &--pending {
-      color: #ff8f00;
+      color: var(--color-status-pending);
       background-color: rgba(255, 143, 0, 0.06);
 
       span {
-        background-color: #ff8f00;
+        background-color: var(--color-status-pending);
       }
     }
 
     &--draft {
-      color: #373b53;
+      color: var(--color-status-draft);
       background-color: rgba(55, 59, 83, 0.06);
 
       span {
-        background-color: #373b53;
+        background-color: var(--color-status-draft);
       }
     }
   }
@@ -115,6 +119,17 @@
     img {
       width: 7px;
       height: auto;
+    }
+  }
+}
+
+.theme-dark {
+  .invoice-record__status--draft {
+    color: var(--color-light-purple);
+    background-color: rgba(223, 227, 250, 0.06);
+
+    span {
+      background-color: var(--color-light-purple);
     }
   }
 }

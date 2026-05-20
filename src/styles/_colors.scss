@@ -1,4 +1,6 @@
 :root {
+  --sidebar-width: 103px;
+
   // Primary
   --color-primary: #7c5dfa;
   --color-primary-light: #9277ff;
@@ -17,7 +19,7 @@
 
   // Alert colors
   --color-danger: #ec5757;
-  --color-danger-light: #9277ff;
+  --color-danger-light: #ff9797;
 
   // Pure
   --color-white: #ffffff;
@@ -30,4 +32,35 @@
   // Sidebar
   --color-sidebar-bg: #373b53;
 
+  // Theme semantic colors - light
+  --color-page-bg: #f8f8fb;
+  --color-card-bg: #ffffff;
+  --color-card-secondary-bg: #f9fafe;
+  --color-text-primary: #0c0e16;
+  --color-text-secondary: #7e88c3;
+  --color-text-muted: #888eb0;
+
+  --color-form-bg: #ffffff;
+  --color-form-border: #dfe3fa;
+  --color-form-placeholder: #0c0e16;
+
+  --color-overlay-bg: rgba(0, 0, 0, 0.5);
+  --color-modal-overlay-bg: rgba(20, 22, 37, 0.35);
+}
+
+.theme-dark {
+  --color-page-bg: #141625;
+  --color-card-bg: #1e2139;
+  --color-card-secondary-bg: #252945;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #dfe3fa;
+  --color-text-muted: #888eb0;
+
+  --color-form-bg: #1e2139;
+  --color-form-border: #252945;
+  --color-form-placeholder: #ffffff;
+
+  --color-sidebar-bg: #1e2139;
+  --color-overlay-bg: rgba(0, 0, 0, 0.55);
+  --color-modal-overlay-bg: rgba(0, 0, 0, 0.55);
 }

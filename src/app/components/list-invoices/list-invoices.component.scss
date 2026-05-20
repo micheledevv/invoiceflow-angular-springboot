@@ -23,12 +23,12 @@
 .text {
   h1 {
     margin: 0;
-    color: var(--color-black);
+    color: var(--color-text-primary);
   }
 
   p {
     margin: 0;
-    color: var(--color-muted-blue);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -53,24 +53,27 @@
   font-size: 12px;
   font-weight: 700;
   line-height: 15px;
-  color: var(--color-black);
+  color: var(--color-text-primary);
 
   cursor: pointer;
   outline: none;
 }
 
-.container-no-invoice{
+.container-no-invoice {
   width: 100%;
   height: 80vh;
+
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  h2{
+
+  h2 {
     margin-top: 50px;
-  }
-  p{
-    color: var(--color-muted-blue);
+    color: var(--color-text-primary);
   }
 
+  p {
+    color: var(--color-text-secondary);
+  }
 }

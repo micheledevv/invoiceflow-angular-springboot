@@ -108,14 +108,28 @@
         <!-- Qui poi ci mettiamo la sezione Item List -->
       </section>
 
+      @if (mode() == 'edit') {
+      <app-actions-button
+        [discardIsVisible]="true"
+        [saveChangesIsVisible]="true"
+        [setJustifyContent]="'flex-end'"
+        (discardClicked)="closeForm()"
+        (saveAndSend)="saveAndSend()">
+      </app-actions-button>
+
+      }@else {
       <app-actions-button
         [discardIsVisible]="true"
         [saveAndSendIsVisible]="true"
         [saveChangesIsVisible]="false"
         [saveAsDraftIsVisible]="true"
+        [setJustifyContent]="'space-between'"
         (discardClicked)="closeForm()"
         (saveAndSend)="saveAndSend()">
       </app-actions-button>
+      }
+
+  
 
     </div>
   </aside>

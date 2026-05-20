@@ -15,6 +15,9 @@ import { GenericModalService } from '../../shared/components/generic-modal/gener
   styleUrl: './detail-invoice.component.scss'
 })
 export class DetailInvoiceComponent implements OnInit {
+saveAsDraftInvoice() {
+throw new Error('Method not implemented.');
+}
   private readonly router = inject(Router);
   private readonly invoiceFormService = inject(InvoiceFormService);
   private readonly detailInvoiceService = inject(DetailInvoiceService);

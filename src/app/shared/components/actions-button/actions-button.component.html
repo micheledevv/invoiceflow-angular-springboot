@@ -1,29 +1,60 @@
-<div class="container">
-    <div class="box-discard">
-        @if (discardIsVisible()) {
-        <button (click)="discardClicked.emit()" class="btn btn-edit-light" >Annulla</button>
-        }
+<div [style.justify-content]="setJustifyContent()" class="container">
+  @if (discardIsVisible()) {
+    <button
+      (click)="discardClicked.emit()"
+      class="btn btn-edit-light"
+      [style.order]="discardOrder()"
+    >
+      Annulla
+    </button>
+  }
 
-    </div>
-    <div class="box-other-actions">
-        @if (saveAsDraftIsVisible()) {
-        <button class="btn btn-draft-light">Salva in bozza</button>
-        }
-        @if (saveAndSendIsVisible()) {
-        <button (click)="saveAndSendClicked.emit()" class="btn btn-primary">Salva e Invia</button>
-        }
+  @if (saveAsDraftIsVisible()) {
+    <button
+      (click)="saveAsDraftClicked.emit()"
+      class="btn btn-draft-light"
+      [style.order]="saveAsDraftOrder()"
+    >
+      Salva in bozza
+    </button>
+  }
 
-        @if (saveChangesIsVisible()) {
-        <button class="btn btn-primary">Salva i cambiamenti</button>
-        }
-        @if (deleteIsVisible()) {
-        <button (click)="deleteClicked.emit()" class="btn btn-danger">Elimina</button>
-        }
-        @if (editIsVisible()) {
-        <button (click)="editClicked.emit()" class="btn btn-primary">Modifica</button>
-        }
+  @if (saveAndSendIsVisible()) {
+    <button
+      (click)="saveAndSendClicked.emit()"
+      class="btn btn-primary"
+      [style.order]="saveAndSendOrder()"
+    >
+      Salva e Invia
+    </button>
+  }
 
-    </div>
+  @if (saveChangesIsVisible()) {
+    <button
+      class="btn btn-primary"
+      [style.order]="saveChangesOrder()"
+    >
+      Salva i cambiamenti
+    </button>
+  }
 
+  @if (deleteIsVisible()) {
+    <button
+      (click)="deleteClicked.emit()"
+      class="btn btn-danger"
+      [style.order]="deleteOrder()"
+    >
+      Elimina
+    </button>
+  }
 
+  @if (editIsVisible()) {
+    <button
+      (click)="editClicked.emit()"
+      class="btn btn-primary"
+      [style.order]="editOrder()"
+    >
+      Modifica
+    </button>
+  }
 </div>

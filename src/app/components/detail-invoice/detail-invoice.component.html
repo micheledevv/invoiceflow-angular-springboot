@@ -18,11 +18,15 @@
 
       <div class="detail-buttons">
         <app-actions-button
-        [deleteIsVisible]="true"
-        [saveAsDraftIsVisible]="true"
         [editIsVisible]="true"
+        [editOrder]="1"
+        [deleteIsVisible]="true"
+        [deleteOrder]="2"
+        [saveAsDraftIsVisible]="true"
+        [saveAsDraftOrder]="3"
         (editClicked)="editInvoice()"
         (deleteClicked)="deleteInvoice()"
+        (saveAsDraftClicked)="saveAsDraftInvoice()"
         ></app-actions-button>
       </div>
     </section>

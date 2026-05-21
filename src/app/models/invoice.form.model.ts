@@ -1,16 +1,30 @@
-export interface AddressFormModel {
-  street: string;
-  city: string;
-  postCode: string;
-  country: string;
+export interface InvoiceItemFormModel {
+  name: string;
+  quantity: string;
+  price: string;
 }
 
 export interface InvoiceFormModel {
-  senderAddress: AddressFormModel;
+  senderAddress: {
+    street: string;
+    city: string;
+    postCode: string;
+    country: string;
+  };
+
   clientName: string;
   clientEmail: string;
-  clientAddress: AddressFormModel;
+
+  clientAddress: {
+    street: string;
+    city: string;
+    postCode: string;
+    country: string;
+  };
+
   createdAt: string;
   paymentTerms: string;
   description: string;
+
+  items: InvoiceItemFormModel[];
 }

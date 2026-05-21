@@ -5,6 +5,7 @@ import { GenericInputComponent } from '../../shared/components/generic-input/gen
 import { SelectInputComponent, SelectOption } from '../../shared/components/select-input/select-input.component';
 import { CalendarInputComponent } from '../../shared/components/calendar-input/calendar-input.component';
 import { ActionsButtonComponent } from '../../shared/components/actions-button/actions-button.component';
+
 import { InvoiceFormService } from './invoice-form.service';
 import { InvoiceFormModel } from '../../models/invoice.form.model';
 import { DetailInvoiceService } from '../detail-invoice/detail-invoice.service';
@@ -23,7 +24,31 @@ import { Invoice } from '../../models/invoice.model';
 })
 export class InvoiceFormComponent implements OnInit {
   private invoiceFormService = inject(InvoiceFormService);
-  private detailInvoiceService = inject(DetailInvoiceService)
+  private detailInvoiceService = inject(DetailInvoiceService);
+
+  mode = this.invoiceFormService.mode;
+  singleInvoice = this.detailInvoiceService.singleInvoice;
+
+  paymentTermsOptions: SelectOption<string>[] = [
+    { label: 'Net 1 Giorno', value: '1' },
+    { label: 'Net 7 Giorni', value: '7' },
+    { label: 'Net 14 Giorni', value: '14' },
+    { label: 'Net 30 Giorni', value: '30' }
+  ];
+
+  invoiceModel = signal<InvoiceFormModel>(this.getEmptyForm());
+
+  invoiceForm = form(this.invoiceModel);
+
+  title = computed(() => {
+    const invoice = this.singleInvoice();
+
+    if (this.mode() === 'create') {
+      return 'Crea fattura';
+    }
+
+    return invoice ? `Modifica #${invoice.id}` : 'Modifica fattura';
+  });
 
   ngOnInit(): void {
     if (this.mode() === 'edit') {
@@ -34,43 +59,50 @@ export class InvoiceFormComponent implements OnInit {
       }
 
       this.patchFormWithInvoice(invoice);
+      return;
     }
+
+    this.resetForm();
   }
 
-  mode = this.invoiceFormService.mode;
-  singleInvoice = this.detailInvoiceService.singleInvoice
+  protected addItem(): void {
+    this.invoiceModel.update((currentForm) => ({
+      ...currentForm,
+      items: [
+        ...currentForm.items,
+        {
+          name: '',
+          quantity: '',
+          price: ''
+        }
+      ]
+    }));
+  }
 
-  paymentTermsOptions: SelectOption<string>[] = [
-    { label: 'Net 1 Giorno', value: '1' },
-    { label: 'Net 7 Giorni', value: '7' },
-    { label: 'Net 14 Giorni', value: '14' },
-    { label: 'Net 30 Giorni', value: '30' }
-  ];
+  protected removeItem(index: number): void {
+    this.invoiceModel.update((currentForm) => ({
+      ...currentForm,
+      items: currentForm.items.filter((_, itemIndex) => itemIndex !== index)
+    }));
+  }
 
-  invoiceModel = signal<InvoiceFormModel>({
-    senderAddress: {
-      street: '',
-      city: '',
-      postCode: '',
-      country: ''
-    },
-    clientName: '',
-    clientEmail: '',
-    clientAddress: {
-      street: '',
-      city: '',
-      postCode: '',
-      country: ''
-    },
-    createdAt: '',
-    paymentTerms: '30',
-    description: ''
-  });
+  protected getItemTotal(index: number): number {
+    const item = this.invoiceModel().items[index];
 
-  invoiceForm = form(this.invoiceModel);
+    if (!item) {
+      return 0;
+    }
+
+    return Number(item.quantity || 0) * Number(item.price || 0);
+  }
+
+  protected getInvoiceTotal(): number {
+    return this.invoiceModel().items.reduce((total, item) => {
+      return total + Number(item.quantity || 0) * Number(item.price || 0);
+    }, 0);
+  }
 
   protected closeForm(): void {
-    console.log('chiuso il form');
     this.invoiceFormService.closeForm();
   }
 
@@ -79,15 +111,36 @@ export class InvoiceFormComponent implements OnInit {
 
     const invoiceToSave = {
       ...formValue,
-      paymentTerms: Number(formValue.paymentTerms)
+      paymentTerms: Number(formValue.paymentTerms),
+      items: formValue.items.map((item) => ({
+        name: item.name,
+        quantity: Number(item.quantity || 0),
+        price: Number(item.price || 0),
+        total: Number(item.quantity || 0) * Number(item.price || 0)
+      })),
+      total: this.getInvoiceTotal()
     };
 
-    console.log(invoiceToSave);
+    console.log('Salva e invia:', invoiceToSave);
   }
 
-  protected title = computed(() => {
-    return this.mode() === 'create' ? 'Crea fattura' : 'Modifica fattura';
-  });
+  protected saveChanges(): void {
+    const formValue = this.invoiceModel();
+
+    const invoiceToUpdate = {
+      ...formValue,
+      paymentTerms: Number(formValue.paymentTerms),
+      items: formValue.items.map((item) => ({
+        name: item.name,
+        quantity: Number(item.quantity || 0),
+        price: Number(item.price || 0),
+        total: Number(item.quantity || 0) * Number(item.price || 0)
+      })),
+      total: this.getInvoiceTotal()
+    };
+
+    console.log('Salva modifiche:', invoiceToUpdate);
+  }
 
   private patchFormWithInvoice(invoice: Invoice): void {
     this.invoiceModel.set({
@@ -107,7 +160,45 @@ export class InvoiceFormComponent implements OnInit {
       },
       createdAt: invoice.createdAt,
       paymentTerms: String(invoice.paymentTerms),
-      description: invoice.description
+      description: invoice.description,
+      items: invoice.items.map((item) => ({
+        name: item.name,
+        quantity: String(item.quantity),
+        price: String(item.price)
+      }))
     });
+  }
+
+  private resetForm(): void {
+    this.invoiceModel.set(this.getEmptyForm());
+  }
+
+  private getEmptyForm(): InvoiceFormModel {
+    return {
+      senderAddress: {
+        street: '',
+        city: '',
+        postCode: '',
+        country: ''
+      },
+      clientName: '',
+      clientEmail: '',
+      clientAddress: {
+        street: '',
+        city: '',
+        postCode: '',
+        country: ''
+      },
+      createdAt: '',
+      paymentTerms: '30',
+      description: '',
+      items: [
+        {
+          name: '',
+          quantity: '',
+          price: ''
+        }
+      ]
+    };
   }
 }

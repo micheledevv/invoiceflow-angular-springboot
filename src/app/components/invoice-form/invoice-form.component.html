@@ -105,31 +105,86 @@
       <section class="invoice-form-section">
         <h2 class="invoice-form-items-title">Lista articoli</h2>
 
-        <!-- Qui poi ci mettiamo la sezione Item List -->
+        <div class="items-list">
+
+          <div class="items-list__header">
+            <p>Nome articolo</p>
+            <p>Q.tà</p>
+            <p>Prezzo</p>
+            <p>Totale</p>
+            <span></span>
+          </div>
+
+          @for (item of invoiceModel().items; track $index; let i = $index) {
+            <div class="items-list__row">
+
+              <app-generic-input
+                label="Nome articolo"
+                [labelIsVisible]="false"
+                [id]="'item-name-' + i"
+                [field]="invoiceForm.items[i].name">
+              </app-generic-input>
+
+              <app-generic-input
+                label="Q.tà"
+                [labelIsVisible]="false"
+                [id]="'item-quantity-' + i"
+                type="number"
+                [field]="invoiceForm.items[i].quantity">
+              </app-generic-input>
+
+              <app-generic-input
+                label="Prezzo"
+                [labelIsVisible]="false"
+                [id]="'item-price-' + i"
+                type="number"
+                [field]="invoiceForm.items[i].price">
+              </app-generic-input>
+
+              <div class="item-total">
+                <p>€ {{ getItemTotal(i) }}</p>
+              </div>
+
+              <button
+                type="button"
+                class="item-delete"
+                aria-label="Elimina articolo"
+                (click)="removeItem(i)">
+                <img src="assets/images/icon-delete.svg" alt="">
+              </button>
+
+            </div>
+          }
+
+          <button
+            type="button"
+            class="btn btn-add-item"
+            (click)="addItem()">
+            + Aggiungi nuovo articolo
+          </button>
+
+        </div>
       </section>
 
-      @if (mode() == 'edit') {
-      <app-actions-button
-        [discardIsVisible]="true"
-        [saveChangesIsVisible]="true"
-        [setJustifyContent]="'flex-end'"
-        (discardClicked)="closeForm()"
-        (saveAndSend)="saveAndSend()">
-      </app-actions-button>
-
-      }@else {
-      <app-actions-button
-        [discardIsVisible]="true"
-        [saveAndSendIsVisible]="true"
-        [saveChangesIsVisible]="false"
-        [saveAsDraftIsVisible]="true"
-        [setJustifyContent]="'space-between'"
-        (discardClicked)="closeForm()"
-        (saveAndSend)="saveAndSend()">
-      </app-actions-button>
+      @if (mode() === 'edit') {
+        <app-actions-button
+          [discardIsVisible]="true"
+          [saveChangesIsVisible]="true"
+          [setJustifyContent]="'flex-end'"
+          (discardClicked)="closeForm()"
+          (saveChangesClicked)="saveChanges()">
+        </app-actions-button>
+      } @else {
+        <app-actions-button
+          [discardIsVisible]="true"
+          [saveAndSendIsVisible]="true"
+          [saveChangesIsVisible]="false"
+          [saveAsDraftIsVisible]="true"
+          [setJustifyContent]="'space-between'"
+          (discardClicked)="closeForm()"
+          (saveAndSendClicked)="saveAndSend()">
+        </app-actions-button>
       }
-
-  
 
     </div>
   </aside>

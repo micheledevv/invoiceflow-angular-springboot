@@ -1,16 +1,18 @@
 <div class="form-field">
-  <div class="form-field__header">
-    <label
-      class="form-label"
-      [class.form-label--error]="firstError()"
-      [attr.for]="id()">
-      {{ label() }}
-    </label>
+  @if (labelIsVisible()) {
+    <div class="form-field__header">
+      <label
+        class="form-label"
+        [class.form-label--error]="firstError()"
+        [attr.for]="id()">
+        {{ label() }}
+      </label>
 
-    @if (firstError()) {
-      <p class="form-error">{{ firstError() }}</p>
-    }
-  </div>
+      @if (firstError()) {
+        <p class="form-error">{{ firstError() }}</p>
+      }
+    </div>
+  }
 
   <input
     class="form-control"

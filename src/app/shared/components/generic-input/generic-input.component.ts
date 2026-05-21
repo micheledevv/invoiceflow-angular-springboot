@@ -14,6 +14,7 @@ export class GenericInputComponent {
   type = input<string>('text');
   id = input<string>('');
   placeholder = input<string>('');
+  labelIsVisible = input<boolean>(true);
 
   firstError = computed(() => {
     const state = this.field()();

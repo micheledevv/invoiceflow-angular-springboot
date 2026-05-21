@@ -9,10 +9,5 @@ export class InvoiceRecordsService {
 
   constructor() { }
 
-  sendItem = new BehaviorSubject<Invoice[]>([]);
-  sendItem$ = this.sendItem.asObservable();
 
-  sendItemm(item:any){
-    this.sendItem.next(item)
-  }
 }

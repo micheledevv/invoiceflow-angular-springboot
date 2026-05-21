@@ -9,12 +9,11 @@ import { InvoiceRecordsService } from './invoice-records.service';
   styleUrl: './invoice-records.component.scss'
 })
 export class InvoiceRecordsComponent {
-  constructor(private itemService: InvoiceRecordsService){}
+  constructor(){}
   @Input() invoices:Invoice[] = []
   @Output() invoiceDetail = new EventEmitter<any>();
 
   detailInvoice(invoice:Invoice){
-    this.itemService.sendItemm(invoice)
     this.invoiceDetail.emit(invoice)
 
   }

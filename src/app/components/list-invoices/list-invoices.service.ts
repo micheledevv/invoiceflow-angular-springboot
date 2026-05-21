@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Invoice } from '../../models/invoice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,9 @@ export class ListInvoicesService {
     private http:HttpClient
   ) { }
 
-  getInvoices():Observable<any>{
-    const url = 'assets/data/data.json'
-    return this.http.get(url)
 
+  getInvoices(): Observable<Invoice[]> {
+    const url = 'http://localhost:8080/api/invoices';
+    return this.http.get<Invoice[]>(url);
   }
 }

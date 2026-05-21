@@ -1,11 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { InvoiceRecordsComponent } from '../../shared/invoice-records/invoice-records.component';
 import { ListInvoicesService } from './list-invoices.service';
-import { tap } from 'rxjs';
+import { finalize, tap } from 'rxjs';
 import { Invoice } from '../../models/invoice.model';
 import { Router } from '@angular/router';
 import { InvoiceFormService } from '../invoice-form/invoice-form.service';
-import { SelectInputComponent } from '../../shared/components/select-input/select-input.component';
 import { form, FormField } from '@angular/forms/signals';
 import { LoaderService } from '../../shared/components/loader/loader.service';
 
@@ -23,47 +22,43 @@ export class ListInvoicesComponent implements OnInit {
   allInvoices: Invoice[] = [];
   filteredInvoices: Invoice[] = [];
 
-  filtersStatusInvoice = [
+  statusLabel = '';
+  totalInvoice = 0;
+
+  protected filtersStatusInvoice = [
     { label: 'Filtra per Stato', value: 'all' },
     { label: 'pending', value: 'pending' },
     { label: 'draft', value: 'draft' },
     { label: 'paid', value: 'paid' },
   ];
 
-  modelSelect = signal<InvoiceFiltersForm>({
+  protected modelSelect = signal<InvoiceFiltersForm>({
     selectedStatus: 'all'
   });
 
-  modelForm = form(this.modelSelect);
+  protected modelForm = form(this.modelSelect);
 
   constructor(
     private listInvoicesService: ListInvoicesService,
     private router: Router,
     private invoiceFormService: InvoiceFormService,
+    private loaderService: LoaderService
   ) {}
 
   ngOnInit(): void {
-    this.listInvoicesService.getInvoices().pipe(
-      tap((invoices) => {
-        this.allInvoices = invoices;
-        this.filteredByStatus();
-      })
-    ).subscribe();
+    this.getAllInvoices();
   }
 
-  goToDetail(invoice: Invoice): void {
+  protected goToDetail(invoice: Invoice): void {
     this.router.navigate(['/detail-invoice', invoice.id]);
   }
 
-  openFormCreate(): void {
+  protected openFormCreate(): void {
     this.invoiceFormService.openForm();
     this.invoiceFormService.setCreateMode();
   }
 
-  statusLabel = 'Tutte le fatture';
-  totalInvoice: number = 0;
-
-  filteredByStatus(): void {
+  protected filteredByStatus(): void {
     const valueSelect = this.modelForm.selectedStatus().value();
 
     this.statusLabel = this.getStatusLabel(valueSelect);
@@ -81,6 +76,32 @@ export class ListInvoicesComponent implements OnInit {
     this.totalInvoice = this.filteredInvoices.length;
   }
 
+  protected get invoicesSummary(): string {
+    const totalText = this.totalInvoice === 1
+      ? "C'è un totale di"
+      : 'Ci sono in totale';
+
+    const invoiceText = this.totalInvoice === 1
+      ? 'fattura'
+      : 'fatture';
+
+    return `${totalText} ${this.totalInvoice} ${invoiceText} ${this.statusLabel}`;
+  }
+
+  private getAllInvoices(): void {
+    this.loaderService.show();
+
+    this.listInvoicesService.getInvoices().pipe(
+      tap((invoices) => {
+        this.allInvoices = invoices;
+        this.filteredByStatus();
+      }),
+      finalize(() => {
+        this.loaderService.hide();
+      })
+    ).subscribe();
+  }
+
   private getStatusLabel(status: string): string {
     switch (status) {
       case 'paid':
@@ -95,17 +116,5 @@ export class ListInvoicesComponent implements OnInit {
       default:
         return '';
     }
-  }
-
-  get invoicesSummary(): string {
-    const totalText = this.totalInvoice === 1
-      ? "C'è un totale di"
-      : 'Ci sono in totale';
-
-    const invoiceText = this.totalInvoice === 1
-      ? 'fattura'
-      : 'fatture';
-
-    return `${totalText} ${this.totalInvoice} ${invoiceText} ${this.statusLabel}`;
   }
 }

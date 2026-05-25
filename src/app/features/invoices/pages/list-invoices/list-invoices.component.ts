@@ -1,12 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { InvoiceRecordsComponent } from '../../shared/invoice-records/invoice-records.component';
+import { InvoiceRecordsComponent } from '../../../../shared/components/invoice-records/invoice-records.component';
 import { ListInvoicesService } from './list-invoices.service';
 import { finalize, tap } from 'rxjs';
-import { Invoice } from '../../models/invoice.model';
+import { Invoice } from './../../models/invoice.model'
 import { Router } from '@angular/router';
-import { InvoiceFormService } from '../invoice-form/invoice-form.service';
+import { InvoiceFormService } from '../../components/invoice-form/invoice-form.service';
 import { form, FormField } from '@angular/forms/signals';
-import { LoaderService } from '../../shared/components/loader/loader.service';
+import { LoaderService } from '../../../../shared/components/loader/loader.service';
 
 type InvoiceFiltersForm = {
   selectedStatus: string;

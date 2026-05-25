@@ -1,6 +1,6 @@
 <div class="invoice-records" style="margin-top: 18px;">
-  @for (invoice of invoices; track invoice.id) {
-    <article class="invoice-record" (click)="detailInvoice(invoice)">
+  @for (invoice of invoices(); track invoice.id) {
+    <article class="invoice-record" (click)="invoiceDetail.emit(invoice)">
       <p class="invoice-record__id">
         <span>#</span>{{ invoice.id }}
       </p>

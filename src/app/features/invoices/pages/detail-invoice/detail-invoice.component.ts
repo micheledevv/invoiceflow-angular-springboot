@@ -2,12 +2,12 @@ import { Component, inject, OnInit } from '@angular/core';
 import { filter, finalize, take, tap } from 'rxjs';
 import { NgClass } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { InvoiceFormService } from '../invoice-form/invoice-form.service';
-import { ActionsButtonComponent } from '../../shared/components/actions-button/actions-button.component';
+import { InvoiceFormService } from '../../components/invoice-form/invoice-form.service';
+import { ActionsButtonComponent } from '../../../../shared/components/actions-button/actions-button.component';
 import { DetailInvoiceService } from './detail-invoice.service';
-import { GenericModalService } from '../../shared/components/generic-modal/generic-modal.service';
+import { GenericModalService } from '../../../../shared/components/generic-modal/generic-modal.service';
 import { Invoice } from '../../models/invoice.model';
-import { LoaderService } from '../../shared/components/loader/loader.service';
+import { LoaderService } from '../../../../shared/components/loader/loader.service';
 
 @Component({
   selector: 'app-detail-invoice',

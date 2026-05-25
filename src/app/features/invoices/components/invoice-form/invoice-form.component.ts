@@ -1,14 +1,14 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { form } from '@angular/forms/signals';
 
-import { GenericInputComponent } from '../../shared/components/generic-input/generic-input.component';
-import { SelectInputComponent, SelectOption } from '../../shared/components/select-input/select-input.component';
-import { CalendarInputComponent } from '../../shared/components/calendar-input/calendar-input.component';
-import { ActionsButtonComponent } from '../../shared/components/actions-button/actions-button.component';
+import { GenericInputComponent } from '../../../../shared/components/generic-input/generic-input.component';
+import { SelectInputComponent, SelectOption } from '../../../../shared/components/select-input/select-input.component';
+import { CalendarInputComponent } from '../../../../shared/components/calendar-input/calendar-input.component';
+import { ActionsButtonComponent } from '../../../../shared/components/actions-button/actions-button.component';
 
 import { InvoiceFormService } from './invoice-form.service';
 import { InvoiceFormModel } from '../../models/invoice.form.model';
-import { DetailInvoiceService } from '../detail-invoice/detail-invoice.service';
+import { DetailInvoiceService } from '../../pages/detail-invoice/detail-invoice.service';
 import { Invoice } from '../../models/invoice.model';
 
 @Component({

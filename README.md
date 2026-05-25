@@ -1,59 +1,85 @@
-# InvoiceflowAngular
+# InvoiceFlow - In Fase Di Sviluppo
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.11.
+InvoiceFlow è un'applicazione web per la gestione delle fatture, sviluppata con Angular.
 
-## Development server
+Il progetto è basato sulla challenge **Invoice App** di Frontend Mentor e ha l'obiettivo di simulare una dashboard gestionale per creare, visualizzare, modificare, filtrare ed eliminare fatture.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## Funzionalità
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- Visualizzazione della lista fatture
+- Visualizzazione del dettaglio di una fattura
+- Creazione di una nuova fattura
+- Modifica di una fattura esistente
+- Eliminazione di una fattura
+- Salvataggio di una fattura come bozza
+- Cambio stato da **In attesa** a **Pagata**
+- Filtro per stato: **Bozza**, **In attesa**, **Pagata**
+- Tema chiaro/scuro
+- Layout responsive
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Tecnologie utilizzate
 
-```bash
-ng generate component component-name
-```
+- Angular 21.2.12
+- Angular CLI 21.2.11
+- TypeScript 5.9.3
+- SCSS
+- Angular Signals
+- Reactive Forms
+- RxJS 7.8.2
+- Dati locali tramite file JSON
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## Versione Angular
 
-## Building
+Il progetto è stato inizialmente sviluppato con Angular 19.
 
-To build the project run:
+Versioni iniziali:
 
-```bash
-ng build
-```
+- Angular: 19.2.21
+- Angular CLI: 19.2.25
+- TypeScript: 5.7.3
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Successivamente il progetto è stato aggiornato ad Angular 21 per usare le novità più recenti e più importanti, come i Signal.
 
-## Running unit tests
+Versioni attuali:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+- Angular: 21.2.12
+- Angular CLI: 21.2.11
+- TypeScript: 5.9.3
+- RxJS: 7.8.2
+- Node.js: 22.15.0
+- npm: 10.9.2
 
-```bash
-ng test
-```
+---
 
-## Running end-to-end tests
+## Stato del progetto
 
-For end-to-end (e2e) testing, run:
+Il progetto è attualmente in fase di sviluppo.
 
-```bash
-ng e2e
-```
+La prima versione utilizza un file JSON locale per simulare i dati delle fatture.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+In una fase successiva verrà aggiunto un backend con:
 
-## Additional Resources
+- Spring Boot
+- Java
+- PostgreSQL
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
+
+## Strategia Git
+
+Il progetto utilizza una strategia **Git Flow semplificata**:
+
+- `main`: branch stabile / produzione
+- `develop`: branch principale di sviluppo
+- `feature/*`: branch dedicati alle singole funzionalità
+
+Flusso di lavoro previsto:
+
+```text
+feature/* → develop → main

@@ -12,7 +12,7 @@
 
         <div class="status-badge" [ngClass]="'status-badge--' + invoice.status">
           <span></span>
-          {{ invoice.status }}
+          {{ getStatusLabel(invoice.status) }}
         </div>
       </div>
 

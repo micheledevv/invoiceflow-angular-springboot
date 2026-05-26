@@ -19,7 +19,7 @@
 
       <div class="invoice-record__status invoice-record__status--{{ invoice.status }}">
         <span></span>
-        {{ invoice.status }}
+        {{ getStatusLabel(invoice.status) }}
       </div>
 
       <button type="button" class="invoice-record__arrow" aria-label="Apri fattura">

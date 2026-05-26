@@ -27,9 +27,9 @@ export class ListInvoicesComponent implements OnInit {
 
   protected filtersStatusInvoice = [
     { label: 'Filtra per Stato', value: 'all' },
-    { label: 'pending', value: 'pending' },
-    { label: 'draft', value: 'draft' },
-    { label: 'paid', value: 'paid' },
+    { label: 'In attesa', value: 'pending' },
+    { label: 'In bozza', value: 'draft' },
+    { label: 'Pagata', value: 'paid' },
   ];
 
   protected modelSelect = signal<InvoiceFiltersForm>({

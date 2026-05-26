@@ -6,7 +6,7 @@ import { InvoiceFormService } from '../../components/invoice-form/invoice-form.s
 import { ActionsButtonComponent } from '../../../../shared/components/actions-button/actions-button.component';
 import { DetailInvoiceService } from './detail-invoice.service';
 import { GenericModalService } from '../../../../shared/components/generic-modal/generic-modal.service';
-import { Invoice } from '../../models/invoice.model';
+import { Invoice, InvoiceStatus } from '../../models/invoice.model';
 import { LoaderService } from '../../../../shared/components/loader/loader.service';
 
 @Component({
@@ -24,7 +24,9 @@ export class DetailInvoiceComponent implements OnInit {
   private readonly modalService = inject(GenericModalService);
   private readonly loaderService = inject(LoaderService)
 
-  invoice: any = {};
+  invoice:any = {};
+
+
 
   ngOnInit(): void {
     this.getInvoice();
@@ -76,5 +78,16 @@ export class DetailInvoiceComponent implements OnInit {
         this.loaderService.hide()
       })
     ).subscribe()
+  }
+
+  statusLabels: Record<InvoiceStatus, string> = {
+    paid: 'Pagata',
+    pending: 'In attesa',
+    draft: 'Bozza'
+  };
+
+  
+  getStatusLabel(status: string): string {
+    return this.statusLabels[status as InvoiceStatus] ?? status;
   }
 }

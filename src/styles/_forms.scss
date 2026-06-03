@@ -5,9 +5,18 @@
 }
 
 .form-field__header {
+  min-height: 15px;
+
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: 8px;
+}
+
+.form-field__header--error {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .form-label {
@@ -18,13 +27,19 @@
   color: var(--color-text-secondary);
 }
 
+.form-label span {
+  color: var(--color-danger);
+}
+
 .form-label--error {
   color: var(--color-danger);
 }
 
 .form-error {
+  margin: 0;
+
   font-size: 10px;
-  line-height: 15px;
+  line-height: 12px;
   letter-spacing: -0.21px;
   font-weight: 700;
   color: var(--color-danger);

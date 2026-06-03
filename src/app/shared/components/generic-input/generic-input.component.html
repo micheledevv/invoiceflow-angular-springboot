@@ -1,11 +1,17 @@
 <div class="form-field">
   @if (labelIsVisible()) {
-    <div class="form-field__header">
+    <div
+      class="form-field__header"
+      [class.form-field__header--error]="firstError()">
+
       <label
         class="form-label"
         [class.form-label--error]="firstError()"
         [attr.for]="id()">
         {{ label() }}
+        @if (isRequired()) {
+          <span>*</span>
+        }
       </label>
 
       @if (firstError()) {

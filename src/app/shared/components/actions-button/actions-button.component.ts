@@ -14,7 +14,13 @@ export class ActionsButtonComponent {
   editIsVisible = input<boolean>(false);
   deleteIsVisible = input<boolean>(false);
 
-  //ordine buttons
+  discardDisabled = input<boolean>(false);
+  saveAsDraftDisabled = input<boolean>(false);
+  saveAndSendDisabled = input<boolean>(false);
+  saveChangesDisabled = input<boolean>(false);
+  editDisabled = input<boolean>(false);
+  deleteDisabled = input<boolean>(false);
+
   discardOrder = input<number>(0);
   saveAsDraftOrder = input<number>(0);
   saveAndSendOrder = input<number>(0);
@@ -22,12 +28,12 @@ export class ActionsButtonComponent {
   editOrder = input<number>(0);
   deleteOrder = input<number>(0);
 
-
-  setJustifyContent = input<string>('')
+  setJustifyContent = input<string>('');
 
   discardClicked = output<void>();
   saveAndSendClicked = output<void>();
   editClicked = output<void>();
   deleteClicked = output<void>();
-  saveAsDraftClicked = output<void>()
+  saveAsDraftClicked = output<void>();
+  saveChangesClicked = output<void>();
 }

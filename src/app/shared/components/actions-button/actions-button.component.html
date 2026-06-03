@@ -1,9 +1,11 @@
 <div [style.justify-content]="setJustifyContent()" class="container">
   @if (discardIsVisible()) {
     <button
+      type="button"
       (click)="discardClicked.emit()"
-      class="btn btn-edit-light btn-discard-spacer "
+      class="btn btn-edit-light btn-discard-spacer"
       [style.order]="discardOrder()"
+      [disabled]="discardDisabled()"
     >
       Annulla
     </button>
@@ -11,38 +13,47 @@
 
   @if (saveAsDraftIsVisible()) {
     <button
+      type="button"
       (click)="saveAsDraftClicked.emit()"
       class="btn btn-draft-light"
       [style.order]="saveAsDraftOrder()"
+      [disabled]="saveAsDraftDisabled()"
     >
-      Salva in bozza
+      Salva come bozza
     </button>
   }
 
   @if (saveAndSendIsVisible()) {
     <button
+      type="button"
       (click)="saveAndSendClicked.emit()"
       class="btn btn-primary"
       [style.order]="saveAndSendOrder()"
+      [disabled]="saveAndSendDisabled()"
     >
-      Salva e Invia
+      Salva e invia
     </button>
   }
 
   @if (saveChangesIsVisible()) {
     <button
+      type="button"
+      (click)="saveChangesClicked.emit()"
       class="btn btn-primary"
       [style.order]="saveChangesOrder()"
+      [disabled]="saveChangesDisabled()"
     >
-      Salva i cambiamenti
+      Salva modifiche
     </button>
   }
 
   @if (deleteIsVisible()) {
     <button
+      type="button"
       (click)="deleteClicked.emit()"
       class="btn btn-danger"
       [style.order]="deleteOrder()"
+      [disabled]="deleteDisabled()"
     >
       Elimina
     </button>
@@ -50,9 +61,11 @@
 
   @if (editIsVisible()) {
     <button
+      type="button"
       (click)="editClicked.emit()"
       class="btn btn-primary"
       [style.order]="editOrder()"
+      [disabled]="editDisabled()"
     >
       Modifica
     </button>

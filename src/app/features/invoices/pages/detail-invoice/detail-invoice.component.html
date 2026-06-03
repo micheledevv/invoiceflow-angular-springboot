@@ -1,115 +1,118 @@
-<div class="invoice-detail-page">
-  <div class="invoice-detail">
+@if (invoice; as selectedInvoice) {
+  <div class="invoice-detail-page">
+    <div class="invoice-detail">
 
-    <button type="button" class="go-back" (click)="goBack()">
-      <img src="assets/images/icon-arrow-left.svg" alt="">
-      Torna indietro
-    </button>
+      <button type="button" class="go-back" (click)="goBack()">
+        <img src="assets/images/icon-arrow-left.svg" alt="">
+        Torna indietro
+      </button>
 
-    <section class="detail-actions">
-      <div class="detail-status">
-        <p class="body-text-variant">Stato</p>
+      <section class="detail-actions">
+        <div class="detail-status">
+          <p class="body-text-variant">Stato</p>
 
-        <div class="status-badge" [ngClass]="'status-badge--' + invoice.status">
-          <span></span>
-          {{ getStatusLabel(invoice.status) }}
-        </div>
-      </div>
-
-      <div class="detail-buttons">
-        <app-actions-button
-        [editIsVisible]="true"
-        [editOrder]="1"
-        [deleteIsVisible]="true"
-        [deleteOrder]="2"
-        [saveAsDraftIsVisible]="true"
-        [saveAsDraftOrder]="3"
-        (editClicked)="editInvoice()"
-        (deleteClicked)="deleteInvoice()"
-        (saveAsDraftClicked)="saveAsDraftInvoice()"
-        ></app-actions-button>
-      </div>
-    </section>
-
-    <section class="invoice-card">
-
-      <div class="invoice-card__top">
-        <div>
-          <p class="invoice-id heading-s">
-            <span>#</span>{{ invoice.id }}
-          </p>
-          <p class="body-text-variant muted">
-            {{ invoice.description }}
-          </p>
-        </div>
-
-        <address class="sender-address body-text-variant">
-          <p>{{ invoice.senderAddress.street }}</p>
-          <p>{{ invoice.senderAddress.city }}</p>
-          <p>{{ invoice.senderAddress.postCode }}</p>
-          <p>{{ invoice.senderAddress.country }}</p>
-        </address>
-      </div>
-
-      <div class="invoice-info-grid">
-
-        <div class="dates">
-          <div class="info-block">
-            <p class="info-label">Data fattura</p>
-            <p class="info-value">{{ invoice.createdAt }}</p>
-          </div>
-
-          <div class="info-block">
-            <p class="info-label">Scadenza pagamento</p>
-            <p class="info-value">{{ invoice.paymentDue }}</p>
+          <div class="status-badge" [ngClass]="'status-badge--' + selectedInvoice.status">
+            <span></span>
+            {{ getStatusLabel(selectedInvoice.status) }}
           </div>
         </div>
 
-        <div class="info-block">
-          <p class="info-label">Fatturato a</p>
-          <p class="info-value">{{ invoice.clientName }}</p>
+        <div class="detail-buttons">
+          <app-actions-button
+            [editIsVisible]="true"
+            [editOrder]="1"
+            [deleteIsVisible]="true"
+            [deleteOrder]="2"
+            [saveAsDraftIsVisible]="true"
+            [saveAsDraftOrder]="3"
+            (editClicked)="editInvoice()"
+            (deleteClicked)="deleteInvoice()"
+            (saveAsDraftClicked)="saveAsDraftInvoice()"
+          ></app-actions-button>
+        </div>
+      </section>
 
-          <address class="client-address body-text-variant">
-            <p>{{ invoice.clientAddress.street }}</p>
-            <p>{{ invoice.clientAddress.city }}</p>
-            <p>{{ invoice.clientAddress.postCode }}</p>
-            <p>{{ invoice.clientAddress.country }}</p>
+      <section class="invoice-card">
+
+        <div class="invoice-card__top">
+          <div>
+            <p class="invoice-id heading-s">
+              <span>#</span>{{ selectedInvoice.id }}
+            </p>
+
+            <p class="body-text-variant muted">
+              {{ selectedInvoice.description }}
+            </p>
+          </div>
+
+          <address class="sender-address body-text-variant">
+            <p>{{ selectedInvoice.senderAddress?.street }}</p>
+            <p>{{ selectedInvoice.senderAddress?.city }}</p>
+            <p>{{ selectedInvoice.senderAddress?.postCode }}</p>
+            <p>{{ selectedInvoice.senderAddress?.country }}</p>
           </address>
         </div>
 
-        <div class="info-block">
-          <p class="info-label">Inviata a</p>
-          <p class="info-value">{{ invoice.clientEmail }}</p>
-        </div>
+        <div class="invoice-info-grid">
 
-      </div>
+          <div class="dates">
+            <div class="info-block">
+              <p class="info-label">Data fattura</p>
+              <p class="info-value">{{ selectedInvoice.createdAt }}</p>
+            </div>
 
-      <div class="items-box">
-
-        <div class="items-header">
-          <p>Nome articolo</p>
-          <p>Q.tà</p>
-          <p>Prezzo</p>
-          <p>Totale</p>
-        </div>
-
-        @for (item of invoice.items; track item.name) {
-          <div class="items-row">
-            <p class="item-name">{{ item.name }}</p>
-            <p>{{ item.quantity }}</p>
-            <p>€ {{ item.price }}</p>
-            <p class="item-total">€{{ item.total }}</p>
+            <div class="info-block">
+              <p class="info-label">Scadenza pagamento</p>
+              <p class="info-value">{{ selectedInvoice.paymentDue }}</p>
+            </div>
           </div>
-        }
 
-        <div class="amount-due">
-          <p>Importo dovuto</p>
-          <p>€ {{ invoice.total }}</p>
+          <div class="info-block">
+            <p class="info-label">Fatturato a</p>
+            <p class="info-value">{{ selectedInvoice.clientName }}</p>
+
+            <address class="client-address body-text-variant">
+              <p>{{ selectedInvoice.clientAddress?.street }}</p>
+              <p>{{ selectedInvoice.clientAddress?.city }}</p>
+              <p>{{ selectedInvoice.clientAddress?.postCode }}</p>
+              <p>{{ selectedInvoice.clientAddress?.country }}</p>
+            </address>
+          </div>
+
+          <div class="info-block">
+            <p class="info-label">Inviata a</p>
+            <p class="info-value">{{ selectedInvoice.clientEmail }}</p>
+          </div>
+
         </div>
 
-      </div>
+        <div class="items-box">
 
-    </section>
+          <div class="items-header">
+            <p>Nome articolo</p>
+            <p>Q.tà</p>
+            <p>Prezzo</p>
+            <p>Totale</p>
+          </div>
 
+          @for (item of selectedInvoice.items; track item.name) {
+            <div class="items-row">
+              <p class="item-name">{{ item.name }}</p>
+              <p>{{ item.quantity }}</p>
+              <p>€ {{ item.price }}</p>
+              <p class="item-total">€{{ item.total }}</p>
+            </div>
+          }
+
+          <div class="amount-due">
+            <p>Importo dovuto</p>
+            <p>€ {{ selectedInvoice.total }}</p>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
   </div>
-</div>
+}

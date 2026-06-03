@@ -4,6 +4,7 @@ import com.invoiceflow.model.Invoice;
 import com.invoiceflow.model.InvoiceStatus;
 import com.invoiceflow.repository.InvoiceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,13 +26,19 @@ public class InvoiceService {
       .orElseThrow(() -> new RuntimeException("Fattura non trovata con id: " + id));
   }
 
+  @Transactional
   public Invoice createInvoice(Invoice invoice) {
-    invoice.setItems(invoice.getItems());
-    invoice.calculateTotal();
+    System.out.println("Items ricevuti dal frontend: " + invoice.getItems().size());
+
+    invoice.prepareItemsForSave();
+
+    System.out.println("Items dopo prepareItemsForSave: " + invoice.getItems().size());
+    System.out.println("Totale calcolato: " + invoice.getTotal());
 
     return invoiceRepository.save(invoice);
   }
 
+  @Transactional
   public Invoice updateInvoice(String id, Invoice invoiceUpdated) {
     Invoice invoice = getInvoiceById(id);
 
@@ -44,8 +51,8 @@ public class InvoiceService {
     invoice.setStatus(invoiceUpdated.getStatus());
     invoice.setSenderAddress(invoiceUpdated.getSenderAddress());
     invoice.setClientAddress(invoiceUpdated.getClientAddress());
-    invoice.setItems(invoiceUpdated.getItems());
-    invoice.calculateTotal();
+
+    invoice.replaceItems(invoiceUpdated.getItems());
 
     return invoiceRepository.save(invoice);
   }

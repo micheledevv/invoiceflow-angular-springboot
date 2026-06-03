@@ -14,6 +14,7 @@ export interface SelectOption<T = string> {
 })
 export class SelectInputComponent {
   label = input.required<string>();
+  isRequired = input<boolean>();
   field = input.required<FieldTree<string>>();
 
   id = input<string>('');

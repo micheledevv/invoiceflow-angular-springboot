@@ -10,26 +10,33 @@
         <h2 class="invoice-form-section__title">Da chi viene emessa</h2>
 
         <app-generic-input
-          label="Indirizzo"
+          label="Indirizzo:"
+          [isRequired]="true"
           id="sender-street"
           [field]="invoiceForm.senderAddress.street">
         </app-generic-input>
 
         <div class="invoice-form-grid invoice-form-grid--3">
           <app-generic-input
-            label="Città"
+            label="Città:"
+            [isRequired]="true"
+
             id="sender-city"
             [field]="invoiceForm.senderAddress.city">
           </app-generic-input>
 
           <app-generic-input
-            label="CAP"
+            label="CAP:"
+            [isRequired]="true"
+
             id="sender-post-code"
             [field]="invoiceForm.senderAddress.postCode">
           </app-generic-input>
 
           <app-generic-input
-            label="Paese"
+            label="Paese:"
+            [isRequired]="true"
+
             id="sender-country"
             [field]="invoiceForm.senderAddress.country">
           </app-generic-input>
@@ -40,39 +47,51 @@
         <h2 class="invoice-form-section__title">Cliente</h2>
 
         <app-generic-input
-          label="Nome cliente"
+          label="Nome cliente:"
+          [isRequired]="true"
+
           id="client-name"
           [field]="invoiceForm.clientName">
         </app-generic-input>
 
         <app-generic-input
-          label="Email cliente"
+          label="Email cliente:"
+          [isRequired]="true"
+
           id="client-email"
           type="email"
           [field]="invoiceForm.clientEmail">
         </app-generic-input>
 
         <app-generic-input
-          label="Indirizzo"
+          label="Indirizzo:"
+          [isRequired]="true"
+
           id="client-street"
           [field]="invoiceForm.clientAddress.street">
         </app-generic-input>
 
         <div class="invoice-form-grid invoice-form-grid--3">
           <app-generic-input
-            label="Città"
+            label="Città:"
+            [isRequired]="true"
+
             id="client-city"
             [field]="invoiceForm.clientAddress.city">
           </app-generic-input>
 
           <app-generic-input
-            label="CAP"
+            label="CAP:"
+            [isRequired]="true"
+
             id="client-post-code"
             [field]="invoiceForm.clientAddress.postCode">
           </app-generic-input>
 
           <app-generic-input
-            label="Paese"
+            label="Paese:"
+            [isRequired]="true"
+
             id="client-country"
             [field]="invoiceForm.clientAddress.country">
           </app-generic-input>
@@ -82,13 +101,15 @@
       <section class="invoice-form-section">
         <div class="invoice-form-grid invoice-form-grid--2">
           <app-calendar-input
-            label="Data fattura"
+            label="Data fattura:"
+            [isRequired]="true"
             id="created-at"
             [field]="invoiceForm.createdAt">
           </app-calendar-input>
 
           <app-select-input
-            label="Termini di pagamento"
+            label="Termini di pagamento:"
+            [isRequired]="true"
             id="payment-terms"
             [field]="invoiceForm.paymentTerms"
             [options]="paymentTermsOptions">
@@ -96,7 +117,9 @@
         </div>
 
         <app-generic-input
-          label="Descrizione progetto"
+          label="Descrizione progetto:"
+          [isRequired]="true"
+
           id="description"
           [field]="invoiceForm.description">
         </app-generic-input>
@@ -121,6 +144,8 @@
               <app-generic-input
                 label="Nome articolo"
                 [labelIsVisible]="false"
+                [isRequired]="true"
+
                 [id]="'item-name-' + i"
                 [field]="invoiceForm.items[i].name">
               </app-generic-input>
@@ -128,6 +153,8 @@
               <app-generic-input
                 label="Q.tà"
                 [labelIsVisible]="false"
+                [isRequired]="true"
+
                 [id]="'item-quantity-' + i"
                 type="number"
                 [field]="invoiceForm.items[i].quantity">
@@ -136,6 +163,8 @@
               <app-generic-input
                 label="Prezzo"
                 [labelIsVisible]="false"
+                [isRequired]="true"
+
                 [id]="'item-price-' + i"
                 type="number"
                 [field]="invoiceForm.items[i].price">
@@ -167,23 +196,26 @@
       </section>
 
       @if (mode() === 'edit') {
-        <app-actions-button
-          [discardIsVisible]="true"
-          [saveChangesIsVisible]="true"
-          [setJustifyContent]="'flex-end'"
-          (discardClicked)="closeForm()"
-          (saveChangesClicked)="saveChanges()">
-        </app-actions-button>
-      } @else {
-        <app-actions-button
-          [discardIsVisible]="true"
-          [saveAndSendIsVisible]="true"
-          [saveChangesIsVisible]="false"
-          [saveAsDraftIsVisible]="true"
-          [setJustifyContent]="'space-between'"
-          (discardClicked)="closeForm()"
-          (saveAndSendClicked)="saveAndSend()">
-        </app-actions-button>
+       <app-actions-button
+        [discardIsVisible]="true"
+        [saveChangesIsVisible]="true"
+        [setJustifyContent]="'flex-end'"
+        [saveChangesDisabled]="invoiceForm().invalid()"
+        (discardClicked)="closeForm()"
+        (saveChangesClicked)="saveChanges()">
+      </app-actions-button>
+    }@else{
+      <app-actions-button
+      [discardIsVisible]="true"
+      [saveAndSendIsVisible]="true"
+      [saveChangesIsVisible]="false"
+      [saveAsDraftIsVisible]="true"
+      [setJustifyContent]="'space-between'"
+      [saveAndSendDisabled]="invoiceForm().invalid()"
+      [saveAsDraftDisabled]="invoiceForm().invalid()"
+      (discardClicked)="closeForm()"
+      (saveAndSendClicked)="saveAndSend()">
+    </app-actions-button>
       }
 
     </div>

@@ -30,6 +30,12 @@ export class DetailInvoiceComponent implements OnInit {
 
   ngOnInit(): void {
     this.getInvoice();
+    this.detailInvoiceService.updateSingleInvoice.pipe(
+      tap((res) => {
+        this.getInvoice()
+      })
+      
+    ).subscribe()
  
   }
 
@@ -48,16 +54,30 @@ export class DetailInvoiceComponent implements OnInit {
     this.modalService.confirmResult$.pipe(
       take(1),
       filter((confirmed) => confirmed)
-    ).subscribe(() => {
-      console.log('Elimino davvero la fattura con id:', this.invoice.id);
+    ).pipe(
+      tap((res) => {
+      const invoiceId = this.route.snapshot.paramMap.get('id');
 
-      // Qui poi farai la chiamata HTTP vera:
-      // this.detailInvoiceService.deleteInvoice(this.invoice.id).subscribe(...)
-    });
+      this.detailInvoiceService.deleteInvoice(String(invoiceId)).pipe(
+        tap((res) => {
+          console.log(res)
+          this.router.navigate([''])
+        })
+
+      ).subscribe()
+      })
+
+    ).subscribe()
   }
 
   saveAsDraftInvoice() {
-    throw new Error('Method not implemented.');
+    const invoiceId = String(this.route.snapshot.paramMap.get('id'));
+    this.detailInvoiceService.markAsPaid(invoiceId).pipe(
+      tap((res) => {
+        console.log('salvato in bozza')
+      })
+
+    ).subscribe()
   }
 
   protected goBack(): void {

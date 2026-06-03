@@ -42,11 +42,18 @@ export class ListInvoicesComponent implements OnInit {
     private listInvoicesService: ListInvoicesService,
     private router: Router,
     private invoiceFormService: InvoiceFormService,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
   ) {}
 
   ngOnInit(): void {
     this.getAllInvoices();
+    
+    this.invoiceFormService.updateGetInvoices.pipe(
+      tap((res) => {
+        this.getAllInvoices()
+      })
+
+    ).subscribe()
   }
 
   protected goToDetail(invoice: Invoice): void {
@@ -117,4 +124,6 @@ export class ListInvoicesComponent implements OnInit {
         return '';
     }
   }
+
+
 }

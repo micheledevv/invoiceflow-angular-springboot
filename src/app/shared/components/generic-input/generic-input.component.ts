@@ -9,6 +9,7 @@ import { FieldTree, FormField } from '@angular/forms/signals';
 })
 export class GenericInputComponent {
   label = input.required<string>();
+  isRequired= input.required<boolean>();
   field = input.required<FieldTree<string>>();
 
   type = input<string>('text');

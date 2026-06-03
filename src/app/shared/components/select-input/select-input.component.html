@@ -5,6 +5,10 @@
       [class.form-label--error]="firstError()"
       [attr.for]="id()">
       {{ label() }}
+      
+        @if (isRequired()) {
+          <span>*</span>
+        }
     </label>
 
     @if (firstError()) {

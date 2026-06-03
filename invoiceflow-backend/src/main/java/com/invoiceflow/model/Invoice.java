@@ -50,11 +50,24 @@ public class Invoice {
 
   private Double total;
 
-  public void setItems(List<InvoiceItem> items) {
+  public void prepareItemsForSave() {
+    if (items == null) {
+      items = new ArrayList<>();
+    }
+
+    for (InvoiceItem item : items) {
+      item.setInvoice(this);
+      item.calculateTotal();
+    }
+
+    calculateTotal();
+  }
+
+  public void replaceItems(List<InvoiceItem> newItems) {
     this.items.clear();
 
-    if (items != null) {
-      for (InvoiceItem item : items) {
+    if (newItems != null) {
+      for (InvoiceItem item : newItems) {
         item.setInvoice(this);
         item.calculateTotal();
         this.items.add(item);

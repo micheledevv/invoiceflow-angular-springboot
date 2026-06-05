@@ -20,7 +20,6 @@
           <app-generic-input
             label="Città:"
             [isRequired]="true"
-
             id="sender-city"
             [field]="invoiceForm.senderAddress.city">
           </app-generic-input>
@@ -28,8 +27,9 @@
           <app-generic-input
             label="CAP:"
             [isRequired]="true"
-
             id="sender-post-code"
+            [onlyNumbers]="true"
+            [maxInputLength]="5"
             [field]="invoiceForm.senderAddress.postCode">
           </app-generic-input>
 
@@ -83,8 +83,9 @@
           <app-generic-input
             label="CAP:"
             [isRequired]="true"
-
             id="client-post-code"
+            [onlyNumbers]="true"
+            [maxInputLength]="5"
             [field]="invoiceForm.clientAddress.postCode">
           </app-generic-input>
 

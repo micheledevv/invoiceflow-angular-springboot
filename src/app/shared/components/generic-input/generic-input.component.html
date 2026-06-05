@@ -27,5 +27,8 @@
     [type]="type()"
     [placeholder]="placeholder()"
     [formField]="field()"
+    [attr.inputmode]="onlyNumbers() ? 'numeric' : null"
+    (beforeinput)="blockInvalidInput($event)"
+    (paste)="blockInvalidPaste($event)"
   />
 </div>

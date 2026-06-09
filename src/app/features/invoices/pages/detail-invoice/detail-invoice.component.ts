@@ -1,113 +1,148 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { filter, finalize, take, tap } from 'rxjs';
-import { NgClass } from '@angular/common';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { InvoiceFormService } from '../../components/invoice-form/invoice-form.service';
+import { filter, finalize, switchMap, take, tap } from 'rxjs';
+
 import { ActionsButtonComponent } from '../../../../shared/components/actions-button/actions-button.component';
-import { DetailInvoiceService } from './detail-invoice.service';
 import { GenericModalService } from '../../../../shared/components/generic-modal/generic-modal.service';
-import { Invoice, InvoiceStatus } from '../../models/invoice.model';
 import { LoaderService } from '../../../../shared/components/loader/loader.service';
+
+import { InvoiceFormService } from '../../components/invoice-form/invoice-form.service';
+import { DetailInvoiceService } from './detail-invoice.service';
+
+import { Invoice, InvoiceStatus } from '../../models/invoice.model';
 
 @Component({
   selector: 'app-detail-invoice',
-  imports: [NgClass, ActionsButtonComponent],
+  imports: [ActionsButtonComponent],
   templateUrl: './detail-invoice.component.html',
   styleUrl: './detail-invoice.component.scss'
 })
 export class DetailInvoiceComponent implements OnInit {
-
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
+
   private readonly invoiceFormService = inject(InvoiceFormService);
   private readonly detailInvoiceService = inject(DetailInvoiceService);
   private readonly modalService = inject(GenericModalService);
-  private readonly loaderService = inject(LoaderService)
+  private readonly loaderService = inject(LoaderService);
 
-  invoice:any = {};
+  protected readonly invoice = signal<Invoice | null>(null);
 
-
+  private readonly statusLabels: Record<InvoiceStatus, string> = {
+    paid: 'Pagata',
+    pending: 'In attesa',
+    draft: 'Bozza'
+  };
 
   ngOnInit(): void {
     this.getInvoice();
-    this.detailInvoiceService.updateSingleInvoice.pipe(
-      tap((res) => {
-        this.getInvoice()
-      })
-      
-    ).subscribe()
- 
+
+    this.detailInvoiceService.updateSingleInvoice
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.getInvoice();
+      });
   }
 
-   protected editInvoice(): void {
+  protected editInvoice(): void {
+    const currentInvoice = this.invoice();
+
+    if (!currentInvoice) {
+      return;
+    }
+
     this.invoiceFormService.setEditMode();
-    this.detailInvoiceService.takeInvoice(this.invoice);
+    this.detailInvoiceService.takeInvoice(currentInvoice);
     this.invoiceFormService.openForm();
   }
 
   protected deleteInvoice(): void {
+    const currentInvoice = this.invoice();
+
+    if (!currentInvoice) {
+      return;
+    }
+
     this.modalService.openModal(
-      'Conferma Eliminazione',
-      `Sei sicuro di voler eliminare la Fattura #${this.invoice.id}? Questa azione sarà irreversibile.`
+      'Conferma eliminazione',
+      `Sei sicuro di voler eliminare la fattura #${currentInvoice.id}? Questa azione sarà irreversibile.`
     );
 
-    this.modalService.confirmResult$.pipe(
-      take(1),
-      filter((confirmed) => confirmed)
-    ).pipe(
-      tap((res) => {
-      const invoiceId = this.route.snapshot.paramMap.get('id');
+    this.modalService.confirmResult$
+      .pipe(
+        take(1),
+        filter(Boolean),
+        switchMap(() => {
+          this.loaderService.show();
 
-      this.detailInvoiceService.deleteInvoice(String(invoiceId)).pipe(
-        tap((res) => {
-          console.log(res)
-          this.router.navigate([''])
-        })
-
-      ).subscribe()
-      })
-
-    ).subscribe()
+          return this.detailInvoiceService.deleteInvoice(currentInvoice.id)
+            .pipe(
+              finalize(() => {
+                this.loaderService.hide();
+              })
+            );
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(() => {
+        this.router.navigate(['']);
+      });
   }
 
-  saveAsDraftInvoice() {
-    const invoiceId = String(this.route.snapshot.paramMap.get('id'));
-    this.detailInvoiceService.markAsPaid(invoiceId).pipe(
-      tap((res) => {
-        console.log('salvato in bozza')
-      })
+  protected markAsPaidInvoice(): void {
+    const currentInvoice = this.invoice();
 
-    ).subscribe()
+    if (!currentInvoice) {
+      return;
+    }
+
+    this.loaderService.show();
+
+    this.detailInvoiceService.markAsPaid(currentInvoice.id)
+      .pipe(
+        tap((updatedInvoice) => {
+          this.invoice.set(updatedInvoice);
+          this.detailInvoiceService.takeInvoice(updatedInvoice);
+        }),
+        finalize(() => {
+          this.loaderService.hide();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
   }
 
   protected goBack(): void {
     this.router.navigate(['']);
   }
 
-  private getInvoice(){
-    this.loaderService.show()
-
-    const invoiceId = this.route.snapshot.paramMap.get('id');
-    
-    this.detailInvoiceService.getInvoice(invoiceId).pipe(
-      tap((singleInvoice:Invoice) => {
-        console.log(singleInvoice)
-        this.invoice = singleInvoice
-      }),
-      finalize(()=>{
-        this.loaderService.hide()
-      })
-    ).subscribe()
+  protected getStatusLabel(status: InvoiceStatus): string {
+    return this.statusLabels[status] ?? status;
   }
 
-  statusLabels: Record<InvoiceStatus, string> = {
-    paid: 'Pagata',
-    pending: 'In attesa',
-    draft: 'Bozza'
-  };
+  private getInvoice(): void {
+    const invoiceId = this.route.snapshot.paramMap.get('id');
 
-  
-  getStatusLabel(status: string): string {
-    return this.statusLabels[status as InvoiceStatus] ?? status;
+    if (!invoiceId) {
+      this.router.navigate(['']);
+      return;
+    }
+
+    this.loaderService.show();
+
+    this.detailInvoiceService.getInvoice(invoiceId)
+      .pipe(
+        tap((singleInvoice) => {
+          this.invoice.set(singleInvoice);
+          this.detailInvoiceService.takeInvoice(singleInvoice);
+        }),
+        finalize(() => {
+          this.loaderService.hide();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
   }
 }

@@ -1,22 +1,30 @@
-import { Injectable, signal } from '@angular/core';
-import { Invoice } from '../../models/invoice.model';
 import { HttpClient } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 
+import { Invoice } from '../../models/invoice.model';
+
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class DetailInvoiceService {
-  constructor(
-    private http:HttpClient
-  ){}
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = 'http://localhost:8080/api/invoices';
 
-  getInvoice(invoiceId: string | null) {
-    const url = `http://localhost:8080/api/invoices/${invoiceId}`
-    return this.http.get<Invoice>(url);
+  readonly singleInvoice = signal<Invoice | null>(null);
+  readonly updateSingleInvoice = new Subject<void>();
+
+  getInvoice(invoiceId: string) {
+    return this.http.get<Invoice>(`${this.apiUrl}/${invoiceId}`);
   }
 
-  singleInvoice = signal<Invoice | null>(null);
+  deleteInvoice(invoiceId: string) {
+    return this.http.delete<void>(`${this.apiUrl}/${invoiceId}`);
+  }
+
+  markAsPaid(invoiceId: string) {
+    return this.http.patch<Invoice>(`${this.apiUrl}/${invoiceId}/mark-as-paid`, {});
+  }
 
   takeInvoice(invoice: Invoice): void {
     this.singleInvoice.set(invoice);
@@ -26,15 +34,7 @@ export class DetailInvoiceService {
     this.singleInvoice.set(null);
   }
 
-  deleteInvoice(id: string) {
-   const apiUrl = 'http://localhost:8080/api/invoices';
-   return this.http.delete<void>(`${apiUrl}/${id}`);
+  notifySingleInvoiceUpdated(): void {
+    this.updateSingleInvoice.next();
   }
-
-  markAsPaid(id: string) {
-   const url = 'http://localhost:8080/api/invoices';
-   return this.http.patch<Invoice>(`${url}/${id}/mark-as-paid`, {});
-  }
-
-  updateSingleInvoice = new Subject<string>
 }

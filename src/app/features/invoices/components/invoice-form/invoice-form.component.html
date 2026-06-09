@@ -36,7 +36,6 @@
           <app-generic-input
             label="Paese:"
             [isRequired]="true"
-
             id="sender-country"
             [field]="invoiceForm.senderAddress.country">
           </app-generic-input>
@@ -49,7 +48,6 @@
         <app-generic-input
           label="Nome cliente:"
           [isRequired]="true"
-
           id="client-name"
           [field]="invoiceForm.clientName">
         </app-generic-input>
@@ -57,7 +55,6 @@
         <app-generic-input
           label="Email cliente:"
           [isRequired]="true"
-
           id="client-email"
           type="email"
           [field]="invoiceForm.clientEmail">
@@ -66,7 +63,6 @@
         <app-generic-input
           label="Indirizzo:"
           [isRequired]="true"
-
           id="client-street"
           [field]="invoiceForm.clientAddress.street">
         </app-generic-input>
@@ -75,7 +71,6 @@
           <app-generic-input
             label="Città:"
             [isRequired]="true"
-
             id="client-city"
             [field]="invoiceForm.clientAddress.city">
           </app-generic-input>
@@ -92,7 +87,6 @@
           <app-generic-input
             label="Paese:"
             [isRequired]="true"
-
             id="client-country"
             [field]="invoiceForm.clientAddress.country">
           </app-generic-input>
@@ -120,7 +114,6 @@
         <app-generic-input
           label="Descrizione progetto:"
           [isRequired]="true"
-
           id="description"
           [field]="invoiceForm.description">
         </app-generic-input>
@@ -130,7 +123,6 @@
         <h2 class="invoice-form-items-title">Lista articoli</h2>
 
         <div class="items-list">
-
           <div class="items-list__header">
             <p>Nome articolo</p>
             <p>Q.tà</p>
@@ -141,21 +133,18 @@
 
           @for (item of invoiceModel().items; track $index; let i = $index) {
             <div class="items-list__row">
-
               <app-generic-input
                 label="Nome articolo"
                 [labelIsVisible]="false"
                 [isRequired]="true"
-
                 [id]="'item-name-' + i"
                 [field]="invoiceForm.items[i].name">
               </app-generic-input>
 
               <app-generic-input
-                label="Q.tà"
+                label="Quantità"
                 [labelIsVisible]="false"
                 [isRequired]="true"
-
                 [id]="'item-quantity-' + i"
                 type="number"
                 [field]="invoiceForm.items[i].quantity">
@@ -165,7 +154,6 @@
                 label="Prezzo"
                 [labelIsVisible]="false"
                 [isRequired]="true"
-
                 [id]="'item-price-' + i"
                 type="number"
                 [field]="invoiceForm.items[i].price">
@@ -182,7 +170,6 @@
                 (click)="removeItem(i)">
                 <img src="assets/images/icon-delete.svg" alt="">
               </button>
-
             </div>
           }
 
@@ -192,31 +179,30 @@
             (click)="addItem()">
             + Aggiungi nuovo articolo
           </button>
-
         </div>
       </section>
 
       @if (mode() === 'edit') {
-       <app-actions-button
-        [discardIsVisible]="true"
-        [saveChangesIsVisible]="true"
-        [setJustifyContent]="'flex-end'"
-        [saveChangesDisabled]="invoiceForm().invalid()"
-        (discardClicked)="closeForm()"
-        (saveChangesClicked)="saveChanges()">
-      </app-actions-button>
-    }@else{
-      <app-actions-button
-      [discardIsVisible]="true"
-      [saveAndSendIsVisible]="true"
-      [saveChangesIsVisible]="false"
-      [saveAsDraftIsVisible]="true"
-      [setJustifyContent]="'space-between'"
-      [saveAndSendDisabled]="invoiceForm().invalid()"
-      [saveAsDraftDisabled]="invoiceForm().invalid()"
-      (discardClicked)="closeForm()"
-      (saveAndSendClicked)="saveAndSend()">
-    </app-actions-button>
+        <app-actions-button
+          [discardIsVisible]="true"
+          [saveChangesIsVisible]="true"
+          [setJustifyContent]="'flex-end'"
+          [saveChangesDisabled]="isFormInvalid()"
+          (discardClicked)="closeForm()"
+          (saveChangesClicked)="saveChanges()">
+        </app-actions-button>
+      } @else {
+        <app-actions-button
+          [discardIsVisible]="true"
+          [saveAndSendIsVisible]="true"
+          [saveChangesIsVisible]="false"
+          [saveAsDraftIsVisible]="true"
+          [setJustifyContent]="'space-between'"
+          [saveAndSendDisabled]="isFormInvalid()"
+          [saveAsDraftDisabled]="isFormInvalid()"
+          (discardClicked)="closeForm()"
+          (saveAndSendClicked)="saveAndSend()">
+        </app-actions-button>
       }
 
     </div>

@@ -8,19 +8,19 @@ import {
   pattern,
   required
 } from '@angular/forms/signals';
+import { finalize, tap } from 'rxjs';
 
 import { GenericInputComponent } from '../../../../shared/components/generic-input/generic-input.component';
 import { SelectInputComponent, SelectOption } from '../../../../shared/components/select-input/select-input.component';
 import { CalendarInputComponent } from '../../../../shared/components/calendar-input/calendar-input.component';
 import { ActionsButtonComponent } from '../../../../shared/components/actions-button/actions-button.component';
+import { LoaderService } from '../../../../shared/components/loader/loader.service';
 
 import { InvoiceFormService } from './invoice-form.service';
-import { InvoiceFormModel } from '../../models/invoice.form.model';
 import { DetailInvoiceService } from '../../pages/detail-invoice/detail-invoice.service';
-import { Invoice } from '../../models/invoice.model';
-import { finalize, tap } from 'rxjs';
-import { LoaderService } from '../../../../shared/components/loader/loader.service';
-import { Router } from '@angular/router';
+
+import { Invoice, InvoiceStatus } from '../../models/invoice.model';
+import { InvoiceFormModel } from '../../models/invoice.form.model';
 
 @Component({
   selector: 'app-invoice-form',
@@ -34,188 +34,187 @@ import { Router } from '@angular/router';
   styleUrl: './invoice-form.component.scss'
 })
 export class InvoiceFormComponent implements OnInit {
-  private invoiceFormService = inject(InvoiceFormService);
-  private detailInvoiceService = inject(DetailInvoiceService);
-  private loaderService = inject(LoaderService)
-  private router = inject(Router)
+  private readonly invoiceFormService = inject(InvoiceFormService);
+  private readonly detailInvoiceService = inject(DetailInvoiceService);
+  private readonly loaderService = inject(LoaderService);
 
-  mode = this.invoiceFormService.mode;
-  singleInvoice = this.detailInvoiceService.singleInvoice;
+  protected readonly mode = this.invoiceFormService.mode;
+  protected readonly singleInvoice = this.detailInvoiceService.singleInvoice;
 
-  paymentTermsOptions: SelectOption<string>[] = [
+  protected readonly paymentTermsOptions: SelectOption<string>[] = [
     { label: 'Net 1 Giorno', value: '1' },
     { label: 'Net 7 Giorni', value: '7' },
     { label: 'Net 14 Giorni', value: '14' },
     { label: 'Net 30 Giorni', value: '30' }
   ];
 
-  invoiceModel = signal<InvoiceFormModel>(this.getEmptyForm());
+  protected readonly invoiceModel = signal<InvoiceFormModel>(this.getEmptyForm());
 
-  invoiceForm = form(this.invoiceModel, (schemaPath) => {
-  // Da chi viene emessa
-  required(schemaPath.senderAddress.street, {
-    message: 'L’indirizzo del mittente è obbligatorio'
-  });
-
-  minLength(schemaPath.senderAddress.street, 5, {
-    message: 'L’indirizzo deve contenere almeno 5 caratteri'
-  });
-
-  maxLength(schemaPath.senderAddress.street, 80, {
-    message: 'L’indirizzo non può superare 80 caratteri'
-  });
-
-  required(schemaPath.senderAddress.city, {
-    message: 'La città del mittente è obbligatoria'
-  });
-
-  minLength(schemaPath.senderAddress.city, 2, {
-    message: 'La città deve contenere almeno 2 caratteri'
-  });
-
-  maxLength(schemaPath.senderAddress.city, 40, {
-    message: 'La città non può superare 40 caratteri'
-  });
-
-  required(schemaPath.senderAddress.postCode, {
-    message: 'Il CAP del mittente è obbligatorio'
-  });
-
-  pattern(schemaPath.senderAddress.postCode, /^[0-9]{5}$/, {
-    message: 'Il CAP deve contenere 5 numeri'
-  });
-
-  required(schemaPath.senderAddress.country, {
-    message: 'Il paese del mittente è obbligatorio'
-  });
-
-  minLength(schemaPath.senderAddress.country, 2, {
-    message: 'Il paese deve contenere almeno 2 caratteri'
-  });
-
-  maxLength(schemaPath.senderAddress.country, 40, {
-    message: 'Il paese non può superare 40 caratteri'
-  });
-
-  // Cliente
-  required(schemaPath.clientName, {
-    message: 'Il nome cliente è obbligatorio'
-  });
-
-  minLength(schemaPath.clientName, 2, {
-    message: 'Il nome cliente deve contenere almeno 2 caratteri'
-  });
-
-  maxLength(schemaPath.clientName, 60, {
-    message: 'Il nome cliente non può superare 60 caratteri'
-  });
-
-  required(schemaPath.clientEmail, {
-    message: 'L’email cliente è obbligatoria'
-  });
-
-  email(schemaPath.clientEmail, {
-    message: 'Inserisci un’email valida'
-  });
-
-  required(schemaPath.clientAddress.street, {
-    message: 'L’indirizzo del cliente è obbligatorio'
-  });
-
-  minLength(schemaPath.clientAddress.street, 5, {
-    message: 'L’indirizzo cliente deve contenere almeno 5 caratteri'
-  });
-
-  maxLength(schemaPath.clientAddress.street, 80, {
-    message: 'L’indirizzo cliente non può superare 80 caratteri'
-  });
-
-  required(schemaPath.clientAddress.city, {
-    message: 'La città del cliente è obbligatoria'
-  });
-
-  minLength(schemaPath.clientAddress.city, 2, {
-    message: 'La città deve contenere almeno 2 caratteri'
-  });
-
-  maxLength(schemaPath.clientAddress.city, 40, {
-    message: 'La città non può superare 40 caratteri'
-  });
-
-  required(schemaPath.clientAddress.postCode, {
-    message: 'Il CAP del cliente è obbligatorio'
-  });
-
-  pattern(schemaPath.clientAddress.postCode, /^[0-9]{5}$/, {
-    message: 'Il CAP deve contenere 5 numeri'
-  });
-
-  required(schemaPath.clientAddress.country, {
-    message: 'Il paese del cliente è obbligatorio'
-  });
-
-  minLength(schemaPath.clientAddress.country, 2, {
-    message: 'Il paese deve contenere almeno 2 caratteri'
-  });
-
-  maxLength(schemaPath.clientAddress.country, 40, {
-    message: 'Il paese non può superare 40 caratteri'
-  });
-
-  // Dati fattura
-  required(schemaPath.createdAt, {
-    message: 'La data fattura è obbligatoria'
-  });
-
-  required(schemaPath.paymentTerms, {
-    message: 'I termini di pagamento sono obbligatori'
-  });
-
-  required(schemaPath.description, {
-    message: 'La descrizione progetto è obbligatoria'
-  });
-
-  minLength(schemaPath.description, 3, {
-    message: 'La descrizione deve contenere almeno 3 caratteri'
-  });
-
-  maxLength(schemaPath.description, 100, {
-    message: 'La descrizione non può superare 100 caratteri'
-  });
-
-  // Lista articoli
-  applyEach(schemaPath.items, (itemPath) => {
-    required(itemPath.name, {
-      message: 'Il nome articolo è obbligatorio'
+  protected readonly invoiceForm = form(this.invoiceModel, (schemaPath) => {
+    // Da chi viene emessa
+    required(schemaPath.senderAddress.street, {
+      message: 'L’indirizzo del mittente è obbligatorio'
     });
 
-    minLength(itemPath.name, 2, {
-      message: 'Il nome articolo deve contenere almeno 2 caratteri'
+    minLength(schemaPath.senderAddress.street, 5, {
+      message: 'L’indirizzo deve contenere almeno 5 caratteri'
     });
 
-    maxLength(itemPath.name, 60, {
-      message: 'Il nome articolo non può superare 60 caratteri'
+    maxLength(schemaPath.senderAddress.street, 80, {
+      message: 'L’indirizzo non può superare 80 caratteri'
     });
 
-    required(itemPath.quantity, {
-      message: 'La quantità è obbligatoria'
+    required(schemaPath.senderAddress.city, {
+      message: 'La città del mittente è obbligatoria'
     });
 
-    pattern(itemPath.quantity, /^[1-9][0-9]*$/, {
-      message: 'La quantità deve essere maggiore di 0'
+    minLength(schemaPath.senderAddress.city, 2, {
+      message: 'La città deve contenere almeno 2 caratteri'
     });
 
-    required(itemPath.price, {
-      message: 'Il prezzo è obbligatorio'
+    maxLength(schemaPath.senderAddress.city, 40, {
+      message: 'La città non può superare 40 caratteri'
     });
 
-    pattern(itemPath.price, /^(?!0+(?:\.0+)?$)\d+(?:[.,]\d{1,2})?$/, {
-      message: 'Il prezzo deve essere maggiore di 0'
+    required(schemaPath.senderAddress.postCode, {
+      message: 'Il CAP del mittente è obbligatorio'
+    });
+
+    pattern(schemaPath.senderAddress.postCode, /^[0-9]{5}$/, {
+      message: 'Il CAP deve contenere 5 numeri'
+    });
+
+    required(schemaPath.senderAddress.country, {
+      message: 'Il paese del mittente è obbligatorio'
+    });
+
+    minLength(schemaPath.senderAddress.country, 2, {
+      message: 'Il paese deve contenere almeno 2 caratteri'
+    });
+
+    maxLength(schemaPath.senderAddress.country, 40, {
+      message: 'Il paese non può superare 40 caratteri'
+    });
+
+    // Cliente
+    required(schemaPath.clientName, {
+      message: 'Il nome cliente è obbligatorio'
+    });
+
+    minLength(schemaPath.clientName, 2, {
+      message: 'Il nome cliente deve contenere almeno 2 caratteri'
+    });
+
+    maxLength(schemaPath.clientName, 60, {
+      message: 'Il nome cliente non può superare 60 caratteri'
+    });
+
+    required(schemaPath.clientEmail, {
+      message: 'L’email cliente è obbligatoria'
+    });
+
+    email(schemaPath.clientEmail, {
+      message: 'Inserisci un’email valida'
+    });
+
+    required(schemaPath.clientAddress.street, {
+      message: 'L’indirizzo del cliente è obbligatorio'
+    });
+
+    minLength(schemaPath.clientAddress.street, 5, {
+      message: 'L’indirizzo cliente deve contenere almeno 5 caratteri'
+    });
+
+    maxLength(schemaPath.clientAddress.street, 80, {
+      message: 'L’indirizzo cliente non può superare 80 caratteri'
+    });
+
+    required(schemaPath.clientAddress.city, {
+      message: 'La città del cliente è obbligatoria'
+    });
+
+    minLength(schemaPath.clientAddress.city, 2, {
+      message: 'La città deve contenere almeno 2 caratteri'
+    });
+
+    maxLength(schemaPath.clientAddress.city, 40, {
+      message: 'La città non può superare 40 caratteri'
+    });
+
+    required(schemaPath.clientAddress.postCode, {
+      message: 'Il CAP del cliente è obbligatorio'
+    });
+
+    pattern(schemaPath.clientAddress.postCode, /^[0-9]{5}$/, {
+      message: 'Il CAP deve contenere 5 numeri'
+    });
+
+    required(schemaPath.clientAddress.country, {
+      message: 'Il paese del cliente è obbligatorio'
+    });
+
+    minLength(schemaPath.clientAddress.country, 2, {
+      message: 'Il paese deve contenere almeno 2 caratteri'
+    });
+
+    maxLength(schemaPath.clientAddress.country, 40, {
+      message: 'Il paese non può superare 40 caratteri'
+    });
+
+    // Dati fattura
+    required(schemaPath.createdAt, {
+      message: 'La data fattura è obbligatoria'
+    });
+
+    required(schemaPath.paymentTerms, {
+      message: 'I termini di pagamento sono obbligatori'
+    });
+
+    required(schemaPath.description, {
+      message: 'La descrizione progetto è obbligatoria'
+    });
+
+    minLength(schemaPath.description, 3, {
+      message: 'La descrizione deve contenere almeno 3 caratteri'
+    });
+
+    maxLength(schemaPath.description, 100, {
+      message: 'La descrizione non può superare 100 caratteri'
+    });
+
+    // Lista articoli
+    applyEach(schemaPath.items, (itemPath) => {
+      required(itemPath.name, {
+        message: 'Il nome articolo è obbligatorio'
+      });
+
+      minLength(itemPath.name, 2, {
+        message: 'Il nome articolo deve contenere almeno 2 caratteri'
+      });
+
+      maxLength(itemPath.name, 60, {
+        message: 'Il nome articolo non può superare 60 caratteri'
+      });
+
+      required(itemPath.quantity, {
+        message: 'La quantità è obbligatoria'
+      });
+
+      pattern(itemPath.quantity, /^[1-9][0-9]*$/, {
+        message: 'La quantità deve essere maggiore di 0'
+      });
+
+      required(itemPath.price, {
+        message: 'Il prezzo è obbligatorio'
+      });
+
+      pattern(itemPath.price, /^(?!0+(?:\.0+)?$)\d+(?:[.,]\d{1,2})?$/, {
+        message: 'Il prezzo deve essere maggiore di 0'
+      });
     });
   });
-});
 
-  title = computed(() => {
+  protected readonly title = computed(() => {
     const invoice = this.singleInvoice();
 
     if (this.mode() === 'create') {
@@ -225,19 +224,10 @@ export class InvoiceFormComponent implements OnInit {
     return invoice ? `Modifica #${invoice.id}` : 'Modifica fattura';
   });
 
+  protected readonly isFormInvalid = computed(() => this.invoiceForm().invalid());
+
   ngOnInit(): void {
-    if (this.mode() === 'edit') {
-      const invoice = this.detailInvoiceService.singleInvoice();
-
-      if (!invoice) {
-        return;
-      }
-
-      this.patchFormWithInvoice(invoice);
-      return;
-    }
-
-    this.resetForm();
+    this.initializeForm();
   }
 
   protected addItem(): void {
@@ -268,13 +258,7 @@ export class InvoiceFormComponent implements OnInit {
       return 0;
     }
 
-    return Number(item.quantity || 0) * Number(item.price || 0);
-  }
-
-  protected getInvoiceTotal(): number {
-    return this.invoiceModel().items.reduce((total, item) => {
-      return total + Number(item.quantity || 0) * Number(item.price || 0);
-    }, 0);
+    return this.calculateItemTotal(item.quantity, item.price);
   }
 
   protected closeForm(): void {
@@ -282,92 +266,114 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   protected saveAndSend(): void {
-  this.loaderService.show()
-  const formValue = this.invoiceModel();
+    if (this.isFormInvalid()) {
+      return;
+    }
 
-  const invoiceToSave: Invoice = {
-    id: this.generateInvoiceId(),
-    createdAt: formValue.createdAt,
-    paymentDue: this.calculatePaymentDue(
-      formValue.createdAt,
-      Number(formValue.paymentTerms)
-    ),
-    description: formValue.description,
-    paymentTerms: Number(formValue.paymentTerms),
-    clientName: formValue.clientName,
-    clientEmail: formValue.clientEmail,
-    status: 'pending',
-    senderAddress: formValue.senderAddress,
-    clientAddress: formValue.clientAddress,
-    items: formValue.items.map((item) => ({
-      name: item.name,
-      quantity: Number(item.quantity || 0),
-      price: Number(item.price || 0),
-      total: Number(item.quantity || 0) * Number(item.price || 0)
-    })),
-    total: this.getInvoiceTotal()
-  };
+    this.loaderService.show();
 
-  this.invoiceFormService.createInvoice(invoiceToSave)
-    .pipe(
-      tap((createdInvoice) => {
-        console.log('Fattura creata:', createdInvoice);
-        this.invoiceFormService.updateGetInvoices.next('')
-      }),
-      finalize(() => {
-        this.invoiceFormService.closeForm();
-        this.loaderService.hide()
-      })
-    )
-    .subscribe();
-}
+    const invoiceToSave = this.buildInvoicePayload({
+      id: this.generateInvoiceId(),
+      status: 'pending'
+    });
 
-protected saveChanges(): void {
-  this.loaderService.show()
-  const invoice = this.singleInvoice();
-
-  if (!invoice) {
-    return;
+    this.invoiceFormService.createInvoice(invoiceToSave)
+      .pipe(
+        tap((createdInvoice) => {
+          console.log('Fattura creata:', createdInvoice);
+          this.invoiceFormService.notifyInvoicesUpdated();
+        }),
+        finalize(() => {
+          this.loaderService.hide();
+          this.invoiceFormService.closeForm();
+        })
+      )
+      .subscribe();
   }
 
-  const formValue = this.invoiceModel();
+  protected saveChanges(): void {
+    if (this.isFormInvalid()) {
+      return;
+    }
 
-  const invoiceToUpdate: Invoice = {
-    id: invoice.id,
-    createdAt: formValue.createdAt,
-    paymentDue: this.calculatePaymentDue(
-      formValue.createdAt,
-      Number(formValue.paymentTerms)
-    ),
-    description: formValue.description,
-    paymentTerms: Number(formValue.paymentTerms),
-    clientName: formValue.clientName,
-    clientEmail: formValue.clientEmail,
-    status: invoice.status,
-    senderAddress: formValue.senderAddress,
-    clientAddress: formValue.clientAddress,
-    items: formValue.items.map((item) => ({
-      name: item.name,
-      quantity: Number(item.quantity || 0),
-      price: Number(item.price || 0),
-      total: Number(item.quantity || 0) * Number(item.price || 0)
-    })),
-    total: this.getInvoiceTotal()
-  };
+    const currentInvoice = this.singleInvoice();
 
-  this.invoiceFormService.updateInvoice(invoice.id, invoiceToUpdate)
-    .pipe(
-      tap((updatedInvoice) => {
-        console.log('Fattura aggiornata:', updatedInvoice);
-        this.detailInvoiceService.updateSingleInvoice.next('')
-      }),
-      finalize(() => {
-        this.invoiceFormService.closeForm();
-        this.loaderService.hide()
-      })
-    )
-    .subscribe();
-}
+    if (!currentInvoice) {
+      return;
+    }
+
+    this.loaderService.show();
+
+    const invoiceToUpdate = this.buildInvoicePayload({
+      id: currentInvoice.id,
+      status: currentInvoice.status
+    });
+
+    this.invoiceFormService.updateInvoice(currentInvoice.id, invoiceToUpdate)
+      .pipe(
+        tap((updatedInvoice) => {
+          console.log('Fattura aggiornata:', updatedInvoice);
+          this.detailInvoiceService.notifySingleInvoiceUpdated();
+        }),
+        finalize(() => {
+          this.loaderService.hide();
+          this.invoiceFormService.closeForm();
+        })
+      )
+      .subscribe();
+  }
+
+  private initializeForm(): void {
+    if (this.mode() === 'edit') {
+      const invoice = this.singleInvoice();
+
+      if (invoice) {
+        this.patchFormWithInvoice(invoice);
+      }
+
+      return;
+    }
+
+    this.resetForm();
+  }
+
+  private buildInvoicePayload(config: {
+    id: string;
+    status: InvoiceStatus;
+  }): Invoice {
+    const formValue = this.invoiceModel();
+    const paymentTerms = Number(formValue.paymentTerms);
+
+    return {
+      id: config.id,
+      createdAt: formValue.createdAt,
+      paymentDue: this.calculatePaymentDue(formValue.createdAt, paymentTerms),
+      description: formValue.description,
+      paymentTerms,
+      clientName: formValue.clientName,
+      clientEmail: formValue.clientEmail,
+      status: config.status,
+      senderAddress: formValue.senderAddress,
+      clientAddress: formValue.clientAddress,
+      items: formValue.items.map((item) => ({
+        name: item.name,
+        quantity: Number(item.quantity || 0),
+        price: Number(item.price || 0),
+        total: this.calculateItemTotal(item.quantity, item.price)
+      })),
+      total: this.getInvoiceTotal()
+    };
+  }
+
+  private getInvoiceTotal(): number {
+    return this.invoiceModel().items.reduce((total, item) => {
+      return total + this.calculateItemTotal(item.quantity, item.price);
+    }, 0);
+  }
+
+  private calculateItemTotal(quantity: string, price: string): number {
+    return Number(quantity || 0) * Number(price || 0);
+  }
 
   private patchFormWithInvoice(invoice: Invoice): void {
     this.invoiceModel.set({

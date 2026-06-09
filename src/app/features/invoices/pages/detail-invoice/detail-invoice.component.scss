@@ -1,12 +1,12 @@
 .invoice-detail-page {
   width: 100%;
   min-height: 100vh;
-  background-color: var(--color-page-bg);
+  padding-top: 30px;
 
   display: flex;
   justify-content: center;
 
-  padding-top: 30px;
+  background-color: var(--color-page-bg);
 
   transition: background-color 0.2s ease;
 }
@@ -21,10 +21,11 @@
 }
 
 .go-back {
+  width: fit-content;
+
   display: inline-flex;
   align-items: center;
   gap: 24px;
-  width: fit-content;
 
   border: 0;
   background: transparent;
@@ -91,7 +92,6 @@
   line-height: 15px;
   letter-spacing: -0.25px;
   font-weight: 700;
-  text-transform: capitalize;
 
   span {
     width: 8px;
@@ -146,7 +146,7 @@
 
 .invoice-card {
   width: 100%;
-  padding: 18px;
+  padding: 32px;
 
   background-color: var(--color-card-bg);
   border-radius: 8px;
@@ -156,15 +156,17 @@
 }
 
 .invoice-card__top {
+  margin-bottom: 28px;
+
   display: flex;
   justify-content: space-between;
   gap: 32px;
-  margin-bottom: 28px;
 }
 
 .invoice-id {
-  color: var(--color-text-primary);
   margin-bottom: 8px;
+
+  color: var(--color-text-primary);
 
   span {
     color: var(--color-muted-blue);
@@ -186,10 +188,11 @@
 }
 
 .invoice-info-grid {
+  margin-bottom: 48px;
+
   display: grid;
   grid-template-columns: 1fr 1fr 1.4fr;
   gap: 48px;
-  margin-bottom: 48px;
 }
 
 .dates {
@@ -223,14 +226,16 @@
 }
 
 .client-address {
+  margin-top: 4px;
+
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-top: 4px;
 }
 
 .items-box {
   overflow: hidden;
+
   border-radius: 8px;
   background-color: var(--color-card-secondary-bg);
 
@@ -249,27 +254,26 @@
   padding: 32px 32px 16px;
 
   color: var(--color-text-secondary);
+
   font-size: 13px;
   line-height: 18px;
   letter-spacing: -0.1px;
   font-weight: 500;
-
-  p:nth-child(2),
-  p:nth-child(3),
-  p:nth-child(4) {
-    text-align: right;
-  }
 }
 
 .items-row {
   padding: 16px 32px;
 
   color: var(--color-text-secondary);
+
   font-size: 13px;
   line-height: 18px;
   letter-spacing: -0.1px;
   font-weight: 700;
+}
 
+.items-header,
+.items-row {
   p:nth-child(2),
   p:nth-child(3),
   p:nth-child(4) {
@@ -282,11 +286,20 @@
   color: var(--color-text-primary);
 }
 
-.amount-due {
-  margin-top: 24px;
+.items-empty {
   padding: 24px 32px;
 
+  color: var(--color-text-secondary);
+
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 700;
+}
+
+.amount-due {
   min-height: 80px;
+  margin-top: 24px;
+  padding: 24px 32px;
 
   display: flex;
   align-items: center;

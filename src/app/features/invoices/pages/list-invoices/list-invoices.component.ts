@@ -1,15 +1,26 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { InvoiceRecordsComponent } from '../../../../shared/components/invoice-records/invoice-records.component';
-import { ListInvoicesService } from './list-invoices.service';
-import { finalize, tap } from 'rxjs';
-import { Invoice } from './../../models/invoice.model'
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { InvoiceFormService } from '../../components/invoice-form/invoice-form.service';
+import { finalize, tap } from 'rxjs';
 import { form, FormField } from '@angular/forms/signals';
+
+import { InvoiceRecordsComponent } from '../../../../shared/components/invoice-records/invoice-records.component';
 import { LoaderService } from '../../../../shared/components/loader/loader.service';
 
+import { InvoiceFormService } from '../../components/invoice-form/invoice-form.service';
+import { ListInvoicesService } from './list-invoices.service';
+
+import { Invoice, InvoiceStatus } from '../../models/invoice.model';
+
+type InvoiceStatusFilter = InvoiceStatus | 'all';
+
 type InvoiceFiltersForm = {
-  selectedStatus: string;
+  selectedStatus: InvoiceStatusFilter;
+};
+
+type InvoiceStatusOption = {
+  label: string;
+  value: InvoiceStatusFilter;
 };
 
 @Component({
@@ -19,111 +30,97 @@ type InvoiceFiltersForm = {
   styleUrl: './list-invoices.component.scss'
 })
 export class ListInvoicesComponent implements OnInit {
-  allInvoices: Invoice[] = [];
-  filteredInvoices: Invoice[] = [];
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
-  statusLabel = '';
-  totalInvoice = 0;
+  private readonly listInvoicesService = inject(ListInvoicesService);
+  private readonly invoiceFormService = inject(InvoiceFormService);
+  private readonly loaderService = inject(LoaderService);
 
-  protected filtersStatusInvoice = [
-    { label: 'Filtra per Stato', value: 'all' },
+  private readonly invoices = signal<Invoice[]>([]);
+
+  protected readonly statusFilters: InvoiceStatusOption[] = [
+    { label: 'Filtra per stato', value: 'all' },
     { label: 'In attesa', value: 'pending' },
     { label: 'In bozza', value: 'draft' },
-    { label: 'Pagata', value: 'paid' },
+    { label: 'Pagata', value: 'paid' }
   ];
 
-  protected modelSelect = signal<InvoiceFiltersForm>({
+  protected readonly filtersModel = signal<InvoiceFiltersForm>({
     selectedStatus: 'all'
   });
 
-  protected modelForm = form(this.modelSelect);
+  protected readonly filtersForm = form(this.filtersModel);
 
-  constructor(
-    private listInvoicesService: ListInvoicesService,
-    private router: Router,
-    private invoiceFormService: InvoiceFormService,
-    private loaderService: LoaderService,
-  ) {}
+  protected readonly filteredInvoices = computed(() => {
+    const selectedStatus = this.filtersModel().selectedStatus;
+    const invoices = this.invoices();
+
+    if (selectedStatus === 'all') {
+      return invoices;
+    }
+
+    return invoices.filter((invoice) => invoice.status === selectedStatus);
+  });
+
+  protected readonly invoicesSummary = computed(() => {
+    const totalInvoices = this.filteredInvoices().length;
+    const selectedStatus = this.filtersModel().selectedStatus;
+
+    const totalText = totalInvoices === 1
+      ? "C'è un totale di"
+      : 'Ci sono in totale';
+
+    const invoiceText = totalInvoices === 1
+      ? 'fattura'
+      : 'fatture';
+
+    return `${totalText} ${totalInvoices} ${invoiceText} ${this.getStatusLabel(selectedStatus)}`;
+  });
 
   ngOnInit(): void {
-    this.getAllInvoices();
-    
-    this.invoiceFormService.updateGetInvoices.pipe(
-      tap((res) => {
-        this.getAllInvoices()
-      })
+    this.getInvoices();
 
-    ).subscribe()
+    this.invoiceFormService.updateGetInvoices
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.getInvoices();
+      });
   }
 
   protected goToDetail(invoice: Invoice): void {
     this.router.navigate(['/detail-invoice', invoice.id]);
   }
 
-  protected openFormCreate(): void {
-    this.invoiceFormService.openForm();
+  protected openCreateForm(): void {
     this.invoiceFormService.setCreateMode();
+    this.invoiceFormService.openForm();
   }
 
-  protected filteredByStatus(): void {
-    const valueSelect = this.modelForm.selectedStatus().value();
-
-    this.statusLabel = this.getStatusLabel(valueSelect);
-
-    if (valueSelect === 'all') {
-      this.filteredInvoices = this.allInvoices;
-      this.totalInvoice = this.filteredInvoices.length;
-      return;
-    }
-
-    this.filteredInvoices = this.allInvoices.filter((invoice) => {
-      return invoice.status === valueSelect;
-    });
-
-    this.totalInvoice = this.filteredInvoices.length;
-  }
-
-  protected get invoicesSummary(): string {
-    const totalText = this.totalInvoice === 1
-      ? "C'è un totale di"
-      : 'Ci sono in totale';
-
-    const invoiceText = this.totalInvoice === 1
-      ? 'fattura'
-      : 'fatture';
-
-    return `${totalText} ${this.totalInvoice} ${invoiceText} ${this.statusLabel}`;
-  }
-
-  private getAllInvoices(): void {
+  private getInvoices(): void {
     this.loaderService.show();
 
-    this.listInvoicesService.getInvoices().pipe(
-      tap((invoices) => {
-        this.allInvoices = invoices;
-        this.filteredByStatus();
-      }),
-      finalize(() => {
-        this.loaderService.hide();
-      })
-    ).subscribe();
+    this.listInvoicesService.getInvoices()
+      .pipe(
+        tap((invoices) => {
+          this.invoices.set(invoices);
+        }),
+        finalize(() => {
+          this.loaderService.hide();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
   }
 
-  private getStatusLabel(status: string): string {
-    switch (status) {
-      case 'paid':
-        return 'in stato: Pagato';
+  private getStatusLabel(status: InvoiceStatusFilter): string {
+    const statusLabels: Record<InvoiceStatusFilter, string> = {
+      all: '',
+      paid: 'in stato: Pagata',
+      draft: 'in stato: In bozza',
+      pending: 'in stato: In attesa'
+    };
 
-      case 'draft':
-        return 'in stato: In bozza';
-
-      case 'pending':
-        return 'in stato: In attesa';
-
-      default:
-        return '';
-    }
+    return statusLabels[status];
   }
-
-
 }

@@ -1,42 +1,51 @@
-<div class="container">
-  <div class="little-box">
+<div class="invoices-page">
+  <div class="invoices-content">
 
-    <div class="little-box__header">
-      <div class="text">
+    <header class="invoice-list-header">
+      <div class="invoice-list-heading">
         <h1 class="heading-m">Fatture</h1>
-        <p class="body-text-variant">{{ invoicesSummary }}</p>
+        <p class="body-text-variant">{{ invoicesSummary() }}</p>
       </div>
 
-      <div class="bo">
-   
-        <select (change)="filteredByStatus()" [formField]="modelForm.selectedStatus" class="invoice-filter" id="status">
-          @for (item of filtersStatusInvoice; track $index) {
-          <option [value]="item.value">{{item.label}}</option>
+      <div class="invoice-list-actions">
+        <select
+          [formField]="filtersForm.selectedStatus"
+          class="invoice-filter"
+          id="status"
+          aria-label="Filtra fatture per stato">
+          @for (filter of statusFilters; track filter.value) {
+            <option [value]="filter.value">{{ filter.label }}</option>
           }
         </select>
 
-
-       <button (click)="openFormCreate()" class="btn btn-primary-icon" type="button">
+        <button
+          type="button"
+          class="btn btn-primary-icon"
+          (click)="openCreateForm()">
           <span class="btn-primary-icon__circle">+</span>
           Nuova Fattura
-       </button>
+        </button>
       </div>
-    </div>
-    @if (filteredInvoices.length == 0) {
-      <div class="container-no-invoice">
-        <div class="box-image">
+    </header>
+
+    @if (filteredInvoices().length === 0) {
+      <div class="empty-invoices">
+        <div class="empty-invoices__image">
           <img src="assets/images/illustration-empty.svg" alt="">
         </div>
-        <h2>Non ci sono Fatture</h2>
-        <p class="body-text-variant">Crea una Fattura cliccando nell'apposito pulsante sopra a destra.</p>
+
+        <h2>Non ci sono fatture</h2>
+
+        <p class="body-text-variant">
+          Crea una fattura cliccando sull’apposito pulsante sopra a destra.
+        </p>
       </div>
-
-    }@else {
-    <app-invoice-records [invoices]="filteredInvoices" (invoiceDetail)="goToDetail($event)"></app-invoice-records>
-
-
+    } @else {
+      <app-invoice-records
+        [invoices]="filteredInvoices()"
+        (invoiceDetail)="goToDetail($event)">
+      </app-invoice-records>
     }
-
 
   </div>
 </div>

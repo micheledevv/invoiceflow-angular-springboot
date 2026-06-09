@@ -160,7 +160,7 @@
               </app-generic-input>
 
               <div class="item-total">
-                <p>€ {{ getItemTotal(i) }}</p>
+                <p>{{ getItemTotal(i) | euroCurrency }}</p>
               </div>
 
               <button
@@ -192,17 +192,18 @@
           (saveChangesClicked)="saveChanges()">
         </app-actions-button>
       } @else {
-        <app-actions-button
-          [discardIsVisible]="true"
-          [saveAndSendIsVisible]="true"
-          [saveChangesIsVisible]="false"
-          [saveAsDraftIsVisible]="true"
-          [setJustifyContent]="'space-between'"
-          [saveAndSendDisabled]="isFormInvalid()"
-          [saveAsDraftDisabled]="isFormInvalid()"
-          (discardClicked)="closeForm()"
-          (saveAndSendClicked)="saveAndSend()">
-        </app-actions-button>
+       <app-actions-button
+        [discardIsVisible]="true"
+        [saveAndSendIsVisible]="true"
+        [saveChangesIsVisible]="false"
+        [saveAsDraftIsVisible]="true"
+        [setJustifyContent]="'space-between'"
+        [saveAndSendDisabled]="isFormInvalid()"
+        [saveAsDraftDisabled]="isFormInvalid()"
+        (discardClicked)="closeForm()"
+        (saveAsDraftClicked)="saveAsDraft()"
+        (saveAndSendClicked)="saveAndSend()">
+    </app-actions-button>
       }
 
     </div>

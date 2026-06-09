@@ -8,15 +8,17 @@
       </div>
 
       <div class="invoice-list-actions">
-        <select
-          [formField]="filtersForm.selectedStatus"
-          class="invoice-filter"
-          id="status"
-          aria-label="Filtra fatture per stato">
-          @for (filter of statusFilters; track filter.value) {
-            <option [value]="filter.value">{{ filter.label }}</option>
-          }
-        </select>
+        @if (hasInvoices()) {
+          <select
+            [formField]="filtersForm.selectedStatus"
+            class="invoice-filter"
+            id="status"
+            aria-label="Filtra fatture per stato">
+            @for (filter of statusFilters; track filter.value) {
+              <option [value]="filter.value">{{ filter.label }}</option>
+            }
+          </select>
+        }
 
         <button
           type="button"
@@ -28,24 +30,24 @@
       </div>
     </header>
 
-    @if (filteredInvoices().length === 0) {
-      <div class="empty-invoices">
-        <div class="empty-invoices__image">
-          <img src="assets/images/illustration-empty.svg" alt="">
-        </div>
-
-        <h2>Non ci sono fatture</h2>
-
-        <p class="body-text-variant">
-          Crea una fattura cliccando sull’apposito pulsante sopra a destra.
-        </p>
+  @if (filteredInvoices().length === 0) {
+    <div class="empty-invoices">
+      <div class="empty-invoices__image">
+        <img src="assets/images/illustration-empty.svg" alt="">
       </div>
-    } @else {
-      <app-invoice-records
-        [invoices]="filteredInvoices()"
-        (invoiceDetail)="goToDetail($event)">
-      </app-invoice-records>
-    }
+
+      <h2>{{ emptyStateTitle() }}</h2>
+
+      <p class="body-text-variant">
+        {{ emptyStateDescription() }}
+      </p>
+    </div>
+  } @else {
+    <app-invoice-records
+      [invoices]="filteredInvoices()"
+      (invoiceDetail)="goToDetail($event)">
+    </app-invoice-records>
+  }
 
   </div>
 </div>

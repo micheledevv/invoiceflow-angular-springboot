@@ -21,6 +21,7 @@ import { DetailInvoiceService } from '../../pages/detail-invoice/detail-invoice.
 
 import { Invoice, InvoiceStatus } from '../../models/invoice.model';
 import { InvoiceFormModel } from '../../models/invoice.form.model';
+import { EuroCurrencyPipe } from "../../../../shared/pipes/euro-currency.pipe";
 
 @Component({
   selector: 'app-invoice-form',
@@ -28,8 +29,9 @@ import { InvoiceFormModel } from '../../models/invoice.form.model';
     GenericInputComponent,
     SelectInputComponent,
     CalendarInputComponent,
-    ActionsButtonComponent
-  ],
+    ActionsButtonComponent,
+    EuroCurrencyPipe
+],
   templateUrl: './invoice-form.component.html',
   styleUrl: './invoice-form.component.scss'
 })
@@ -451,5 +453,31 @@ export class InvoiceFormComponent implements OnInit {
     date.setDate(date.getDate() + paymentTerms);
 
     return date.toISOString().split('T')[0];
+  }
+
+ protected saveAsDraft(): void {
+  if (this.isFormInvalid()) {
+    return;
+  }
+
+  this.loaderService.show();
+
+  const invoiceToSave = this.buildInvoicePayload({
+    id: this.generateInvoiceId(),
+    status: 'draft'
+  });
+
+  this.invoiceFormService.createInvoice(invoiceToSave)
+    .pipe(
+      tap((createdInvoice) => {
+        console.log('Fattura salvata come bozza:', createdInvoice);
+        this.invoiceFormService.updateGetInvoices.next();
+      }),
+      finalize(() => {
+        this.loaderService.hide();
+        this.invoiceFormService.closeForm();
+      })
+    )
+    .subscribe();
   }
 }

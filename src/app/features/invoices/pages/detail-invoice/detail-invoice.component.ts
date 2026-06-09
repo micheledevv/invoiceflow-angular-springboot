@@ -11,10 +11,12 @@ import { InvoiceFormService } from '../../components/invoice-form/invoice-form.s
 import { DetailInvoiceService } from './detail-invoice.service';
 
 import { Invoice, InvoiceStatus } from '../../models/invoice.model';
+import { ItalianDatePipe } from '../../../../shared/pipes/italian-date.pipe';
+import { EuroCurrencyPipe } from '../../../../shared/pipes/euro-currency.pipe';
 
 @Component({
   selector: 'app-detail-invoice',
-  imports: [ActionsButtonComponent],
+  imports: [ActionsButtonComponent, ItalianDatePipe, EuroCurrencyPipe],
   templateUrl: './detail-invoice.component.html',
   styleUrl: './detail-invoice.component.scss'
 })

@@ -6,7 +6,7 @@
       </p>
 
       <p class="invoice-record__date">
-        {{ invoice.createdAt }}
+        {{ invoice.createdAt | italianDate  }}
       </p>
 
       <p class="invoice-record__client">
@@ -14,7 +14,7 @@
       </p>
 
       <p class="invoice-record__total">
-        €{{ invoice.total }}
+        {{ invoice.total | euroCurrency }}
       </p>
 
       <div class="invoice-record__status invoice-record__status--{{ invoice.status }}">

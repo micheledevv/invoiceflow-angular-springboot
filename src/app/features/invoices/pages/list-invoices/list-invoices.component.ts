@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { finalize, tap } from 'rxjs';
@@ -37,6 +37,12 @@ export class ListInvoicesComponent implements OnInit {
   private readonly invoiceFormService = inject(InvoiceFormService);
   private readonly loaderService = inject(LoaderService);
 
+  constructor(){
+    effect(() => {
+      console.log(this.filtersModel().selectedStatus)
+    })
+  }
+
   private readonly invoices = signal<Invoice[]>([]);
 
   protected readonly statusFilters: InvoiceStatusOption[] = [
@@ -61,6 +67,26 @@ export class ListInvoicesComponent implements OnInit {
     }
 
     return invoices.filter((invoice) => invoice.status === selectedStatus);
+  });
+
+  protected readonly hasInvoices = computed(() => {
+   return this.invoices().length > 0;
+  });
+
+  protected readonly emptyStateTitle = computed(() => {
+    if (!this.hasInvoices()) {
+      return 'Non ci sono ancora fatture';
+    }
+
+    return 'Nessuna fattura trovata';
+  });
+
+  protected readonly emptyStateDescription = computed(() => {
+    if (!this.hasInvoices()) {
+      return 'Crea una nuova fattura cliccando sul pulsante sopra a destra.';
+    }
+
+    return 'Non ci sono fatture disponibili per lo stato selezionato.';
   });
 
   protected readonly invoicesSummary = computed(() => {

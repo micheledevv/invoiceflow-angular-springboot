@@ -1,10 +1,36 @@
 import { Routes } from '@angular/router';
-import { ListInvoicesComponent } from './features/invoices/pages/list-invoices/list-invoices.component';
-import { DetailInvoiceComponent } from './features/invoices/pages/detail-invoice/detail-invoice.component';
-import { PageNotFoundComponent } from './core/pages/page-not-found/page-not-found.component';
+
+import { authGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
-    {path:'', component: ListInvoicesComponent},
-    {path:'detail-invoice/:id', component:DetailInvoiceComponent},
-    {path:'**', component:PageNotFoundComponent}
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./core/pages/login/login.component')
+        .then((m) => m.LoginComponent)
+  },
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./core/pages/register/register.component')
+        .then((m) => m.RegisterComponent)
+  },
+  {
+    path: '',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/invoices/pages/list-invoices/list-invoices.component')
+        .then((m) => m.ListInvoicesComponent)
+  },
+  {
+    path: 'detail-invoice/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/invoices/pages/detail-invoice/detail-invoice.component')
+        .then((m) => m.DetailInvoiceComponent)
+  },
+  {
+    path: '**',
+    redirectTo: ''
+  }
 ];

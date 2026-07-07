@@ -1,0 +1,65 @@
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-card__header">
+      <h1>Accedi</h1>
+      <p>Entra nel tuo account InvoiceFlow</p>
+    </div>
+
+    <form class="auth-form" (submit)="login(); $event.preventDefault()">
+
+      <div class="auth-field">
+        <label for="email">Email:
+          <span style="font-size: 18px; color: red;">*</span>
+        </label>
+        
+
+        <input
+          id="email"
+          type="email"
+          [class.auth-input--error]="getFieldError(loginForm.email)"
+          [formField]="loginForm.email"
+          placeholder="mario.rossi@test.it">
+
+        @if (getFieldError(loginForm.email)) {
+          <p class="field-error">{{ getFieldError(loginForm.email) }}</p>
+        }
+      </div>
+
+      <div class="auth-field">
+        <label for="password">Password:
+          <span style="font-size: 18px; color: red;">*</span>
+        </label>
+
+        <input
+          id="password"
+          type="password"
+          [class.auth-input--error]="getFieldError(loginForm.password)"
+          [formField]="loginForm.password"
+          placeholder="Password">
+
+        @if (getFieldError(loginForm.password)) {
+          <p class="field-error">{{ getFieldError(loginForm.password) }}</p>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <p class="auth-error">{{ errorMessage() }}</p>
+      }
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="isSubmitDisabled()">
+        {{ isLoading() ? 'Accesso...' : 'Accedi' }}
+      </button>
+
+    </form>
+
+    <p class="auth-footer">
+      Non hai un account?
+      <a routerLink="/register">Registrati</a>
+    </p>
+
+  </div>
+</div>

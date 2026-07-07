@@ -1,46 +1,40 @@
 package com.invoiceflow.service;
 
 import com.invoiceflow.model.Invoice;
-import com.invoiceflow.model.InvoiceStatus;
 import com.invoiceflow.repository.InvoiceRepository;
+import com.invoiceflow.user.AppUser;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class InvoiceService {
 
   private final InvoiceRepository invoiceRepository;
 
-  public InvoiceService(InvoiceRepository invoiceRepository) {
-    this.invoiceRepository = invoiceRepository;
+  public List<Invoice> getAllInvoices(AppUser user) {
+    return invoiceRepository.findByUser(user);
   }
 
-  public List<Invoice> getInvoices() {
-    return invoiceRepository.findAll();
-  }
-
-  public Invoice getInvoiceById(String id) {
-    return invoiceRepository.findById(id)
-      .orElseThrow(() -> new RuntimeException("Fattura non trovata con id: " + id));
+  public Invoice getInvoiceById(String id, AppUser user) {
+    return invoiceRepository.findByIdAndUser(id, user)
+      .orElseThrow(() -> new RuntimeException("Fattura non trovata"));
   }
 
   @Transactional
-  public Invoice createInvoice(Invoice invoice) {
-    System.out.println("Items ricevuti dal frontend: " + invoice.getItems().size());
-
+  public Invoice createInvoice(Invoice invoice, AppUser user) {
+    invoice.setUser(user);
     invoice.prepareItemsForSave();
-
-    System.out.println("Items dopo prepareItemsForSave: " + invoice.getItems().size());
-    System.out.println("Totale calcolato: " + invoice.getTotal());
 
     return invoiceRepository.save(invoice);
   }
 
   @Transactional
-  public Invoice updateInvoice(String id, Invoice invoiceUpdated) {
-    Invoice invoice = getInvoiceById(id);
+  public Invoice updateInvoice(String id, Invoice invoiceUpdated, AppUser user) {
+    Invoice invoice = getInvoiceById(id, user);
 
     invoice.setCreatedAt(invoiceUpdated.getCreatedAt());
     invoice.setPaymentDue(invoiceUpdated.getPaymentDue());
@@ -57,13 +51,16 @@ public class InvoiceService {
     return invoiceRepository.save(invoice);
   }
 
-  public void deleteInvoice(String id) {
-    invoiceRepository.deleteById(id);
+  @Transactional
+  public void deleteInvoice(String id, AppUser user) {
+    Invoice invoice = getInvoiceById(id, user);
+    invoiceRepository.delete(invoice);
   }
 
-  public Invoice markAsPaid(String id) {
-    Invoice invoice = getInvoiceById(id);
-    invoice.setStatus(InvoiceStatus.paid);
+  @Transactional
+  public Invoice markAsPaid(String id, AppUser user) {
+    Invoice invoice = getInvoiceById(id, user);
+    invoice.setStatus(com.invoiceflow.model.InvoiceStatus.paid);
 
     return invoiceRepository.save(invoice);
   }

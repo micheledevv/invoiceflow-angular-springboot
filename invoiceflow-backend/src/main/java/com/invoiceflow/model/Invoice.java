@@ -1,4 +1,6 @@
 package com.invoiceflow.model;
+import com.invoiceflow.user.AppUser;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,6 +15,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class Invoice {
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  @JsonIgnore
+  private AppUser user;
 
   @Id
   private String id;

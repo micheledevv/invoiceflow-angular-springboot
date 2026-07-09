@@ -1,4 +1,20 @@
-export interface Invoice {
+export type InvoiceStatus = 'paid' | 'pending' | 'draft';
+
+export type Address = {
+  street: string;
+  city: string;
+  postCode: string;
+  country: string;
+};
+
+export type InvoiceItem = {
+  name: string;
+  quantity: number;
+  price: number;
+  total: number;
+};
+
+export type Invoice = {
   id: string;
   createdAt: string;
   paymentDue: string;
@@ -6,25 +22,10 @@ export interface Invoice {
   paymentTerms: number;
   clientName: string;
   clientEmail: string;
+  senderName: string;
   status: InvoiceStatus;
   senderAddress: Address;
   clientAddress: Address;
   items: InvoiceItem[];
   total: number;
-}
-
-export type InvoiceStatus = 'paid' | 'pending' | 'draft';
-
-export interface Address {
-  street: string;
-  city: string;
-  postCode: string;
-  country: string;
-}
-
-export interface InvoiceItem {
-  name: string;
-  quantity: number;
-  price: number;
-  total: number;
-}
+};

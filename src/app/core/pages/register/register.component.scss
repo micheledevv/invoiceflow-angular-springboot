@@ -11,7 +11,7 @@
 
 .auth-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 520px;
   padding: 40px;
 
   background-color: var(--color-card-bg);
@@ -37,6 +37,31 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.auth-section {
+  margin-top: 8px;
+
+  h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 700;
+  }
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: 16px;
 }
 
 .auth-field {
@@ -78,16 +103,18 @@
   font-weight: 700;
 }
 
-.auth-footer {
-  margin: 24px 0 0;
-  text-align: center;
-  color: var(--color-text-secondary);
+.field-error {
+  margin: 0;
 
-  a {
-    color: var(--color-primary);
-    font-weight: 700;
-    text-decoration: none;
-  }
+  color: var(--color-danger);
+
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 700;
+}
+
+.auth-input--error {
+  border-color: var(--color-danger) !important;
 }
 
 .avatar-upload {
@@ -100,7 +127,7 @@
   display: none;
 }
 
-.avatar-upload__button {
+.auth-field .avatar-upload__button {
   width: fit-content;
   min-height: 40px;
   padding: 0 18px;
@@ -111,7 +138,7 @@
 
   border-radius: 999px;
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: var(--color-white, #ffffff);
 
   font-size: 12px;
   font-weight: 700;
@@ -122,6 +149,7 @@
 
   &:hover {
     background-color: var(--color-primary-light);
+    color: var(--color-white, #ffffff);
   }
 }
 
@@ -146,20 +174,35 @@
 
     border-radius: 50%;
     object-fit: cover;
+    object-position: center;
     border: 2px solid var(--color-primary);
   }
 }
 
-.field-error {
-  margin: 0;
+.auth-footer {
+  margin: 24px 0 0;
+  text-align: center;
+  color: var(--color-text-secondary);
 
-  color: var(--color-danger);
-
-  font-size: 11px;
-  line-height: 14px;
-  font-weight: 700;
+  a {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+  }
 }
 
-.auth-input--error {
-  border-color: var(--color-danger) !important;
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+@media (max-width: 560px) {
+  .auth-card {
+    padding: 32px 24px;
+  }
+
+  .auth-grid {
+    grid-template-columns: 1fr;
+  }
 }

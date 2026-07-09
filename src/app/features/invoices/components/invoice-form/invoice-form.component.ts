@@ -6,7 +6,8 @@ import {
   maxLength,
   minLength,
   pattern,
-  required
+  required,
+  readonly
 } from '@angular/forms/signals';
 import { finalize, tap } from 'rxjs';
 
@@ -22,6 +23,7 @@ import { DetailInvoiceService } from '../../pages/detail-invoice/detail-invoice.
 import { Invoice, InvoiceStatus } from '../../models/invoice.model';
 import { InvoiceFormModel } from '../../models/invoice.form.model';
 import { EuroCurrencyPipe } from "../../../../shared/pipes/euro-currency.pipe";
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-invoice-form',
@@ -39,6 +41,7 @@ export class InvoiceFormComponent implements OnInit {
   private readonly invoiceFormService = inject(InvoiceFormService);
   private readonly detailInvoiceService = inject(DetailInvoiceService);
   private readonly loaderService = inject(LoaderService);
+  private readonly authService = inject(AuthService);
 
   protected readonly mode = this.invoiceFormService.mode;
   protected readonly singleInvoice = this.detailInvoiceService.singleInvoice;
@@ -53,6 +56,12 @@ export class InvoiceFormComponent implements OnInit {
   protected readonly invoiceModel = signal<InvoiceFormModel>(this.getEmptyForm());
 
   protected readonly invoiceForm = form(this.invoiceModel, (schemaPath) => {
+
+    readonly(schemaPath.senderName);
+    readonly(schemaPath.senderAddress.street);
+    readonly(schemaPath.senderAddress.city);
+    readonly(schemaPath.senderAddress.postCode);
+    readonly(schemaPath.senderAddress.country);
     // Da chi viene emessa
     required(schemaPath.senderAddress.street, {
       message: 'L’indirizzo del mittente è obbligatorio'
@@ -96,6 +105,17 @@ export class InvoiceFormComponent implements OnInit {
 
     maxLength(schemaPath.senderAddress.country, 40, {
       message: 'Il paese non può superare 40 caratteri'
+    });
+    required(schemaPath.senderName, {
+      message: 'Il nome del mittente è obbligatorio'
+    });
+
+    minLength(schemaPath.senderName, 2, {
+      message: 'Il nome del mittente deve contenere almeno 2 caratteri'
+    });
+
+    maxLength(schemaPath.senderName, 60, {
+      message: 'Il nome del mittente non può superare 60 caratteri'
     });
 
     // Cliente
@@ -228,6 +248,10 @@ export class InvoiceFormComponent implements OnInit {
 
   protected readonly isFormInvalid = computed(() => this.invoiceForm().invalid());
 
+  protected readonly canRemoveItem = computed(() => {
+    return this.invoiceModel().items.length > 1;
+  });
+
   ngOnInit(): void {
     this.initializeForm();
   }
@@ -247,6 +271,10 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   protected removeItem(index: number): void {
+    if (!this.canRemoveItem()) {
+      return;
+    }
+
     this.invoiceModel.update((currentForm) => ({
       ...currentForm,
       items: currentForm.items.filter((_, itemIndex) => itemIndex !== index)
@@ -346,25 +374,26 @@ export class InvoiceFormComponent implements OnInit {
     const formValue = this.invoiceModel();
     const paymentTerms = Number(formValue.paymentTerms);
 
-    return {
-      id: config.id,
-      createdAt: formValue.createdAt,
-      paymentDue: this.calculatePaymentDue(formValue.createdAt, paymentTerms),
-      description: formValue.description,
-      paymentTerms,
-      clientName: formValue.clientName,
-      clientEmail: formValue.clientEmail,
-      status: config.status,
-      senderAddress: formValue.senderAddress,
-      clientAddress: formValue.clientAddress,
-      items: formValue.items.map((item) => ({
-        name: item.name,
-        quantity: Number(item.quantity || 0),
-        price: Number(item.price || 0),
-        total: this.calculateItemTotal(item.quantity, item.price)
-      })),
-      total: this.getInvoiceTotal()
-    };
+   return {
+    id: config.id,
+    createdAt: formValue.createdAt,
+    paymentDue: this.calculatePaymentDue(formValue.createdAt, paymentTerms),
+    description: formValue.description,
+    paymentTerms,
+    clientName: formValue.clientName,
+    clientEmail: formValue.clientEmail,
+    senderName: formValue.senderName,
+    status: config.status,
+    senderAddress: formValue.senderAddress,
+    clientAddress: formValue.clientAddress,
+    items: formValue.items.map((item) => ({
+      name: item.name,
+      quantity: Number(item.quantity || 0),
+      price: Number(item.price || 0),
+      total: this.calculateItemTotal(item.quantity, item.price)
+    })),
+    total: this.getInvoiceTotal()
+  };
   }
 
   private getInvoiceTotal(): number {
@@ -377,53 +406,66 @@ export class InvoiceFormComponent implements OnInit {
     return Number(quantity || 0) * Number(price || 0);
   }
 
-  private patchFormWithInvoice(invoice: Invoice): void {
-    this.invoiceModel.set({
-      senderAddress: {
-        street: invoice.senderAddress.street,
-        city: invoice.senderAddress.city,
-        postCode: invoice.senderAddress.postCode,
-        country: invoice.senderAddress.country
-      },
-      clientName: invoice.clientName,
-      clientEmail: invoice.clientEmail,
-      clientAddress: {
-        street: invoice.clientAddress.street,
-        city: invoice.clientAddress.city,
-        postCode: invoice.clientAddress.postCode,
-        country: invoice.clientAddress.country
-      },
-      createdAt: invoice.createdAt,
-      paymentTerms: String(invoice.paymentTerms),
-      description: invoice.description,
-      items: invoice.items.map((item) => ({
-        name: item.name,
-        quantity: String(item.quantity),
-        price: String(item.price)
-      }))
-    });
-  }
+ private patchFormWithInvoice(invoice: Invoice): void {
+  this.invoiceModel.set({
+    senderName: invoice.senderName ?? '',
+
+    senderAddress: {
+      street: invoice.senderAddress.street,
+      city: invoice.senderAddress.city,
+      postCode: invoice.senderAddress.postCode,
+      country: invoice.senderAddress.country
+    },
+
+    clientName: invoice.clientName,
+    clientEmail: invoice.clientEmail,
+
+    clientAddress: {
+      street: invoice.clientAddress.street,
+      city: invoice.clientAddress.city,
+      postCode: invoice.clientAddress.postCode,
+      country: invoice.clientAddress.country
+    },
+
+    createdAt: invoice.createdAt,
+    paymentTerms: String(invoice.paymentTerms),
+    description: invoice.description,
+
+    items: invoice.items.map((item) => ({
+      name: item.name,
+      quantity: String(item.quantity),
+      price: String(item.price)
+    }))
+  });
+ }
 
   private resetForm(): void {
     this.invoiceModel.set(this.getEmptyForm());
   }
 
   private getEmptyForm(): InvoiceFormModel {
+    const currentUser = this.authService.currentUser();
+
     return {
+      senderName: currentUser?.fullName ?? '',
+
       senderAddress: {
-        street: '',
-        city: '',
-        postCode: '',
-        country: ''
+        street: currentUser?.senderAddress?.street ?? '',
+        city: currentUser?.senderAddress?.city ?? '',
+        postCode: currentUser?.senderAddress?.postCode ?? '',
+        country: currentUser?.senderAddress?.country ?? ''
       },
+
       clientName: '',
       clientEmail: '',
+
       clientAddress: {
         street: '',
         city: '',
         postCode: '',
         country: ''
       },
+
       createdAt: '',
       paymentTerms: '30',
       description: '',

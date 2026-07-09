@@ -31,12 +31,12 @@
       </button>
     }
 
-    @if (currentUser()?.avatarBase64) {
+    @if (currentUser()) {
       <hr>
 
       <div class="sidebar__avatar">
         <img
-          [src]="currentUser()?.avatarBase64"
+          [src]="currentUser()?.avatarBase64 || 'assets/images/logo.svg'"
           [alt]="'Avatar di ' + currentUser()?.fullName">
       </div>
     }

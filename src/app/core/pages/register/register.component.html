@@ -10,7 +10,7 @@
 
       <div class="auth-field">
         <label for="fullName">Nome completo:
-          <span style="font-size: 18px; color: red;">*</span>
+          <span style="font-size: 18px; color: red; line-height: 15px; font-weight: 500;">*</span>
         </label>
 
         <input
@@ -27,7 +27,7 @@
 
       <div class="auth-field">
         <label for="email">Email:
-          <span style="font-size: 18px; color: red;">*</span>
+          <span style="font-size: 18px; color: red; line-height: 15px; font-weight: 500;">*</span>
         </label>
 
         <input
@@ -44,7 +44,7 @@
 
       <div class="auth-field">
         <label for="password">Password:
-          <span style="font-size: 18px; color: red;">*</span>
+          <span style="font-size: 18px; color: red; line-height: 15px; font-weight: 500;">*</span>
         </label>
 
         <input
@@ -79,14 +79,86 @@
           </p>
         </div>
 
-        @if (getFieldError(registerForm.avatarBase64)) {
-          <p class="field-error">{{ getFieldError(registerForm.avatarBase64) }}</p>
-        }
 
         @if (avatarPreview()) {
           <div class="avatar-preview">
             <img [src]="avatarPreview()" alt="Anteprima immagine profilo">
           </div>
+        }
+      </div>
+
+      <div class="auth-section">
+        <h2>Dati mittente</h2>
+        <p>Questi dati verranno usati per precompilare le tue fatture.</p>
+      </div>
+
+      <div class="auth-field">
+        <label for="senderStreet">Indirizzo:
+          <span style="font-size: 18px; color: red; line-height: 15px; font-weight: 500;">*</span>
+        </label>
+
+        <input
+          id="senderStreet"
+          type="text"
+          [class.auth-input--error]="getFieldError(registerForm.senderAddress.street)"
+          [formField]="registerForm.senderAddress.street"
+          placeholder="Via Roma, 19">
+
+        @if (getFieldError(registerForm.senderAddress.street)) {
+          <p class="field-error">{{ getFieldError(registerForm.senderAddress.street) }}</p>
+        }
+      </div>
+
+      <div class="auth-grid">
+        <div class="auth-field">
+          <label for="senderCity">Città:
+            <span style="font-size: 18px; color: red; line-height: 15px; font-weight: 500;">*</span>
+          </label>
+
+          <input
+            id="senderCity"
+            type="text"
+            [class.auth-input--error]="getFieldError(registerForm.senderAddress.city)"
+            [formField]="registerForm.senderAddress.city"
+            placeholder="Milano">
+
+          @if (getFieldError(registerForm.senderAddress.city)) {
+            <p class="field-error">{{ getFieldError(registerForm.senderAddress.city) }}</p>
+          }
+        </div>
+
+        <div class="auth-field">
+          <label for="senderPostCode">CAP:
+            <span style="font-size: 18px; color: red; line-height: 15px; font-weight: 500;">*</span>
+          </label>
+
+          <input
+            id="senderPostCode"
+            type="text"
+            [class.auth-input--error]="getFieldError(registerForm.senderAddress.postCode)"
+            [formField]="registerForm.senderAddress.postCode"
+            placeholder="12345">
+
+          @if (getFieldError(registerForm.senderAddress.postCode)) {
+            <p class="field-error">{{ getFieldError(registerForm.senderAddress.postCode) }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="auth-field">
+        <label for="senderCountry">Paese:
+          <span style="font-size: 18px; color: red; line-height: 15px; font-weight: 500;">*</span>
+        </label>
+
+        <input
+          id="senderCountry"
+          type="text"
+          [class.auth-input--error]="getFieldError(registerForm.senderAddress.country)"
+          [formField]="registerForm.senderAddress.country"
+          placeholder="Italia">
+
+        @if (getFieldError(registerForm.senderAddress.country)) {
+          <p class="field-error">{{ getFieldError(registerForm.senderAddress.country) }}</p>
         }
       </div>
 
@@ -97,7 +169,7 @@
       <button
         type="submit"
         class="btn btn-primary"
-        [disabled]="isSubmitDisabled()">
+        [disabled]="isRegisterButtonDisabled()">
         {{ isLoading() ? 'Registrazione...' : 'Registrati' }}
       </button>
 

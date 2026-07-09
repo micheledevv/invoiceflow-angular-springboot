@@ -20,6 +20,8 @@ export class GenericInputComponent {
   onlyNumbers = input<boolean>(false);
   maxInputLength = input<number | null>(null);
 
+  isReadonly = input<boolean>(false);
+
   private manualError = signal<string>('');
 
   firstError = computed(() => {

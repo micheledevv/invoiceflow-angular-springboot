@@ -55,7 +55,8 @@ export class AuthService {
       userId: response.userId,
       fullName: response.fullName,
       email: response.email,
-      avatarBase64: response.avatarBase64
+      avatarBase64: response.avatarBase64,
+      senderAddress: response.senderAddress
     };
 
     localStorage.setItem(this.tokenKey, response.token);

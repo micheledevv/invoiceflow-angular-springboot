@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { email, form, FormField, minLength, required } from '@angular/forms/signals';
+import { email, form, FormField, minLength, pattern, required } from '@angular/forms/signals';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
@@ -10,6 +10,12 @@ type RegisterForm = {
   email: string;
   password: string;
   avatarBase64: string;
+  senderAddress: {
+    street: string;
+    city: string;
+    postCode: string;
+    country: string;
+  };
 };
 
 @Component({
@@ -25,18 +31,22 @@ export class RegisterComponent {
   protected readonly isLoading = signal(false);
   protected readonly submitted = signal(false);
   protected readonly errorMessage = signal('');
-  protected readonly avatarPreview = signal('');
   protected readonly avatarFileName = signal('');
 
-  protected readonly isSubmitDisabled = computed(() => {
-   return this.isLoading() || this.registerForm().invalid();
-  });
+  private readonly defaultAvatar = 'assets/images/logo.svg';
+  protected readonly avatarPreview = signal('');
 
   protected readonly registerModel = signal<RegisterForm>({
     fullName: '',
     email: '',
     password: '',
-    avatarBase64: ''
+    avatarBase64: this.defaultAvatar,
+    senderAddress: {
+      street: '',
+      city: '',
+      postCode: '',
+      country: ''
+    }
   });
 
   protected readonly registerForm = form(this.registerModel, (schemaPath) => {
@@ -60,9 +70,29 @@ export class RegisterComponent {
       message: 'La password deve contenere almeno 8 caratteri'
     });
 
-    required(schemaPath.avatarBase64, {
-      message: 'Immagine profilo obbligatoria'
+    required(schemaPath.senderAddress.street, {
+      message: 'Indirizzo obbligatorio'
     });
+
+    required(schemaPath.senderAddress.city, {
+      message: 'Città obbligatoria'
+    });
+
+    required(schemaPath.senderAddress.postCode, {
+      message: 'CAP obbligatorio'
+    });
+
+    pattern(schemaPath.senderAddress.postCode, /^[0-9]{5}$/, {
+      message: 'Il CAP deve contenere 5 numeri'
+    });
+
+    required(schemaPath.senderAddress.country, {
+      message: 'Paese obbligatorio'
+    });
+  });
+
+  protected readonly isRegisterButtonDisabled = computed(() => {
+    return this.isLoading() || this.registerForm().invalid();
   });
 
   protected onAvatarSelected(event: Event): void {
@@ -114,9 +144,7 @@ export class RegisterComponent {
   protected register(): void {
     this.submitted.set(true);
 
-    if (this.registerForm().invalid()) {
-      return;
-    }
+
 
     this.errorMessage.set('');
     this.isLoading.set(true);
@@ -150,4 +178,6 @@ export class RegisterComponent {
 
     return state.errors()[0]?.message ?? 'Campo non valido';
   }
+
+
 }

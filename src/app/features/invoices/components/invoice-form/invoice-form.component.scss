@@ -201,3 +201,9 @@
     align-self: end;
   }
 }
+
+.item-delete:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}

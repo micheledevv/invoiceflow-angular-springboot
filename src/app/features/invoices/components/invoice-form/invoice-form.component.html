@@ -10,6 +10,13 @@
         <h2 class="invoice-form-section__title">Da chi viene emessa</h2>
 
         <app-generic-input
+          label="Nome / Ragione sociale:"
+          [isRequired]="true"
+          id="sender-name"
+          [field]="invoiceForm.senderName">
+        </app-generic-input>
+
+        <app-generic-input
           label="Indirizzo:"
           [isRequired]="true"
           id="sender-street"
@@ -167,6 +174,8 @@
                 type="button"
                 class="item-delete"
                 aria-label="Elimina articolo"
+                [disabled]="!canRemoveItem()"
+                [title]="canRemoveItem() ? 'Elimina articolo' : 'Deve esserci almeno un articolo'"
                 (click)="removeItem(i)">
                 <img src="assets/images/icon-delete.svg" alt="">
               </button>

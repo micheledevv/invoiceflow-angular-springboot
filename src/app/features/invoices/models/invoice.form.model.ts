@@ -1,10 +1,6 @@
-export interface InvoiceItemFormModel {
-  name: string;
-  quantity: string;
-  price: string;
-}
+export type InvoiceFormModel = {
+  senderName: string;
 
-export interface InvoiceFormModel {
   senderAddress: {
     street: string;
     city: string;
@@ -26,5 +22,9 @@ export interface InvoiceFormModel {
   paymentTerms: string;
   description: string;
 
-  items: InvoiceItemFormModel[];
-}
+  items: {
+    name: string;
+    quantity: string;
+    price: string;
+  }[];
+};

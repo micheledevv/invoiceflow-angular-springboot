@@ -1,7 +1,10 @@
 package com.invoiceflow.auth;
 
+import com.invoiceflow.model.Address;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record RegisterRequest(
@@ -16,7 +19,10 @@ public record RegisterRequest(
   @Size(min = 8, message = "La password deve contenere almeno 8 caratteri")
   String password,
 
-  @NotBlank(message = "L'immagine profilo è obbligatoria")
-  String avatarBase64
+  String avatarBase64,
+
+  @Valid
+  @NotNull(message = "L'indirizzo del mittente è obbligatorio")
+  Address senderAddress
 ) {
 }

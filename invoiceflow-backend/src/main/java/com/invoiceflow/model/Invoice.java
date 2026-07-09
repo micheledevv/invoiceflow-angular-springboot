@@ -1,11 +1,9 @@
 package com.invoiceflow.model;
-import com.invoiceflow.user.AppUser;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.invoiceflow.user.AppUser;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,21 +12,26 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Invoice {
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  @JsonIgnore
-  private AppUser user;
 
   @Id
   private String id;
 
   private String createdAt;
+
   private String paymentDue;
+
   private String description;
+
   private Integer paymentTerms;
+
   private String clientName;
+
   private String clientEmail;
+
+  private String senderName;
 
   @Enumerated(EnumType.STRING)
   private InvoiceStatus status;
@@ -51,10 +54,19 @@ public class Invoice {
   })
   private Address clientAddress;
 
-  @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(
+    mappedBy = "invoice",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
   private List<InvoiceItem> items = new ArrayList<>();
 
   private Double total;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  @JsonIgnore
+  private AppUser user;
 
   public void prepareItemsForSave() {
     if (items == null) {

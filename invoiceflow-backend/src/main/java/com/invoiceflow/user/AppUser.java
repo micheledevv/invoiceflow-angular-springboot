@@ -1,5 +1,6 @@
 package com.invoiceflow.user;
 
+import com.invoiceflow.model.Address;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,4 +28,13 @@ public class AppUser {
 
   @Column(columnDefinition = "TEXT")
   private String avatarBase64;
+
+  @Embedded
+  @AttributeOverrides({
+    @AttributeOverride(name = "street", column = @Column(name = "sender_street")),
+    @AttributeOverride(name = "city", column = @Column(name = "sender_city")),
+    @AttributeOverride(name = "postCode", column = @Column(name = "sender_post_code")),
+    @AttributeOverride(name = "country", column = @Column(name = "sender_country"))
+  })
+  private Address senderAddress;
 }

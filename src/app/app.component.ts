@@ -8,10 +8,11 @@ import { InvoiceFormComponent } from './features/invoices/components/invoice-for
 import { GenericModalComponent } from './shared/components/generic-modal/generic-modal.component';
 import { InvoiceFormService } from './features/invoices/components/invoice-form/invoice-form.service';
 import { ThemeService } from './core/layout/theme/theme.service';
+import { NotificationHostComponent } from './shared/components/notification-host/notification-host.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SidebarComponent, LoaderComponent, InvoiceFormComponent, GenericModalComponent],
+  imports: [RouterOutlet, SidebarComponent, LoaderComponent, InvoiceFormComponent, GenericModalComponent,NotificationHostComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

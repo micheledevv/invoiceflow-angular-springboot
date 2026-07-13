@@ -4,6 +4,7 @@ import { email, form, FormField, required } from '@angular/forms/signals';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 type LoginForm = {
   email: string;
@@ -19,6 +20,7 @@ type LoginForm = {
 export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService);
 
   protected readonly isLoading = signal(false);
   protected readonly submitted = signal(false);

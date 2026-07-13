@@ -1,0 +1,17 @@
+<div class="notification-host">
+  @for (notification of notifications(); track notification.id) {
+    <app-alert-banner
+      [type]="notification.type"
+      (closed)="dismissNotification(notification.id)">
+
+      <span alert-title>
+        {{ notification.title }}
+      </span>
+
+      <span alert-message>
+        {{ notification.message }}
+      </span>
+
+    </app-alert-banner>
+  }
+</div>

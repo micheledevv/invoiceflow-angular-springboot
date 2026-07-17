@@ -22,6 +22,15 @@
 
     @if (currentUser()) {
       <button
+        class="sidebar__settings"
+        type="button"
+        aria-label="Impostazioni"
+        title="Impostazioni"
+        (click)="openSettingsPanel()">
+        <span aria-hidden="true">⚙</span>
+      </button>
+
+      <button
         class="sidebar__logout"
         type="button"
         aria-label="Logout"
@@ -43,3 +52,7 @@
 
   </div>
 </nav>
+
+@if (settingsPanelIsOpen()) {
+  <app-settings-panel (closed)="closeSettingsPanel()"></app-settings-panel>
+}

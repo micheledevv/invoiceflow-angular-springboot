@@ -1,9 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { email, form, FormField, minLength, pattern, required } from '@angular/forms/signals';
-import { finalize } from 'rxjs';
+import { catchError, EMPTY, finalize, tap } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 type RegisterForm = {
   fullName: string;
@@ -27,6 +28,7 @@ type RegisterForm = {
 export class RegisterComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService)
 
   protected readonly isLoading = signal(false);
   protected readonly submitted = signal(false);
@@ -144,25 +146,33 @@ export class RegisterComponent {
   protected register(): void {
     this.submitted.set(true);
 
-
+    if (this.registerForm().invalid()) {
+      return;
+    }
 
     this.errorMessage.set('');
     this.isLoading.set(true);
 
     this.authService.register(this.registerModel())
       .pipe(
+        tap(() => {
+          this.router.navigateByUrl('/');
+        }),
+        tap(() => {
+        this.notificationService.success(
+            'Accesso effettuato',
+            'Bentornato su InvoiceFlow.'
+          );
+        }),
+        catchError(() => {
+          this.errorMessage.set('Registrazione non riuscita. Controlla i dati inseriti.');
+          return EMPTY;
+        }),
         finalize(() => {
           this.isLoading.set(false);
         })
       )
-      .subscribe({
-        next: () => {
-          this.router.navigateByUrl('/');
-        },
-        error: () => {
-          this.errorMessage.set('Registrazione non riuscita. Controlla i dati inseriti.');
-        }
-      });
+      .subscribe();
   }
 
   protected getFieldError(field: any): string {

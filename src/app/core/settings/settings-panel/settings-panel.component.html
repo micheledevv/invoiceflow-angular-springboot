@@ -1,0 +1,178 @@
+<div class="settings-backdrop" (click)="closePanel()"></div>
+
+<aside class="settings-panel">
+  <header class="settings-panel__header">
+    <div>
+      <h2>Impostazioni</h2>
+      <p>Gestisci profilo, fatture e sicurezza.</p>
+    </div>
+
+    <button
+      type="button"
+      class="settings-panel__close"
+      aria-label="Chiudi impostazioni"
+      (click)="closePanel()">
+      ×
+    </button>
+  </header>
+
+  <div class="settings-tabs">
+    <button
+      type="button"
+      [class.settings-tabs__button--active]="activeTab() === 'profile'"
+      (click)="setActiveTab('profile')">
+      Profilo
+    </button>
+
+    <button
+      type="button"
+      [class.settings-tabs__button--active]="activeTab() === 'preferences'"
+      (click)="setActiveTab('preferences')">
+      Fatture
+    </button>
+
+    <button
+      type="button"
+      [class.settings-tabs__button--active]="activeTab() === 'security'"
+      (click)="setActiveTab('security')">
+      Sicurezza
+    </button>
+  </div>
+
+  <div class="settings-panel__body">
+
+    @if (activeTab() === 'profile') {
+      <section class="settings-section">
+        <h3>Profilo mittente</h3>
+        <p>Questi dati verranno usati per precompilare le nuove fatture.</p>
+
+        <div class="settings-avatar">
+          <img [src]="avatarPreview() || 'assets/images/logo.svg'" alt="Avatar profilo">
+
+          <div class="settings-avatar__actions">
+            <input
+              id="settings-avatar"
+              class="settings-avatar__input"
+              type="file"
+              accept="image/png, image/jpeg, image/webp"
+              (change)="onAvatarSelected($event)">
+
+            <label for="settings-avatar">
+              Cambia immagine
+            </label>
+
+            <button
+              type="button"
+              (click)="resetAvatar()">
+              Usa default
+            </button>
+
+            <span>{{ avatarFileName() || 'Nessun nuovo file selezionato' }}</span>
+          </div>
+        </div>
+
+        <app-generic-input
+          label="Nome / Ragione sociale:"
+          [isRequired]="true"
+          id="settings-full-name"
+          [field]="profileForm.fullName">
+        </app-generic-input>
+
+        <app-generic-input
+          label="Indirizzo:"
+          [isRequired]="true"
+          id="settings-street"
+          [field]="profileForm.senderAddress.street">
+        </app-generic-input>
+
+        <div class="settings-grid">
+          <app-generic-input
+            label="Città:"
+            [isRequired]="true"
+            id="settings-city"
+            [field]="profileForm.senderAddress.city">
+          </app-generic-input>
+
+          <app-generic-input
+            label="CAP:"
+            [isRequired]="true"
+            id="settings-post-code"
+            [onlyNumbers]="true"
+            [maxInputLength]="5"
+            [field]="profileForm.senderAddress.postCode">
+          </app-generic-input>
+        </div>
+
+        <app-generic-input
+          label="Paese:"
+          [isRequired]="true"
+          id="settings-country"
+          [field]="profileForm.senderAddress.country">
+        </app-generic-input>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="isProfileSubmitDisabled()"
+        (click)="saveProfile()">
+        {{ isLoading() ? 'Salvataggio...' : 'Salva profilo' }}
+      </button>
+      </section>
+    }
+
+    @if (activeTab() === 'preferences') {
+      <section class="settings-section">
+        <h3>Preferenze fattura</h3>
+        <p>Scegli i valori predefiniti usati quando crei una nuova fattura.</p>
+
+        <app-select-input
+          label="Termini di pagamento predefiniti:"
+          [isRequired]="true"
+          id="settings-payment-terms"
+          [field]="preferencesForm.defaultPaymentTerms"
+          [options]="paymentTermsOptions">
+        </app-select-input>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="isPreferencesSubmitDisabled()"
+          (click)="savePreferences()">
+          {{ isLoading() ? 'Salvataggio...' : 'Salva preferenze' }}
+        </button>
+      </section>
+    }
+
+    @if (activeTab() === 'security') {
+      <section class="settings-section">
+        <h3>Sicurezza account</h3>
+        <p>Aggiorna la password del tuo account.</p>
+
+        <app-generic-input
+          label="Password attuale:"
+          [isRequired]="true"
+          id="settings-current-password"
+          type="password"
+          [field]="passwordForm.currentPassword">
+        </app-generic-input>
+
+        <app-generic-input
+          label="Nuova password:"
+          [isRequired]="true"
+          id="settings-new-password"
+          type="password"
+          [field]="passwordForm.newPassword">
+        </app-generic-input>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="isPasswordSubmitDisabled()"
+          (click)="changePassword()">
+          {{ isLoading() ? 'Aggiornamento...' : 'Cambia password' }}
+        </button>
+      </section>
+    }
+
+  </div>
+</aside>

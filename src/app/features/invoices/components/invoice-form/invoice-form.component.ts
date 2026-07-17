@@ -9,7 +9,7 @@ import {
   required,
   readonly
 } from '@angular/forms/signals';
-import { finalize, tap } from 'rxjs';
+import { catchError, EMPTY, finalize, tap } from 'rxjs';
 
 import { GenericInputComponent } from '../../../../shared/components/generic-input/generic-input.component';
 import { SelectInputComponent, SelectOption } from '../../../../shared/components/select-input/select-input.component';
@@ -24,6 +24,7 @@ import { Invoice, InvoiceStatus } from '../../models/invoice.model';
 import { InvoiceFormModel } from '../../models/invoice.form.model';
 import { EuroCurrencyPipe } from "../../../../shared/pipes/euro-currency.pipe";
 import { AuthService } from '../../../../core/auth/auth.service';
+import { NotificationService } from '../../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-invoice-form',
@@ -42,6 +43,7 @@ export class InvoiceFormComponent implements OnInit {
   private readonly detailInvoiceService = inject(DetailInvoiceService);
   private readonly loaderService = inject(LoaderService);
   private readonly authService = inject(AuthService);
+private readonly notificationService = inject(NotificationService);
 
   protected readonly mode = this.invoiceFormService.mode;
   protected readonly singleInvoice = this.detailInvoiceService.singleInvoice;
@@ -272,6 +274,11 @@ export class InvoiceFormComponent implements OnInit {
 
   protected removeItem(index: number): void {
     if (!this.canRemoveItem()) {
+      this.notificationService.warning(
+        'Articolo obbligatorio',
+        'La fattura deve contenere almeno un articolo.'
+      );
+
       return;
     }
 
@@ -297,6 +304,11 @@ export class InvoiceFormComponent implements OnInit {
 
   protected saveAndSend(): void {
     if (this.isFormInvalid()) {
+      this.notificationService.warning(
+        'Dati incompleti',
+        'Completa tutti i campi obbligatori prima di inviare la fattura.'
+      );
+
       return;
     }
 
@@ -311,11 +323,26 @@ export class InvoiceFormComponent implements OnInit {
       .pipe(
         tap((createdInvoice) => {
           console.log('Fattura creata:', createdInvoice);
+
           this.invoiceFormService.notifyInvoicesUpdated();
+
+          this.notificationService.success(
+            'Fattura creata',
+            `La fattura #${createdInvoice.id} è stata creata e inviata correttamente.`
+          );
+
+          this.invoiceFormService.closeForm();
+        }),
+        catchError(() => {
+          this.notificationService.error(
+            'Creazione non riuscita',
+            'Non è stato possibile creare la fattura.'
+          );
+
+          return EMPTY;
         }),
         finalize(() => {
           this.loaderService.hide();
-          this.invoiceFormService.closeForm();
         })
       )
       .subscribe();
@@ -323,12 +350,22 @@ export class InvoiceFormComponent implements OnInit {
 
   protected saveChanges(): void {
     if (this.isFormInvalid()) {
+      this.notificationService.warning(
+        'Dati incompleti',
+        'Completa tutti i campi obbligatori prima di salvare le modifiche.'
+      );
+
       return;
     }
 
     const currentInvoice = this.singleInvoice();
 
     if (!currentInvoice) {
+      this.notificationService.error(
+        'Fattura non trovata',
+        'Non è stato possibile recuperare la fattura da modificare.'
+      );
+
       return;
     }
 
@@ -343,11 +380,26 @@ export class InvoiceFormComponent implements OnInit {
       .pipe(
         tap((updatedInvoice) => {
           console.log('Fattura aggiornata:', updatedInvoice);
+
           this.detailInvoiceService.notifySingleInvoiceUpdated();
+
+          this.notificationService.success(
+            'Fattura aggiornata',
+            `La fattura #${updatedInvoice.id} è stata aggiornata correttamente.`
+          );
+
+          this.invoiceFormService.closeForm();
+        }),
+        catchError(() => {
+          this.notificationService.error(
+            'Aggiornamento non riuscito',
+            `Non è stato possibile aggiornare la fattura #${currentInvoice.id}.`
+          );
+
+          return EMPTY;
         }),
         finalize(() => {
           this.loaderService.hide();
-          this.invoiceFormService.closeForm();
         })
       )
       .subscribe();
@@ -467,7 +519,7 @@ export class InvoiceFormComponent implements OnInit {
       },
 
       createdAt: '',
-      paymentTerms: '30',
+      paymentTerms: String(currentUser?.defaultPaymentTerms ?? 30),
       description: '',
       items: [
         {
@@ -497,29 +549,49 @@ export class InvoiceFormComponent implements OnInit {
     return date.toISOString().split('T')[0];
   }
 
- protected saveAsDraft(): void {
-  if (this.isFormInvalid()) {
-    return;
-  }
+  protected saveAsDraft(): void {
+    if (this.isFormInvalid()) {
+      this.notificationService.warning(
+        'Dati incompleti',
+        'Completa tutti i campi obbligatori prima di salvare la bozza.'
+      );
 
-  this.loaderService.show();
+      return;
+    }
 
-  const invoiceToSave = this.buildInvoicePayload({
-    id: this.generateInvoiceId(),
-    status: 'draft'
-  });
+    this.loaderService.show();
 
-  this.invoiceFormService.createInvoice(invoiceToSave)
-    .pipe(
-      tap((createdInvoice) => {
-        console.log('Fattura salvata come bozza:', createdInvoice);
-        this.invoiceFormService.updateGetInvoices.next();
-      }),
-      finalize(() => {
-        this.loaderService.hide();
-        this.invoiceFormService.closeForm();
-      })
-    )
-    .subscribe();
+    const invoiceToSave = this.buildInvoicePayload({
+      id: this.generateInvoiceId(),
+      status: 'draft'
+    });
+
+    this.invoiceFormService.createInvoice(invoiceToSave)
+      .pipe(
+        tap((createdInvoice) => {
+          console.log('Fattura salvata come bozza:', createdInvoice);
+
+          this.invoiceFormService.notifyInvoicesUpdated();
+
+          this.notificationService.success(
+            'Bozza salvata',
+            `La fattura #${createdInvoice.id} è stata salvata come bozza.`
+          );
+
+          this.invoiceFormService.closeForm();
+        }),
+        catchError(() => {
+          this.notificationService.error(
+            'Salvataggio non riuscito',
+            'Non è stato possibile salvare la fattura come bozza.'
+          );
+
+          return EMPTY;
+        }),
+        finalize(() => {
+          this.loaderService.hide();
+        })
+      )
+      .subscribe();
   }
 }

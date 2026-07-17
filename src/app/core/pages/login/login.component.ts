@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { email, form, FormField, required } from '@angular/forms/signals';
-import { finalize } from 'rxjs';
+import { catchError, EMPTY, finalize, tap } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { NotificationService } from '../../../shared/services/notification.service';
@@ -61,18 +61,29 @@ export class LoginComponent {
 
     this.authService.login(this.loginModel())
       .pipe(
+        tap(() => {
+          this.notificationService.success(
+            'Accesso effettuato',
+            'Bentornato su InvoiceFlow.'
+          );
+
+          this.router.navigate([''])
+        }),
+        catchError(() => {
+          this.notificationService.error(
+            'Accesso non riuscito',
+            'Email o password non validi.'
+          );
+
+          this.errorMessage.set('Email o password non validi');
+
+          return EMPTY;
+        }),
         finalize(() => {
           this.isLoading.set(false);
         })
       )
-      .subscribe({
-        next: () => {
-          this.router.navigateByUrl('/');
-        },
-        error: () => {
-          this.errorMessage.set('Email o password non validi');
-        }
-      });
+      .subscribe();
   }
 
   protected getFieldError(field: any): string {

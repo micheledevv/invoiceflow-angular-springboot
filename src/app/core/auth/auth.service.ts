@@ -50,13 +50,19 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
+  updateCurrentUser(user: AuthUser): void {
+    localStorage.setItem(this.userKey, JSON.stringify(user));
+    this.currentUserSignal.set(user);
+  }
+
   private saveAuthData(response: AuthResponse): void {
     const user: AuthUser = {
       userId: response.userId,
       fullName: response.fullName,
       email: response.email,
       avatarBase64: response.avatarBase64,
-      senderAddress: response.senderAddress
+      senderAddress: response.senderAddress,
+      defaultPaymentTerms: response.defaultPaymentTerms
     };
 
     localStorage.setItem(this.tokenKey, response.token);

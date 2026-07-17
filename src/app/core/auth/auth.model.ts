@@ -25,6 +25,7 @@ export type AuthResponse = {
   email: string;
   avatarBase64: string;
   senderAddress: Address;
+  defaultPaymentTerms: number;
 };
 
 export type AuthUser = {
@@ -33,4 +34,5 @@ export type AuthUser = {
   email: string;
   avatarBase64: string;
   senderAddress: Address;
+  defaultPaymentTerms: number;
 };

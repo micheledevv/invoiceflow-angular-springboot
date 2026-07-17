@@ -18,7 +18,7 @@ export class GenericInputComponent {
   labelIsVisible = input<boolean>(true);
 
   onlyNumbers = input<boolean>(false);
-  maxInputLength = input<number | null>(null);
+  maxDigits = input<number | null>(null);
 
   isReadonly = input<boolean>(false);
 
@@ -58,7 +58,7 @@ export class GenericInputComponent {
       return;
     }
 
-    const maxLength = this.maxInputLength();
+    const maxLength = this.maxDigits();
 
     if (maxLength === null) {
       this.clearManualError();
@@ -98,7 +98,7 @@ export class GenericInputComponent {
       return;
     }
 
-    const maxLength = this.maxInputLength();
+    const maxLength = this.maxDigits();
 
     if (maxLength === null) {
       this.clearManualError();

@@ -22,7 +22,7 @@ import { DetailInvoiceService } from '../../pages/detail-invoice/detail-invoice.
 
 import { Invoice, InvoiceStatus } from '../../models/invoice.model';
 import { InvoiceFormModel } from '../../models/invoice.form.model';
-import { EuroCurrencyPipe } from "../../../../shared/pipes/euro-currency.pipe";
+import { EuroCurrencyPipe } from '../../../../shared/pipes/euro-currency.pipe';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
 
@@ -34,7 +34,7 @@ import { NotificationService } from '../../../../shared/services/notification.se
     CalendarInputComponent,
     ActionsButtonComponent,
     EuroCurrencyPipe
-],
+  ],
   templateUrl: './invoice-form.component.html',
   styleUrl: './invoice-form.component.scss'
 })
@@ -43,28 +43,41 @@ export class InvoiceFormComponent implements OnInit {
   private readonly detailInvoiceService = inject(DetailInvoiceService);
   private readonly loaderService = inject(LoaderService);
   private readonly authService = inject(AuthService);
-private readonly notificationService = inject(NotificationService);
+  private readonly notificationService = inject(NotificationService);
+
+  private readonly maxItems = 10;
 
   protected readonly mode = this.invoiceFormService.mode;
   protected readonly singleInvoice = this.detailInvoiceService.singleInvoice;
 
   protected readonly paymentTermsOptions: SelectOption<string>[] = [
-    { label: 'Net 1 Giorno', value: '1' },
-    { label: 'Net 7 Giorni', value: '7' },
-    { label: 'Net 14 Giorni', value: '14' },
-    { label: 'Net 30 Giorni', value: '30' }
+    { label: 'Entro 1 giorno', value: '1' },
+    { label: 'Entro 7 giorni', value: '7' },
+    { label: 'Entro 14 giorni', value: '14' },
+    { label: 'Entro 30 giorni', value: '30' }
   ];
 
   protected readonly invoiceModel = signal<InvoiceFormModel>(this.getEmptyForm());
 
   protected readonly invoiceForm = form(this.invoiceModel, (schemaPath) => {
-
     readonly(schemaPath.senderName);
     readonly(schemaPath.senderAddress.street);
     readonly(schemaPath.senderAddress.city);
     readonly(schemaPath.senderAddress.postCode);
     readonly(schemaPath.senderAddress.country);
-    // Da chi viene emessa
+
+    required(schemaPath.senderName, {
+      message: 'Il nome del mittente è obbligatorio'
+    });
+
+    minLength(schemaPath.senderName, 2, {
+      message: 'Il nome del mittente deve contenere almeno 2 caratteri'
+    });
+
+    maxLength(schemaPath.senderName, 60, {
+      message: 'Il nome del mittente non può superare 60 caratteri'
+    });
+
     required(schemaPath.senderAddress.street, {
       message: 'L’indirizzo del mittente è obbligatorio'
     });
@@ -108,19 +121,7 @@ private readonly notificationService = inject(NotificationService);
     maxLength(schemaPath.senderAddress.country, 40, {
       message: 'Il paese non può superare 40 caratteri'
     });
-    required(schemaPath.senderName, {
-      message: 'Il nome del mittente è obbligatorio'
-    });
 
-    minLength(schemaPath.senderName, 2, {
-      message: 'Il nome del mittente deve contenere almeno 2 caratteri'
-    });
-
-    maxLength(schemaPath.senderName, 60, {
-      message: 'Il nome del mittente non può superare 60 caratteri'
-    });
-
-    // Cliente
     required(schemaPath.clientName, {
       message: 'Il nome cliente è obbligatorio'
     });
@@ -129,8 +130,8 @@ private readonly notificationService = inject(NotificationService);
       message: 'Il nome cliente deve contenere almeno 2 caratteri'
     });
 
-    maxLength(schemaPath.clientName, 60, {
-      message: 'Il nome cliente non può superare 60 caratteri'
+    maxLength(schemaPath.clientName, 50, {
+      message: 'Il nome cliente non può superare 50 caratteri'
     });
 
     required(schemaPath.clientEmail, {
@@ -141,6 +142,10 @@ private readonly notificationService = inject(NotificationService);
       message: 'Inserisci un’email valida'
     });
 
+    maxLength(schemaPath.clientEmail, 80, {
+      message: 'L’email cliente non può superare 80 caratteri'
+    });
+
     required(schemaPath.clientAddress.street, {
       message: 'L’indirizzo del cliente è obbligatorio'
     });
@@ -149,8 +154,8 @@ private readonly notificationService = inject(NotificationService);
       message: 'L’indirizzo cliente deve contenere almeno 5 caratteri'
     });
 
-    maxLength(schemaPath.clientAddress.street, 80, {
-      message: 'L’indirizzo cliente non può superare 80 caratteri'
+    maxLength(schemaPath.clientAddress.street, 70, {
+      message: 'L’indirizzo cliente non può superare 70 caratteri'
     });
 
     required(schemaPath.clientAddress.city, {
@@ -161,8 +166,8 @@ private readonly notificationService = inject(NotificationService);
       message: 'La città deve contenere almeno 2 caratteri'
     });
 
-    maxLength(schemaPath.clientAddress.city, 40, {
-      message: 'La città non può superare 40 caratteri'
+    maxLength(schemaPath.clientAddress.city, 35, {
+      message: 'La città non può superare 35 caratteri'
     });
 
     required(schemaPath.clientAddress.postCode, {
@@ -181,11 +186,10 @@ private readonly notificationService = inject(NotificationService);
       message: 'Il paese deve contenere almeno 2 caratteri'
     });
 
-    maxLength(schemaPath.clientAddress.country, 40, {
-      message: 'Il paese non può superare 40 caratteri'
+    maxLength(schemaPath.clientAddress.country, 35, {
+      message: 'Il paese non può superare 35 caratteri'
     });
 
-    // Dati fattura
     required(schemaPath.createdAt, {
       message: 'La data fattura è obbligatoria'
     });
@@ -202,11 +206,10 @@ private readonly notificationService = inject(NotificationService);
       message: 'La descrizione deve contenere almeno 3 caratteri'
     });
 
-    maxLength(schemaPath.description, 100, {
-      message: 'La descrizione non può superare 100 caratteri'
+    maxLength(schemaPath.description, 80, {
+      message: 'La descrizione non può superare 80 caratteri'
     });
 
-    // Lista articoli
     applyEach(schemaPath.items, (itemPath) => {
       required(itemPath.name, {
         message: 'Il nome articolo è obbligatorio'
@@ -216,24 +219,24 @@ private readonly notificationService = inject(NotificationService);
         message: 'Il nome articolo deve contenere almeno 2 caratteri'
       });
 
-      maxLength(itemPath.name, 60, {
-        message: 'Il nome articolo non può superare 60 caratteri'
+      maxLength(itemPath.name, 50, {
+        message: 'Il nome articolo non può superare 50 caratteri'
       });
 
       required(itemPath.quantity, {
         message: 'La quantità è obbligatoria'
       });
 
-      pattern(itemPath.quantity, /^[1-9][0-9]*$/, {
-        message: 'La quantità deve essere maggiore di 0'
+      pattern(itemPath.quantity, /^[1-9][0-9]{0,2}$/, {
+        message: 'La quantità deve essere compresa tra 1 e 999'
       });
 
       required(itemPath.price, {
         message: 'Il prezzo è obbligatorio'
       });
 
-      pattern(itemPath.price, /^(?!0+(?:\.0+)?$)\d+(?:[.,]\d{1,2})?$/, {
-        message: 'Il prezzo deve essere maggiore di 0'
+      pattern(itemPath.price, /^(?!0+(?:[.,]0{1,2})?$)\d{1,5}(?:[.,]\d{1,2})?$/, {
+        message: 'Il prezzo deve essere compreso tra 0,01 e 99999,99'
       });
     });
   });
@@ -248,10 +251,16 @@ private readonly notificationService = inject(NotificationService);
     return invoice ? `Modifica #${invoice.id}` : 'Modifica fattura';
   });
 
-  protected readonly isFormInvalid = computed(() => this.invoiceForm().invalid());
+  protected readonly isFormInvalid = computed(() => {
+    return this.invoiceForm().invalid();
+  });
 
   protected readonly canRemoveItem = computed(() => {
     return this.invoiceModel().items.length > 1;
+  });
+
+  protected readonly canAddItem = computed(() => {
+    return this.invoiceModel().items.length < this.maxItems;
   });
 
   ngOnInit(): void {
@@ -259,6 +268,15 @@ private readonly notificationService = inject(NotificationService);
   }
 
   protected addItem(): void {
+    if (!this.canAddItem()) {
+      this.notificationService.warning(
+        'Limite articoli raggiunto',
+        `Puoi aggiungere al massimo ${this.maxItems} articoli per fattura.`
+      );
+
+      return;
+    }
+
     this.invoiceModel.update((currentForm) => ({
       ...currentForm,
       items: [
@@ -405,6 +423,52 @@ private readonly notificationService = inject(NotificationService);
       .subscribe();
   }
 
+  protected saveAsDraft(): void {
+    if (this.isFormInvalid()) {
+      this.notificationService.warning(
+        'Dati incompleti',
+        'Completa tutti i campi obbligatori prima di salvare la bozza.'
+      );
+
+      return;
+    }
+
+    this.loaderService.show();
+
+    const invoiceToSave = this.buildInvoicePayload({
+      id: this.generateInvoiceId(),
+      status: 'draft'
+    });
+
+    this.invoiceFormService.createInvoice(invoiceToSave)
+      .pipe(
+        tap((createdInvoice) => {
+          console.log('Fattura salvata come bozza:', createdInvoice);
+
+          this.invoiceFormService.notifyInvoicesUpdated();
+
+          this.notificationService.success(
+            'Bozza salvata',
+            `La fattura #${createdInvoice.id} è stata salvata come bozza.`
+          );
+
+          this.invoiceFormService.closeForm();
+        }),
+        catchError(() => {
+          this.notificationService.error(
+            'Salvataggio non riuscito',
+            'Non è stato possibile salvare la fattura come bozza.'
+          );
+
+          return EMPTY;
+        }),
+        finalize(() => {
+          this.loaderService.hide();
+        })
+      )
+      .subscribe();
+  }
+
   private initializeForm(): void {
     if (this.mode() === 'edit') {
       const invoice = this.singleInvoice();
@@ -426,26 +490,36 @@ private readonly notificationService = inject(NotificationService);
     const formValue = this.invoiceModel();
     const paymentTerms = Number(formValue.paymentTerms);
 
-   return {
-    id: config.id,
-    createdAt: formValue.createdAt,
-    paymentDue: this.calculatePaymentDue(formValue.createdAt, paymentTerms),
-    description: formValue.description,
-    paymentTerms,
-    clientName: formValue.clientName,
-    clientEmail: formValue.clientEmail,
-    senderName: formValue.senderName,
-    status: config.status,
-    senderAddress: formValue.senderAddress,
-    clientAddress: formValue.clientAddress,
-    items: formValue.items.map((item) => ({
-      name: item.name,
-      quantity: Number(item.quantity || 0),
-      price: Number(item.price || 0),
-      total: this.calculateItemTotal(item.quantity, item.price)
-    })),
-    total: this.getInvoiceTotal()
-  };
+    return {
+      id: config.id,
+      createdAt: formValue.createdAt,
+      paymentDue: this.calculatePaymentDue(formValue.createdAt, paymentTerms),
+      description: formValue.description.trim(),
+      paymentTerms,
+      clientName: formValue.clientName.trim(),
+      clientEmail: formValue.clientEmail.trim(),
+      senderName: formValue.senderName.trim(),
+      status: config.status,
+      senderAddress: {
+        street: formValue.senderAddress.street.trim(),
+        city: formValue.senderAddress.city.trim(),
+        postCode: formValue.senderAddress.postCode.trim(),
+        country: formValue.senderAddress.country.trim()
+      },
+      clientAddress: {
+        street: formValue.clientAddress.street.trim(),
+        city: formValue.clientAddress.city.trim(),
+        postCode: formValue.clientAddress.postCode.trim(),
+        country: formValue.clientAddress.country.trim()
+      },
+      items: formValue.items.map((item) => ({
+        name: item.name.trim(),
+        quantity: this.parseNumberValue(item.quantity),
+        price: this.parseNumberValue(item.price),
+        total: this.calculateItemTotal(item.quantity, item.price)
+      })),
+      total: this.getInvoiceTotal()
+    };
   }
 
   private getInvoiceTotal(): number {
@@ -455,41 +529,45 @@ private readonly notificationService = inject(NotificationService);
   }
 
   private calculateItemTotal(quantity: string, price: string): number {
-    return Number(quantity || 0) * Number(price || 0);
+    return this.parseNumberValue(quantity) * this.parseNumberValue(price);
   }
 
- private patchFormWithInvoice(invoice: Invoice): void {
-  this.invoiceModel.set({
-    senderName: invoice.senderName ?? '',
+  private parseNumberValue(value: string): number {
+    return Number(String(value || '0').replace(',', '.'));
+  }
 
-    senderAddress: {
-      street: invoice.senderAddress.street,
-      city: invoice.senderAddress.city,
-      postCode: invoice.senderAddress.postCode,
-      country: invoice.senderAddress.country
-    },
+  private patchFormWithInvoice(invoice: Invoice): void {
+    this.invoiceModel.set({
+      senderName: invoice.senderName ?? '',
 
-    clientName: invoice.clientName,
-    clientEmail: invoice.clientEmail,
+      senderAddress: {
+        street: invoice.senderAddress.street,
+        city: invoice.senderAddress.city,
+        postCode: invoice.senderAddress.postCode,
+        country: invoice.senderAddress.country
+      },
 
-    clientAddress: {
-      street: invoice.clientAddress.street,
-      city: invoice.clientAddress.city,
-      postCode: invoice.clientAddress.postCode,
-      country: invoice.clientAddress.country
-    },
+      clientName: invoice.clientName,
+      clientEmail: invoice.clientEmail,
 
-    createdAt: invoice.createdAt,
-    paymentTerms: String(invoice.paymentTerms),
-    description: invoice.description,
+      clientAddress: {
+        street: invoice.clientAddress.street,
+        city: invoice.clientAddress.city,
+        postCode: invoice.clientAddress.postCode,
+        country: invoice.clientAddress.country
+      },
 
-    items: invoice.items.map((item) => ({
-      name: item.name,
-      quantity: String(item.quantity),
-      price: String(item.price)
-    }))
-  });
- }
+      createdAt: invoice.createdAt,
+      paymentTerms: String(invoice.paymentTerms),
+      description: invoice.description,
+
+      items: invoice.items.map((item) => ({
+        name: item.name,
+        quantity: String(item.quantity),
+        price: String(item.price)
+      }))
+    });
+  }
 
   private resetForm(): void {
     this.invoiceModel.set(this.getEmptyForm());
@@ -547,51 +625,5 @@ private readonly notificationService = inject(NotificationService);
     date.setDate(date.getDate() + paymentTerms);
 
     return date.toISOString().split('T')[0];
-  }
-
-  protected saveAsDraft(): void {
-    if (this.isFormInvalid()) {
-      this.notificationService.warning(
-        'Dati incompleti',
-        'Completa tutti i campi obbligatori prima di salvare la bozza.'
-      );
-
-      return;
-    }
-
-    this.loaderService.show();
-
-    const invoiceToSave = this.buildInvoicePayload({
-      id: this.generateInvoiceId(),
-      status: 'draft'
-    });
-
-    this.invoiceFormService.createInvoice(invoiceToSave)
-      .pipe(
-        tap((createdInvoice) => {
-          console.log('Fattura salvata come bozza:', createdInvoice);
-
-          this.invoiceFormService.notifyInvoicesUpdated();
-
-          this.notificationService.success(
-            'Bozza salvata',
-            `La fattura #${createdInvoice.id} è stata salvata come bozza.`
-          );
-
-          this.invoiceFormService.closeForm();
-        }),
-        catchError(() => {
-          this.notificationService.error(
-            'Salvataggio non riuscito',
-            'Non è stato possibile salvare la fattura come bozza.'
-          );
-
-          return EMPTY;
-        }),
-        finalize(() => {
-          this.loaderService.hide();
-        })
-      )
-      .subscribe();
   }
 }

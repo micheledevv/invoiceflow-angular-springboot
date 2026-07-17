@@ -245,7 +245,7 @@
 .items-header,
 .items-row {
   display: grid;
-  grid-template-columns: 1fr 64px 110px 110px;
+  grid-template-columns: minmax(0, 1fr) 64px 110px 110px;
   align-items: center;
   column-gap: 24px;
 }
@@ -304,11 +304,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24px;
 
   background-color: var(--color-sidebar-bg);
   color: var(--color-white);
 
   p:first-child {
+    flex-shrink: 0;
+
     font-size: 13px;
     line-height: 18px;
     letter-spacing: -0.1px;
@@ -316,10 +319,16 @@
   }
 
   p:last-child {
+    min-width: 0;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
     font-size: 24px;
     line-height: 32px;
     letter-spacing: -0.5px;
     font-weight: 700;
+    text-align: right;
   }
 }
 
@@ -327,6 +336,42 @@
   .amount-due {
     background-color: #0c0e16;
   }
+}
+
+/* Protezione layout contro testi troppo lunghi */
+.invoice-card,
+.invoice-card p,
+.invoice-card span,
+.invoice-card address,
+.invoice-card div,
+.invoice-card section,
+.invoice-card article,
+.invoice-card header,
+.sender-address,
+.client-address,
+.info-value,
+.muted,
+.item-name,
+.item-total {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.invoice-card__top > *,
+.invoice-info-grid > *,
+.items-row > *,
+.items-header > * {
+  min-width: 0;
+}
+
+.sender-address,
+.client-address {
+  max-width: 260px;
+}
+
+.item-name {
+  max-width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -352,7 +397,7 @@
 
   .items-header,
   .items-row {
-    grid-template-columns: 1fr 48px 90px 90px;
+    grid-template-columns: minmax(0, 1fr) 48px 90px 90px;
     column-gap: 16px;
   }
 }
@@ -398,7 +443,7 @@
   }
 
   .items-row {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 8px 16px;
     padding: 24px;
 

@@ -36,7 +36,6 @@
             [isRequired]="true"
             id="sender-post-code"
             [onlyNumbers]="true"
-            [maxInputLength]="5"
             [field]="invoiceForm.senderAddress.postCode">
           </app-generic-input>
 
@@ -87,7 +86,6 @@
             [isRequired]="true"
             id="client-post-code"
             [onlyNumbers]="true"
-            [maxInputLength]="5"
             [field]="invoiceForm.clientAddress.postCode">
           </app-generic-input>
 
@@ -154,6 +152,7 @@
                 [isRequired]="true"
                 [id]="'item-quantity-' + i"
                 type="number"
+                [onlyNumbers]="true"
                 [field]="invoiceForm.items[i].quantity">
               </app-generic-input>
 
@@ -185,6 +184,8 @@
           <button
             type="button"
             class="btn btn-add-item"
+            [disabled]="!canAddItem()"
+            [title]="canAddItem() ? 'Aggiungi nuovo articolo' : 'Hai raggiunto il limite massimo di articoli'"
             (click)="addItem()">
             + Aggiungi nuovo articolo
           </button>

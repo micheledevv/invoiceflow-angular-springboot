@@ -1,11 +1,13 @@
 package com.invoiceflow.controller;
 
+import com.invoiceflow.dto.InvoiceRequest;
 import com.invoiceflow.model.Invoice;
 import com.invoiceflow.service.InvoiceService;
 import com.invoiceflow.user.AppUser;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,19 +34,19 @@ public class InvoiceController {
 
   @PostMapping
   public Invoice createInvoice(
-    @RequestBody Invoice invoice,
+    @Valid @RequestBody InvoiceRequest request,
     @AuthenticationPrincipal AppUser user
   ) {
-    return invoiceService.createInvoice(invoice, user);
+    return invoiceService.createInvoice(request, user);
   }
 
   @PutMapping("/{id}")
   public Invoice updateInvoice(
     @PathVariable String id,
-    @RequestBody Invoice invoice,
+    @Valid @RequestBody InvoiceRequest request,
     @AuthenticationPrincipal AppUser user
   ) {
-    return invoiceService.updateInvoice(id, invoice, user);
+    return invoiceService.updateInvoice(id, request, user);
   }
 
   @DeleteMapping("/{id}")

@@ -1,9 +1,8 @@
-package com.invoiceflow.auth;
+package com.invoiceflow.settings;
 
 import com.invoiceflow.model.Address;
 
-public record AuthResponse(
-  String token,
+public record UserSettingsResponse(
   Long userId,
   String fullName,
   String email,

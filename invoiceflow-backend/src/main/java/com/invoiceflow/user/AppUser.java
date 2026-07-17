@@ -29,6 +29,9 @@ public class AppUser {
   @Column(columnDefinition = "TEXT")
   private String avatarBase64;
 
+  @Builder.Default
+  private Integer defaultPaymentTerms = 30;
+
   @Embedded
   @AttributeOverrides({
     @AttributeOverride(name = "street", column = @Column(name = "sender_street")),

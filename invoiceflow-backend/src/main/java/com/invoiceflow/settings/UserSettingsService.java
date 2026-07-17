@@ -1,7 +1,6 @@
-package com.invoiceflow.auth;
+package com.invoiceflow.settings;
 
 import com.invoiceflow.model.Address;
-import com.invoiceflow.security.JwtService;
 import com.invoiceflow.user.AppUser;
 import com.invoiceflow.user.AppUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,60 +10,81 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class UserSettingsService {
 
   private static final String DEFAULT_AVATAR = "assets/images/logo.svg";
   private static final int DEFAULT_PAYMENT_TERMS = 30;
 
   private final AppUserRepository appUserRepository;
   private final PasswordEncoder passwordEncoder;
-  private final JwtService jwtService;
 
-  public AuthResponse register(RegisterRequest request) {
-    if (appUserRepository.existsByEmail(request.email())) {
-      throw new IllegalArgumentException("Email già registrata");
-    }
+  public UserSettingsResponse getSettings(AppUser authenticatedUser) {
+    AppUser user = getManagedUser(authenticatedUser);
 
-    String avatar = normalizeAvatar(request.avatarBase64());
+    return buildResponse(user);
+  }
+
+  public UserSettingsResponse updateProfile(
+    AppUser authenticatedUser,
+    UpdateProfileRequest request
+  ) {
+    AppUser user = getManagedUser(authenticatedUser);
 
     validateSenderAddress(request.senderAddress());
 
-    AppUser user = AppUser.builder()
-      .fullName(request.fullName())
-      .email(request.email())
-      .password(passwordEncoder.encode(request.password()))
-      .avatarBase64(avatar)
-      .senderAddress(request.senderAddress())
-      .defaultPaymentTerms(DEFAULT_PAYMENT_TERMS)
-      .build();
+    String avatar = normalizeAvatar(request.avatarBase64());
+
+    user.setFullName(request.fullName());
+    user.setAvatarBase64(avatar);
+    user.setSenderAddress(request.senderAddress());
 
     AppUser savedUser = appUserRepository.save(user);
-    String token = jwtService.generateToken(savedUser);
 
-    return buildAuthResponse(token, savedUser);
+    return buildResponse(savedUser);
   }
 
-  public AuthResponse login(LoginRequest request) {
-    AppUser user = appUserRepository.findByEmail(request.email())
-      .orElseThrow(() -> new BadCredentialsException("Credenziali non valide"));
+  public UserSettingsResponse updateInvoicePreferences(
+    AppUser authenticatedUser,
+    UpdateInvoicePreferencesRequest request
+  ) {
+    AppUser user = getManagedUser(authenticatedUser);
+
+    validatePaymentTerms(request.defaultPaymentTerms());
+
+    user.setDefaultPaymentTerms(request.defaultPaymentTerms());
+
+    AppUser savedUser = appUserRepository.save(user);
+
+    return buildResponse(savedUser);
+  }
+
+  public void changePassword(
+    AppUser authenticatedUser,
+    ChangePasswordRequest request
+  ) {
+    AppUser user = getManagedUser(authenticatedUser);
 
     boolean passwordMatches = passwordEncoder.matches(
-      request.password(),
+      request.currentPassword(),
       user.getPassword()
     );
 
     if (!passwordMatches) {
-      throw new BadCredentialsException("Credenziali non valide");
+      throw new BadCredentialsException("Password attuale non valida");
     }
 
-    String token = jwtService.generateToken(user);
+    user.setPassword(passwordEncoder.encode(request.newPassword()));
 
-    return buildAuthResponse(token, user);
+    appUserRepository.save(user);
   }
 
-  private AuthResponse buildAuthResponse(String token, AppUser user) {
-    return new AuthResponse(
-      token,
+  private AppUser getManagedUser(AppUser authenticatedUser) {
+    return appUserRepository.findById(authenticatedUser.getId())
+      .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+  }
+
+  private UserSettingsResponse buildResponse(AppUser user) {
+    return new UserSettingsResponse(
       user.getId(),
       user.getFullName(),
       user.getEmail(),
@@ -72,6 +92,20 @@ public class AuthService {
       user.getSenderAddress(),
       user.getDefaultPaymentTerms() != null ? user.getDefaultPaymentTerms() : DEFAULT_PAYMENT_TERMS
     );
+  }
+
+  private void validatePaymentTerms(Integer paymentTerms) {
+    if (
+      paymentTerms == null ||
+        (
+          paymentTerms != 1 &&
+            paymentTerms != 7 &&
+            paymentTerms != 14 &&
+            paymentTerms != 30
+        )
+    ) {
+      throw new IllegalArgumentException("Termini di pagamento non validi");
+    }
   }
 
   private String normalizeAvatar(String avatarBase64) {

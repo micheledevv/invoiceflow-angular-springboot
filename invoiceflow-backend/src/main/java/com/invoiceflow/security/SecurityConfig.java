@@ -32,6 +32,7 @@ public class SecurityConfig {
       .authorizeHttpRequests(auth -> auth
         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+        .requestMatchers("/api/user-settings/**").authenticated()
         .requestMatchers("/api/invoices/**").authenticated()
         .anyRequest().permitAll()
       )

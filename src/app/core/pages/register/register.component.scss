@@ -60,7 +60,7 @@
 
 .auth-grid {
   display: grid;
-  grid-template-columns: 1fr 140px;
+  grid-template-columns: minmax(0, 1fr) 140px;
   gap: 16px;
 }
 
@@ -74,32 +74,21 @@
     font-size: 13px;
     font-weight: 700;
   }
+}
 
-  input {
-    min-height: 48px;
-    padding: 0 20px;
-
-    border: 1px solid var(--color-input-border);
-    border-radius: 4px;
-    background-color: var(--color-input-bg);
-    color: var(--color-text-primary);
-
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 700;
-
-    outline: none;
-  }
-
-  input:focus {
-    border-color: var(--color-primary);
-  }
+.confirm-password-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .auth-error {
   margin: 0;
+
   color: var(--color-danger);
+
   font-size: 12px;
+  line-height: 15px;
   font-weight: 700;
 }
 
@@ -111,10 +100,6 @@
   font-size: 11px;
   line-height: 14px;
   font-weight: 700;
-}
-
-.auth-input--error {
-  border-color: var(--color-danger) !important;
 }
 
 .avatar-upload {

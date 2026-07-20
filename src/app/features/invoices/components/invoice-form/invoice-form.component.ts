@@ -106,6 +106,10 @@ export class InvoiceFormComponent implements OnInit {
       message: 'Il CAP del mittente è obbligatorio'
     });
 
+    maxLength(schemaPath.senderAddress.postCode, 5, {
+      message: 'Il CAP deve contenere al massimo 5 numeri'
+    });
+
     pattern(schemaPath.senderAddress.postCode, /^[0-9]{5}$/, {
       message: 'Il CAP deve contenere 5 numeri'
     });

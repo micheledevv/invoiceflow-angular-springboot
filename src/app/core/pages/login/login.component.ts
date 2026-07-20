@@ -1,10 +1,17 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { email, form, FormField, required } from '@angular/forms/signals';
+import {
+  email,
+  form,
+  maxLength,
+  minLength,
+  required
+} from '@angular/forms/signals';
 import { catchError, EMPTY, finalize, tap } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { NotificationService } from '../../../shared/services/notification.service';
+import { GenericInputComponent } from '../../../shared/components/generic-input/generic-input.component';
 
 type LoginForm = {
   email: string;
@@ -13,7 +20,7 @@ type LoginForm = {
 
 @Component({
   selector: 'app-login',
-  imports: [FormField, RouterLink],
+  imports: [GenericInputComponent,  RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -25,10 +32,6 @@ export class LoginComponent {
   protected readonly isLoading = signal(false);
   protected readonly submitted = signal(false);
   protected readonly errorMessage = signal('');
-
-  protected readonly isSubmitDisabled = computed(() => {
-   return this.isLoading() || this.loginForm().invalid();
-  });
 
   protected readonly loginModel = signal<LoginForm>({
     email: '',
@@ -44,9 +47,21 @@ export class LoginComponent {
       message: 'Email non valida'
     });
 
+    maxLength(schemaPath.email, 80, {
+      message: 'L’email non può superare 80 caratteri'
+    });
+
     required(schemaPath.password, {
       message: 'Password obbligatoria'
     });
+
+    minLength(schemaPath.password, 8, {
+      message: 'La password deve contenere almeno 8 caratteri'
+    });
+  });
+
+  protected readonly isSubmitDisabled = computed(() => {
+    return this.isLoading() || this.loginForm().invalid();
   });
 
   protected login(): void {
@@ -67,7 +82,7 @@ export class LoginComponent {
             'Bentornato su InvoiceFlow.'
           );
 
-          this.router.navigate([''])
+          this.router.navigateByUrl('/');
         }),
         catchError(() => {
           this.notificationService.error(
@@ -84,19 +99,5 @@ export class LoginComponent {
         })
       )
       .subscribe();
-  }
-
-  protected getFieldError(field: any): string {
-    const state = field();
-
-    if (!this.submitted() && !state.touched()) {
-      return '';
-    }
-
-    if (!state.invalid()) {
-      return '';
-    }
-
-    return state.errors()[0]?.message ?? 'Campo non valido';
   }
 }

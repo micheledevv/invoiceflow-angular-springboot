@@ -2,10 +2,15 @@ package com.invoiceflow.controller;
 
 import com.invoiceflow.dto.InvoiceRequest;
 import com.invoiceflow.model.Invoice;
+import com.invoiceflow.service.InvoicePdfService;
 import com.invoiceflow.service.InvoiceService;
 import com.invoiceflow.user.AppUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +23,7 @@ import java.util.List;
 public class InvoiceController {
 
   private final InvoiceService invoiceService;
+  private final InvoicePdfService invoicePdfService;
 
   @GetMapping
   public List<Invoice> getAllInvoices(@AuthenticationPrincipal AppUser user) {
@@ -30,6 +36,28 @@ public class InvoiceController {
     @AuthenticationPrincipal AppUser user
   ) {
     return invoiceService.getInvoiceById(id, user);
+  }
+
+  @GetMapping(value = "/{id}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+  public ResponseEntity<byte[]> downloadInvoicePdf(
+    @PathVariable String id,
+    @AuthenticationPrincipal AppUser user
+  ) {
+    Invoice invoice = invoiceService.getInvoiceById(id, user);
+    byte[] pdf = invoicePdfService.generateInvoicePdf(invoice);
+
+    String fileName = "invoice-" + invoice.getId() + ".pdf";
+
+    return ResponseEntity.ok()
+      .contentType(MediaType.APPLICATION_PDF)
+      .header(
+        HttpHeaders.CONTENT_DISPOSITION,
+        ContentDisposition.attachment()
+          .filename(fileName)
+          .build()
+          .toString()
+      )
+      .body(pdf);
   }
 
   @PostMapping

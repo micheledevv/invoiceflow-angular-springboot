@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-  private static final String DEFAULT_AVATAR = "assets/images/logo.svg";
+  private static final String DEFAULT_AVATAR = "assets/images/default_logo.jpeg";
   private static final int DEFAULT_PAYMENT_TERMS = 30;
 
   private final AppUserRepository appUserRepository;

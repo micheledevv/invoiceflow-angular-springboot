@@ -81,6 +81,7 @@ export class LoginComponent {
             'Accesso effettuato',
             'Bentornato su InvoiceFlow.'
           );
+          console.log('primo tap')
 
           this.router.navigateByUrl('/');
         }),
@@ -89,12 +90,15 @@ export class LoginComponent {
             'Accesso non riuscito',
             'Email o password non validi.'
           );
+          console.log('2 operatore catcherror')
+
 
           this.errorMessage.set('Email o password non validi');
 
           return EMPTY;
         }),
         finalize(() => {
+          console.log('3 operatore finalize')
           this.isLoading.set(false);
         })
       )

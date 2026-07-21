@@ -1,0 +1,7 @@
+<button
+  type="button"
+  class="btn invoice-pdf-button"
+  [disabled]="isDownloading()"
+  (click)="downloadPdf()">
+  {{ isDownloading() ? 'Scaricamento...' : 'Scarica PDF' }}
+</button>

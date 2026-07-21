@@ -14,10 +14,11 @@ import { Invoice, InvoiceStatus } from '../../models/invoice.model';
 import { ItalianDatePipe } from '../../../../shared/pipes/italian-date.pipe';
 import { EuroCurrencyPipe } from '../../../../shared/pipes/euro-currency.pipe';
 import { NotificationService } from '../../../../shared/services/notification.service';
+import { InvoicePdfDownloadButtonComponent } from '../../components/invoice-pdf-download-button/invoice-pdf-download-button.component';
 
 @Component({
   selector: 'app-detail-invoice',
-  imports: [ActionsButtonComponent, ItalianDatePipe, EuroCurrencyPipe],
+  imports: [ActionsButtonComponent, ItalianDatePipe, EuroCurrencyPipe, InvoicePdfDownloadButtonComponent],
   templateUrl: './detail-invoice.component.html',
   styleUrl: './detail-invoice.component.scss'
 })

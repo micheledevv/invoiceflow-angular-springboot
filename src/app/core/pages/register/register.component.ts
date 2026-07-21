@@ -46,7 +46,7 @@ export class RegisterComponent {
   protected readonly errorMessage = signal('');
   protected readonly avatarFileName = signal('');
 
-  private readonly defaultAvatar = 'assets/images/logo.svg';
+  private readonly defaultAvatar = 'assets/images/default_logo.jpeg';
 
   protected readonly avatarPreview = signal('');
 

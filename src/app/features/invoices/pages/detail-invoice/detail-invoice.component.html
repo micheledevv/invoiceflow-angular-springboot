@@ -29,7 +29,12 @@
             (deleteClicked)="deleteInvoice()"
             (markAsPaidClicked)="markAsPaidInvoice()">
           </app-actions-button>
+
+          <app-invoice-pdf-download-button
+            [invoiceId]="selectedInvoice.id">
+          </app-invoice-pdf-download-button>
         </div>
+
       </section>
 
       <section class="invoice-card">

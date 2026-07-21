@@ -55,7 +55,7 @@ export class SettingsPanelComponent implements OnInit {
 
   closed = output<void>();
 
-  private readonly defaultAvatar = 'assets/images/logo.svg';
+  private readonly defaultAvatar = 'assets/images/default_logo.jpeg';
 
   protected readonly activeTab = signal<SettingsTab>('profile');
   protected readonly isLoading = signal(false);

@@ -6,7 +6,7 @@
       </p>
 
       <p class="invoice-record__date">
-        {{ invoice.createdAt | italianDate  }}
+        {{ invoice.createdAt | italianDate }}
       </p>
 
       <p class="invoice-record__client">
@@ -25,6 +25,26 @@
       <button type="button" class="invoice-record__arrow" aria-label="Apri fattura">
         <img src="assets/images/icon-arrow-right.svg" alt="">
       </button>
+
+      @if (getDueWarning(invoice); as dueWarning) {
+        <div
+          class="due-alert"
+          [class.due-alert--overdue]="dueWarning.type === 'overdue'"
+          [class.due-alert--today]="dueWarning.type === 'today'"
+          [class.due-alert--tomorrow]="dueWarning.type === 'tomorrow'"
+          [class.due-alert--soon]="dueWarning.type === 'soon'"
+          [attr.aria-label]="dueWarning.message"
+          (click)="$event.stopPropagation()">
+
+          <div class="due-alert__icon">
+            !
+
+            <div class="due-alert__tooltip" role="tooltip">
+              <p>{{ dueWarning.message }}</p>
+            </div>
+          </div>
+        </div>
+      }
     </article>
   }
 </div>

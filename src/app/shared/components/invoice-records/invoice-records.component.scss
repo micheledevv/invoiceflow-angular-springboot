@@ -1,19 +1,29 @@
+.invoice-records {
+  margin-top: 18px;
+  overflow: visible;
+}
+
 .invoice-record {
   width: 100%;
   min-height: 72px;
+
+  position: relative;
 
   display: grid;
   grid-template-columns: 90px 130px minmax(0, 1fr) 120px 104px 16px;
   align-items: center;
   column-gap: 24px;
   padding: 20px;
+  margin-top: 10px;
 
   background-color: var(--color-card-bg);
   border-radius: 8px;
   border: 1px solid transparent;
   box-shadow: 0 10px 10px -10px rgba(72, 84, 159, 0.10);
 
+  overflow: visible;
   cursor: pointer;
+
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
@@ -57,12 +67,12 @@
   }
 
   &__client {
+    min-width: 0;
+    max-width: 100%;
+
     font-size: 12px;
     font-weight: 500;
     color: var(--color-text-muted);
-
-    min-width: 0;
-    max-width: 100%;
 
     overflow: hidden;
     white-space: nowrap;
@@ -146,6 +156,146 @@
       width: 7px;
       height: auto;
     }
+  }
+}
+
+.due-alert {
+  position: absolute;
+  top: 5px;
+  right: 0px;
+  z-index: 20;
+}
+
+.due-alert__icon {
+  position: relative;
+
+  width: 23px;
+  height: 23px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background-color: var(--color-danger);
+  color: #ffffff;
+
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 0 0 0 rgba(255, 87, 87, 0.45);
+
+  animation:
+    due-alert-bounce 1.2s ease-in-out infinite,
+    due-alert-pulse 1.8s ease-out infinite;
+}
+
+.due-alert__tooltip {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+
+  width: max-content;
+  max-width: 240px;
+  padding: 10px 12px;
+
+  border-radius: 8px;
+  background-color: var(--color-danger);
+  color: #ffffff;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease;
+
+  p {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    line-height: 15px;
+    font-weight: 700;
+    white-space: normal;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 10px;
+
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--color-danger) transparent transparent transparent;
+  }
+}
+
+.due-alert__icon:hover .due-alert__tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.due-alert--soon .due-alert__icon,
+.due-alert--tomorrow .due-alert__icon {
+  background-color: var(--color-status-pending);
+}
+
+.due-alert--soon .due-alert__tooltip,
+.due-alert--tomorrow .due-alert__tooltip {
+  background-color: var(--color-status-pending);
+
+  &::after {
+    border-color: var(--color-status-pending) transparent transparent transparent;
+  }
+}
+
+.due-alert--today .due-alert__icon,
+.due-alert--overdue .due-alert__icon {
+  background-color: var(--color-danger);
+}
+
+.due-alert--today .due-alert__tooltip,
+.due-alert--overdue .due-alert__tooltip {
+  background-color: var(--color-danger);
+
+  &::after {
+    border-color: var(--color-danger) transparent transparent transparent;
+  }
+}
+
+@keyframes due-alert-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-4px) scale(1.08);
+  }
+}
+
+@keyframes due-alert-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 87, 87, 0.45);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 87, 87, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 87, 87, 0);
   }
 }
 

@@ -1,0 +1,27 @@
+<section class="client-create-page">
+
+  <button
+    type="button"
+    class="client-create-page__back"
+    (click)="cancel()">
+    <img src="assets/images/icon-arrow-left.svg" alt="">
+    Torna ai clienti
+  </button>
+
+  <header class="client-create-page__header">
+    <div>
+      <h1>Nuovo cliente</h1>
+      <p>
+        Aggiungi un nuovo cliente alla tua anagrafica e usalo per compilare le fatture più velocemente.
+      </p>
+    </div>
+  </header>
+
+  <app-client-form
+    submitLabel="Crea cliente"
+    [isSubmitting]="isSubmitting()"
+    (formSubmit)="createClient($event)"
+    (cancelled)="cancel()">
+  </app-client-form>
+
+</section>

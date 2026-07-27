@@ -1,0 +1,144 @@
+.client-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.client-form__section {
+  padding: 28px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  background-color: var(--color-card-bg);
+  border-radius: 12px;
+  box-shadow: 0 10px 10px -10px rgba(72, 84, 159, 0.1);
+}
+
+.client-form__section-header {
+  h2 {
+    margin: 0;
+
+    color: var(--color-text-primary);
+
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 6px 0 0;
+
+    color: var(--color-text-secondary);
+
+    font-size: 12px;
+    line-height: 17px;
+    font-weight: 700;
+  }
+}
+
+.client-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.client-form__grid--three {
+  grid-template-columns: minmax(0, 1fr) 130px minmax(0, 1fr);
+}
+
+.client-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    color: var(--color-text-secondary);
+
+    font-size: 12px;
+    line-height: 15px;
+    font-weight: 700;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 130px;
+    padding: 16px 18px;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+    outline: none;
+    resize: vertical;
+
+    background-color: var(--color-input-bg, var(--color-card-bg));
+    color: var(--color-text-primary);
+
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 700;
+
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &::placeholder {
+      color: var(--color-text-secondary);
+      opacity: 0.7;
+    }
+
+    &:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 1px rgba(124, 93, 250, 0.15);
+    }
+  }
+
+  span {
+    align-self: flex-end;
+
+    color: var(--color-text-secondary);
+
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 700;
+  }
+}
+
+.client-form__actions {
+  padding: 24px 0 0;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  .btn {
+    min-height: 48px;
+    padding: 0 24px;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .client-form__section {
+    padding: 24px 20px;
+  }
+
+  .client-form__grid,
+  .client-form__grid--three {
+    grid-template-columns: 1fr;
+  }
+
+  .client-form__actions {
+    flex-direction: column-reverse;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}

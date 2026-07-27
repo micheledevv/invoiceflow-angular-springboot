@@ -14,12 +14,13 @@ export class AuthService {
   private readonly tokenKey = 'invoiceflow_token';
   private readonly userKey = 'invoiceflow_user';
 
+  private readonly tokenSignal = signal<string | null>(this.getTokenFromStorage());
   private readonly currentUserSignal = signal<AuthUser | null>(this.getUserFromStorage());
 
   readonly currentUser = this.currentUserSignal.asReadonly();
 
   readonly isLoggedIn = computed(() => {
-    return !!this.getToken();
+    return !!this.tokenSignal();
   });
 
   register(request: RegisterRequest) {
@@ -43,11 +44,13 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
+
+    this.tokenSignal.set(null);
     this.currentUserSignal.set(null);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return this.tokenSignal();
   }
 
   updateCurrentUser(user: AuthUser): void {
@@ -68,7 +71,12 @@ export class AuthService {
     localStorage.setItem(this.tokenKey, response.token);
     localStorage.setItem(this.userKey, JSON.stringify(user));
 
+    this.tokenSignal.set(response.token);
     this.currentUserSignal.set(user);
+  }
+
+  private getTokenFromStorage(): string | null {
+    return localStorage.getItem(this.tokenKey);
   }
 
   private getUserFromStorage(): AuthUser | null {

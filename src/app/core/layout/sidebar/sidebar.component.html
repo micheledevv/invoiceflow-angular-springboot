@@ -3,8 +3,6 @@
     <img src="assets/images/logo.svg" alt="InvoiceFlow logo">
   </div>
 
-  <div class="sidebar__footer">
-
     <button
       class="sidebar__theme-toggle"
       type="button"
@@ -20,6 +18,8 @@
 
     </button>
 
+  <div class="sidebar__footer">
+
     @if (currentUser()) {
       <button
         class="sidebar__settings"
@@ -27,16 +27,37 @@
         aria-label="Impostazioni"
         title="Impostazioni"
         (click)="openSettingsPanel()">
-        <span aria-hidden="true">⚙</span>
+        <img
+          class="sidebar__settings-icon"
+          src="https://img.icons8.com/?size=100&id=flyFkP7sj07V&format=png&color=7E88C3"
+          
+          alt="">
       </button>
+
+
+      <button
+        class="sidebar__clients"
+        type="button"
+        aria-label="Clienti"
+        title="Clienti"
+        routerLink="/clients">
+        <img
+          class="sidebar__clients-icon"
+          src="https://img.icons8.com/?size=100&id=108343&format=png&color=7E88C3"
+          alt="">
+      </button>
+
 
       <button
         class="sidebar__logout"
         type="button"
-        aria-label="Logout"
+        aria-label="Esci"
         title="Esci"
         (click)="logout()">
-        Esci
+        <img
+          class="sidebar__logout-icon"
+          src="https://img.icons8.com/?size=100&id=2445&format=png&color=7E88C3"
+          alt="">
       </button>
     }
 

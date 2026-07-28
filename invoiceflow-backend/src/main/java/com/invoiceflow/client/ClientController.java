@@ -21,6 +21,14 @@ public class ClientController {
     return clientService.getAllClients(user);
   }
 
+  @GetMapping("/{id}")
+  public Client getClientById(
+    @PathVariable String id,
+    @AuthenticationPrincipal AppUser user
+  ) {
+    return clientService.getClientById(id, user);
+  }
+
   @PostMapping
   public Client createClient(
     @Valid @RequestBody ClientRequest request,

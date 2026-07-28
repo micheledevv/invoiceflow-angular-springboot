@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClientRepository extends JpaRepository<Client, String> {
-  List<Client> findByUser(AppUser user);
+  List<Client> findByUserOrderByCreatedAtDescNameAsc(AppUser user);
 
   Optional<Client> findByIdAndUser(String id, AppUser user);
 

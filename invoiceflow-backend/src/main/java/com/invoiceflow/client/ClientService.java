@@ -19,7 +19,15 @@ public class ClientService {
   private final ClientRepository clientRepository;
 
   public List<Client> getAllClients(AppUser user) {
-    return clientRepository.findByUser(user);
+    return clientRepository.findByUserOrderByCreatedAtDescNameAsc(user);
+  }
+
+  public Client getClientById(String id, AppUser user) {
+    return clientRepository.findByIdAndUser(id, user)
+      .orElseThrow(() -> new ResponseStatusException(
+        HttpStatus.NOT_FOUND,
+        "Cliente non trovato"
+      ));
   }
 
   @Transactional

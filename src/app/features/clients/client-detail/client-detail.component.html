@@ -1,1 +1,176 @@
-<p>client-detail works!</p>
+<section class="client-detail-page">
+
+  <button
+    type="button"
+    class="client-detail-page__back"
+    (click)="goBack()">
+    <img src="assets/images/icon-arrow-left.svg" alt="">
+    Torna ai clienti
+  </button>
+
+  @if (client(); as selectedClient) {
+    <header class="client-hero">
+
+      <div class="client-hero__avatar">
+        {{ selectedClient.name.charAt(0).toUpperCase() }}
+      </div>
+
+      <div class="client-hero__content">
+
+        <div class="client-hero__top">
+          <div class="client-hero__title">
+            <span>Cliente</span>
+            <h1>{{ selectedClient.name }}</h1>
+            <p>{{ selectedClient.email }}</p>
+          </div>
+
+          <div class="client-hero__actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="goBack()">
+              Lista clienti
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="editClient()">
+              Modifica
+            </button>
+          </div>
+        </div>
+
+        <div class="client-hero__meta">
+          <div>
+            <span>ID Cliente</span>
+            <strong>{{ selectedClient.id }}</strong>
+          </div>
+
+          <div>
+            <span>Creato il</span>
+            <strong>{{ selectedClient.createdAt | italianDate }}</strong>
+          </div>
+        </div>
+
+      </div>
+
+    </header>
+
+    <section class="client-stats">
+      <article class="client-stat-card">
+        <span>Fatture collegate</span>
+        <strong>{{ selectedClient.invoicesCount ?? 0 }}</strong>
+      </article>
+
+      <article class="client-stat-card">
+        <span>Totale fatturato</span>
+        <strong>{{ (selectedClient.totalBilled ?? 0) | euroCurrency }}</strong>
+      </article>
+
+      <article class="client-stat-card">
+        <span>Paese</span>
+        <strong>{{ selectedClient.address.country }}</strong>
+      </article>
+    </section>
+
+    <section class="client-detail-grid">
+
+      <article class="client-info-card">
+        <header>
+          <h2>Contatti</h2>
+          <p>Informazioni principali del cliente.</p>
+        </header>
+
+        <div class="client-info-list">
+
+          <div class="client-info-row">
+            <span>Email</span>
+            <a [href]="'mailto:' + selectedClient.email">
+              {{ selectedClient.email }}
+            </a>
+          </div>
+
+          <div class="client-info-row">
+            <span>Telefono</span>
+            <strong>
+              {{ selectedClient.phone || 'Non inserito' }}
+            </strong>
+          </div>
+
+          <div class="client-info-row">
+            <span>Partita IVA</span>
+            <strong>
+              {{ selectedClient.vatNumber || 'Non inserita' }}
+            </strong>
+          </div>
+
+          <div class="client-info-row">
+            <span>Codice fiscale</span>
+            <strong>
+              {{ selectedClient.taxCode || 'Non inserito' }}
+            </strong>
+          </div>
+
+        </div>
+      </article>
+
+      <article class="client-info-card">
+        <header>
+          <h2>Indirizzo</h2>
+          <p>Dati usati per compilare le fatture.</p>
+        </header>
+
+        <address class="client-address">
+          <strong>{{ selectedClient.address.street }}</strong>
+          <span>{{ selectedClient.address.postCode }} {{ selectedClient.address.city }}</span>
+          <span>{{ selectedClient.address.country }}</span>
+        </address>
+      </article>
+
+    </section>
+
+    <article class="client-info-card client-notes-card">
+      <header>
+        <h2>Note</h2>
+        <p>Informazioni aggiuntive sul cliente.</p>
+      </header>
+
+      @if (selectedClient.notes) {
+        <p class="client-notes-card__text">
+          {{ selectedClient.notes }}
+        </p>
+      } @else {
+        <p class="client-notes-card__empty">
+          Nessuna nota inserita per questo cliente.
+        </p>
+      }
+    </article>
+
+    <article class="client-info-card client-invoices-card">
+      <header>
+        <h2>Fatture del cliente</h2>
+        <p>Collegamento futuro tra anagrafica clienti e fatture.</p>
+      </header>
+
+      <div class="client-invoices-card__empty">
+        <p>
+          Le fatture collegate a questo cliente verranno mostrate qui quando sarà completata l’integrazione.
+        </p>
+      </div>
+    </article>
+  } @else {
+    <section class="client-detail-empty">
+      <h1>Cliente non disponibile</h1>
+      <p>Il dettaglio del cliente non è stato caricato.</p>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="goBack()">
+        Torna ai clienti
+      </button>
+    </section>
+  }
+
+</section>

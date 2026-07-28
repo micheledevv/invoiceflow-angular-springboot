@@ -34,6 +34,7 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
         .requestMatchers("/api/user-settings/**").authenticated()
         .requestMatchers("/api/invoices/**").authenticated()
+        .requestMatchers("/api/clients/**").authenticated()
         .anyRequest().permitAll()
       )
       .authenticationProvider(authenticationProvider())

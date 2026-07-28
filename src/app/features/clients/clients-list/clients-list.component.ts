@@ -1,8 +1,13 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, Inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { inject } from '@angular/core';
 
 import { EuroCurrencyPipe } from '../../../shared/pipes/euro-currency.pipe';
+import { ClientsService } from '../services/clients.service';
+import { catchError, EMPTY, finalize, tap } from 'rxjs';
+import { NotificationService } from '../../../shared/services/notification.service';
+import { LoaderService } from '../../../shared/components/loader/loader.service';
+import { MessagesLoader } from '../../../shared/components/loader/models/text.messages.model';
 
 type ClientAddress = {
   street: string;
@@ -31,80 +36,45 @@ export type Client = {
   templateUrl: './clients-list.component.html',
   styleUrl: './clients-list.component.scss'
 })
-export class ClientsListComponent {
+export class ClientsListComponent implements OnInit {
+  constructor(){}
+
+  protected readonly clientsService = inject(ClientsService)
+  protected readonly notificationService = inject(NotificationService)
+  protected readonly loaderService = inject(LoaderService)
+
+  ngOnInit(): void {
+    this.loadClients();
+  }
+
+  private loadClients(): void {
+    this.loaderService.show(MessagesLoader.loadingClients);
+
+    this.clientsService.getAllClients()
+      .pipe(
+        tap((clients) => {
+          this.clients.set(clients);
+        }),
+        catchError(() => {
+          this.notificationService.error(
+            'Clienti non recuperati',
+            'Non è stato possibile recuperare i clienti.'
+          );
+
+          return EMPTY;
+        }),
+        finalize(() => {
+          this.loaderService.hide();
+        })
+      )
+      .subscribe();
+  }
   private readonly router = inject(Router);
 
   protected readonly searchTerm = signal('');
 
   protected readonly clients = signal<Client[]>([
-    {
-      id: 'CL-0001',
-      name: 'Mario Rossi',
-      email: 'mario.rossi@test.it',
-      phone: '+39 333 123 4567',
-      vatNumber: 'IT12345678901',
-      address: {
-        street: 'Via Roma, 24',
-        city: 'Milano',
-        postCode: '20121',
-        country: 'Italia'
-      },
-      invoicesCount: 4,
-      totalBilled: 2840.50,
-      notes: 'Cliente storico con pagamenti regolari.',
-      createdAt: '2026-07-27'
-    },
-    {
-      id: 'CL-0002',
-      name: 'Studio Design Lab',
-      email: 'info@designlab.it',
-      phone: '+39 091 555 8899',
-      vatNumber: 'IT98765432109',
-      address: {
-        street: 'Corso Vittorio Emanuele, 112',
-        city: 'Palermo',
-        postCode: '90133',
-        country: 'Italia'
-      },
-      invoicesCount: 2,
-      totalBilled: 1750,
-      notes: 'Richiede spesso lavori grafici e sviluppo landing page.',
-      createdAt: '2026-07-27'
-    },
-    {
-      id: 'CL-0003',
-      name: 'Tech Solutions SRL',
-      email: 'amministrazione@techsolutions.it',
-      phone: '+39 02 4567 8901',
-      vatNumber: 'IT11223344556',
-      address: {
-        street: 'Via Torino, 8',
-        city: 'Torino',
-        postCode: '10121',
-        country: 'Italia'
-      },
-      invoicesCount: 7,
-      totalBilled: 9450.75,
-      notes: 'Cliente aziendale con più fatture attive.',
-      createdAt: '2026-07-27'
-    },
-    {
-      id: 'CL-0004',
-      name: 'Giulia Bianchi',
-      email: 'giulia.bianchi@test.it',
-      phone: '',
-      taxCode: 'BNCGLI96A41H501Z',
-      address: {
-        street: 'Via Napoli, 15',
-        city: 'Catania',
-        postCode: '95131',
-        country: 'Italia'
-      },
-      invoicesCount: 0,
-      totalBilled: 0,
-      notes: '',
-      createdAt: '2026-07-27'
-    }
+  
   ]);
 
   protected readonly filteredClients = computed(() => {

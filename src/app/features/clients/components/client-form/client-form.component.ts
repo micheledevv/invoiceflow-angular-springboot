@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import {
   email,
   form,
@@ -10,6 +10,7 @@ import {
 
 import { GenericInputComponent } from '../../../../shared/components/generic-input/generic-input.component';
 import { ClientFormValue } from '../../models/client.model';
+import { ClientsService } from '../../services/clients.service';
 
 @Component({
   selector: 'app-client-form',
@@ -18,6 +19,7 @@ import { ClientFormValue } from '../../models/client.model';
   styleUrl: './client-form.component.scss'
 })
 export class ClientFormComponent {
+  protected readonly clientsService = inject(ClientsService)
   readonly submitLabel = input('Salva cliente');
   readonly isSubmitting = input(false);
 

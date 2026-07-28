@@ -11,6 +11,7 @@ import { InvoiceFormService } from '../../components/invoice-form/invoice-form.s
 import { ListInvoicesService } from './list-invoices.service';
 
 import { Invoice, InvoiceStatus } from '../../models/invoice.model';
+import { MessagesLoader } from '../../../../shared/components/loader/models/text.messages.model';
 
 type InvoiceStatusFilter = InvoiceStatus | 'all';
 
@@ -124,7 +125,7 @@ export class ListInvoicesComponent implements OnInit {
   }
 
   private getInvoices(): void {
-    this.loaderService.show();
+    this.loaderService.show(MessagesLoader.loadingInvoices);
 
     this.listInvoicesService.getInvoices()
       .pipe(

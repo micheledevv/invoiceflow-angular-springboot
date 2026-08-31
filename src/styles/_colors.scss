@@ -1,5 +1,6 @@
 :root {
   --sidebar-width: 103px;
+  --mobile-nav-height: 80px;
 
   // Primary
   --color-primary: #7c5dfa;
@@ -63,4 +64,10 @@
   --color-sidebar-bg: #1e2139;
   --color-overlay-bg: rgba(0, 0, 0, 0.55);
   --color-modal-overlay-bg: rgba(0, 0, 0, 0.55);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --mobile-nav-height: 72px;
+  }
 }

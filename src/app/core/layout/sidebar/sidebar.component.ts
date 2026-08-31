@@ -1,5 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive
+} from '@angular/router';
+import { filter } from 'rxjs';
 
 import { ThemeService } from '../theme/theme.service';
 import { AuthService } from '../../auth/auth.service';
@@ -16,15 +23,29 @@ export class SidebarComponent {
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly currentUser = this.authService.currentUser;
   protected readonly settingsPanelIsOpen = signal(false);
+  protected readonly mobileMenuIsOpen = signal(false);
+
+  constructor() {
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(() => {
+        this.closeMobileMenu();
+      });
+  }
 
   protected toggleTheme(): void {
     this.themeService.toggleTheme();
   }
 
   protected openSettingsPanel(): void {
+    this.closeMobileMenu();
     this.settingsPanelIsOpen.set(true);
   }
 
@@ -32,7 +53,16 @@ export class SidebarComponent {
     this.settingsPanelIsOpen.set(false);
   }
 
+  protected toggleMobileMenu(): void {
+    this.mobileMenuIsOpen.update((isOpen) => !isOpen);
+  }
+
+  protected closeMobileMenu(): void {
+    this.mobileMenuIsOpen.set(false);
+  }
+
   protected logout(): void {
+    this.closeMobileMenu();
     this.authService.logout();
     this.router.navigateByUrl('/login');
   }

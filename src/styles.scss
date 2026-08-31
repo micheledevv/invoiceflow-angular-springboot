@@ -4,8 +4,38 @@
 @use './styles/forms';
 @use './styles/invoice-status';
 
-*{
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  min-width: 320px;
+  background-color: var(--color-page-bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background-color: var(--color-page-bg);
+}
+
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+img {
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .btn {
+    min-height: 48px;
+  }
 }

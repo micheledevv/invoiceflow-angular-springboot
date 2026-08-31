@@ -142,3 +142,13 @@
     }
   }
 }
+
+@media (max-width: 480px) {
+  .client-form__section {
+    padding: 22px 16px;
+  }
+
+  .client-notes textarea {
+    font-size: 16px;
+  }
+}

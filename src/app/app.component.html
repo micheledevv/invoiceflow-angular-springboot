@@ -1,4 +1,7 @@
-<div class="app-layout" [class.theme-dark]="isDarkMode()">
+<div
+  class="app-layout"
+  [class.app-layout--auth-page]="isAuthPage()"
+  [class.theme-dark]="isDarkMode()">
   <app-sidebar></app-sidebar>
 
   @if (isFormOpen()) {

@@ -250,3 +250,73 @@
     box-shadow: 0 0 0 0 rgba(255, 87, 87, 0);
   }
 }
+
+@media (max-width: 850px) {
+  .invoice-record {
+    grid-template-columns: 76px 106px minmax(0, 1fr) 92px 104px 12px;
+    column-gap: 12px;
+    padding: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .invoice-records {
+    margin-top: 8px;
+  }
+
+  .invoice-record {
+    min-height: 132px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'invoice-id invoice-status'
+      'invoice-client invoice-client'
+      'invoice-date invoice-total';
+    gap: 16px 12px;
+    padding: 20px;
+
+    &__id {
+      grid-area: invoice-id;
+      align-self: center;
+    }
+
+    &__date {
+      grid-area: invoice-date;
+      align-self: end;
+    }
+
+    &__client {
+      grid-area: invoice-client;
+      font-size: 13px;
+    }
+
+    &__total {
+      grid-area: invoice-total;
+      align-self: end;
+      font-size: 14px;
+    }
+
+    &__status {
+      grid-area: invoice-status;
+      justify-self: end;
+    }
+
+    &__arrow {
+      display: none;
+    }
+  }
+
+  .due-alert {
+    top: -7px;
+    right: -7px;
+  }
+
+  .due-alert__tooltip {
+    max-width: min(240px, calc(100vw - 48px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .due-alert__icon {
+    animation: none;
+  }
+}

@@ -1,6 +1,6 @@
 .not-found-page {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
 
   display: flex;
   align-items: center;
@@ -146,5 +146,35 @@
 
   .btn {
     width: 100%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .not-found-page {
+    min-height: calc(100dvh - var(--mobile-nav-height));
+  }
+}
+
+@media (max-width: 480px) {
+  .not-found-page {
+    padding: 16px;
+  }
+
+  .not-found-card {
+    min-height: 0;
+    padding: 32px 18px;
+    border-radius: 18px;
+  }
+
+  .not-found-card__icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found-card {
+    animation: none;
   }
 }

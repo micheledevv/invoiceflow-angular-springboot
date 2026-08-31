@@ -463,6 +463,10 @@
 }
 
 @media (max-width: 1024px) {
+  .clients-page {
+    padding-top: 56px;
+  }
+
   .clients-grid {
     grid-template-columns: 1fr;
   }
@@ -513,6 +517,10 @@
 }
 
 @media (max-width: 480px) {
+  .clients-page {
+    padding: 36px 16px 32px;
+  }
+
   .clients-summary {
     flex-direction: column;
   }
@@ -520,6 +528,10 @@
   .clients-search {
     min-height: 50px;
     padding: 0 14px;
+
+    input {
+      font-size: 16px;
+    }
   }
 
   .client-card {

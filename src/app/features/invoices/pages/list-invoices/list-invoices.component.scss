@@ -1,6 +1,7 @@
 .invoices-page {
   min-height: 80vh;
   margin-top: 70px;
+  padding-bottom: 56px;
 
   display: flex;
   justify-content: center;
@@ -115,7 +116,9 @@
 
 @media (max-width: 768px) {
   .invoices-page {
-    padding: 0 24px;
+    min-height: calc(100dvh - var(--mobile-nav-height));
+    margin-top: 48px;
+    padding: 0 24px 48px;
   }
 
   .invoices-content {
@@ -135,5 +138,30 @@
   .invoice-filter {
     min-width: auto;
     max-width: 96px;
+  }
+}
+
+@media (max-width: 480px) {
+  .invoices-page {
+    margin-top: 36px;
+    padding-inline: 16px;
+  }
+
+  .invoice-list-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .invoice-list-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .invoice-filter {
+    max-width: 118px;
+  }
+
+  .empty-invoices {
+    min-height: 48vh;
   }
 }

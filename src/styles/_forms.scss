@@ -139,6 +139,12 @@
 }
 
 @media (max-width: 640px) {
+  .form-control {
+    padding-inline: 16px;
+    font-size: 16px;
+    line-height: 20px;
+  }
+
   .form-grid--2,
   .form-grid--3 {
     grid-template-columns: 1fr;

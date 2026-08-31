@@ -1,7 +1,7 @@
 .invoice-form-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 200;
 
   background-color: var(--color-overlay-bg);
   overflow: hidden;
@@ -10,7 +10,7 @@
 .invoice-form-panel {
   width: 616px;
   max-width: calc(100vw - var(--sidebar-width));
-  height: 100vh;
+  height: 100dvh;
   margin-left: var(--sidebar-width);
 
   background-color: var(--color-card-bg);
@@ -170,11 +170,11 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .invoice-form-panel {
-    width: calc(100vw - 80px);
-    max-width: calc(100vw - 80px);
-    margin-left: 80px;
+    width: min(616px, 100vw);
+    max-width: 100vw;
+    margin-left: 0;
   }
 
   .invoice-form-content {
@@ -196,7 +196,7 @@
   }
 
   .invoice-form-content {
-    padding: 32px 24px 80px;
+    padding: 32px 20px max(80px, env(safe-area-inset-bottom));
   }
 
   .invoice-form-grid--2,
@@ -209,24 +209,80 @@
   }
 
   .items-list__row {
-    grid-template-columns: 1fr 1fr 24px;
-    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 12px;
+    padding: 18px;
+
+    border: 1px solid var(--color-form-border);
+    border-radius: 9px;
+    background-color: var(--color-card-secondary-bg);
   }
 
   .items-list__row app-generic-input:first-child {
     grid-column: 1 / -1;
   }
 
+  .items-list__row app-generic-input::before,
+  .item-total::before {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    line-height: 15px;
+    font-weight: 600;
+  }
+
+  .items-list__row app-generic-input:nth-child(1)::before {
+    content: 'Nome articolo';
+  }
+
+  .items-list__row app-generic-input:nth-child(2)::before {
+    content: 'Quantit\00e0';
+  }
+
+  .items-list__row app-generic-input:nth-child(3)::before {
+    content: 'Prezzo';
+  }
+
+  .item-total::before {
+    content: 'Totale';
+  }
+
   .item-total {
     min-height: auto;
+    justify-content: flex-start;
 
     p {
       min-height: 48px;
+      font-size: 14px;
     }
   }
 
   .item-delete {
+    width: 48px;
+    border-radius: 8px;
+    background-color: rgba(236, 87, 87, 0.1);
     align-self: end;
+    justify-self: end;
+  }
+}
+
+@media (max-width: 380px) {
+  .invoice-form-content {
+    padding-inline: 16px;
+  }
+
+  .items-list__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .items-list__row app-generic-input:first-child {
+    grid-column: auto;
+  }
+
+  .item-delete {
+    justify-self: start;
   }
 }
 

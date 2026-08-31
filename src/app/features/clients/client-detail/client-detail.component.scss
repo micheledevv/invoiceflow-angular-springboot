@@ -417,6 +417,10 @@
 }
 
 @media (max-width: 880px) {
+  .client-detail-page {
+    padding-top: 56px;
+  }
+
   .client-detail-grid {
     grid-template-columns: 1fr;
   }
@@ -481,6 +485,30 @@
     .btn {
       width: 100%;
     }
+  }
+}
+
+@media (max-width: 480px) {
+  .client-detail-page {
+    padding: 36px 16px 32px;
+  }
+
+  .client-detail-page__back {
+    margin-bottom: 24px;
+  }
+
+  .client-hero,
+  .client-info-card {
+    padding: 20px 16px;
+  }
+
+  .client-stat-card {
+    padding: 18px 16px;
+  }
+
+  .client-invoice-row {
+    padding: 14px;
+    gap: 14px;
   }
 }
 

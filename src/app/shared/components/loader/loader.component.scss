@@ -12,7 +12,8 @@
 }
 
 .loader-card {
-  min-width: 280px;
+  width: min(320px, calc(100vw - 32px));
+  min-width: 0;
   padding: 36px 32px;
 
   display: flex;
@@ -129,5 +130,22 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 380px) {
+  .loader-card {
+    padding: 28px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-card,
+  .loader-logo span {
+    animation: none;
+  }
+
+  .loader-spinner {
+    animation-duration: 1.6s;
   }
 }

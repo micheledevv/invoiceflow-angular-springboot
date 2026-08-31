@@ -1,26 +1,62 @@
 <nav class="sidebar">
-  <div class="sidebar__logo">
+  <a
+    class="sidebar__logo"
+    routerLink="/"
+    aria-label="Vai alla panoramica fatture"
+    (click)="closeMobileMenu()">
     <img src="assets/images/logo.svg" alt="InvoiceFlow logo">
-  </div>
+  </a>
 
+  <button
+    class="sidebar__theme-toggle"
+    type="button"
+    aria-label="Cambia tema"
+    title="Cambia tema"
+    (click)="toggleTheme()">
+
+    @if (themeService.isDarkMode()) {
+      <img src="assets/images/icon-sun.svg" alt="">
+    } @else {
+      <img src="assets/images/icon-moon.svg" alt="">
+    }
+  </button>
+
+  @if (currentUser()) {
     <button
-      class="sidebar__theme-toggle"
+      class="sidebar__menu-toggle"
+      [class.sidebar__menu-toggle--open]="mobileMenuIsOpen()"
       type="button"
-      aria-label="Cambia tema"
-      title="Cambia tema"
-      (click)="toggleTheme()">
-
-      @if (themeService.isDarkMode()) {
-        <img src="assets/images/icon-sun.svg" alt="">
-      } @else {
-        <img src="assets/images/icon-moon.svg" alt="">
-      }
-
+      aria-label="Apri menu di navigazione"
+      aria-controls="sidebar-navigation"
+      [attr.aria-expanded]="mobileMenuIsOpen()"
+      (click)="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
+  }
 
-  <div class="sidebar__footer">
+  <div
+    id="sidebar-navigation"
+    class="sidebar__footer"
+    [class.sidebar__footer--open]="mobileMenuIsOpen()">
 
     @if (currentUser()) {
+      <button
+        class="sidebar__home"
+        type="button"
+        aria-label="Panoramica fatture"
+        title="Panoramica fatture"
+        routerLink="/"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <img
+          class="sidebar__nav-icon"
+          src="assets/images/icon-home.svg"
+          alt="">
+        <span class="sidebar__label">Panoramica</span>
+      </button>
+
       <button
         class="sidebar__settings"
         type="button"
@@ -28,10 +64,10 @@
         title="Impostazioni"
         (click)="openSettingsPanel()">
         <img
-          class="sidebar__settings-icon"
-          src="https://img.icons8.com/?size=100&id=flyFkP7sj07V&format=png&color=7E88C3"
-          
+          class="sidebar__nav-icon"
+          src="assets/images/icon-settings.svg"
           alt="">
+        <span class="sidebar__label">Impostazioni</span>
       </button>
 
 
@@ -40,11 +76,13 @@
         type="button"
         aria-label="Clienti"
         title="Clienti"
-        routerLink="/clients">
+        routerLink="/clients"
+        routerLinkActive="is-active">
         <img
-          class="sidebar__clients-icon"
-          src="https://img.icons8.com/?size=100&id=108343&format=png&color=7E88C3"
+          class="sidebar__nav-icon"
+          src="assets/images/icon-clients.svg"
           alt="">
+        <span class="sidebar__label">Clienti</span>
       </button>
 
       <button
@@ -55,9 +93,10 @@
         routerLink="/sent-invoices"
         routerLinkActive="is-active">
         <img
-          class="sidebar__sent-invoices-icon"
+          class="sidebar__nav-icon"
           src="assets/images/icon-sent-invoices.svg"
           alt="">
+        <span class="sidebar__label">Fatture inviate</span>
       </button>
 
 
@@ -68,9 +107,10 @@
         title="Esci"
         (click)="logout()">
         <img
-          class="sidebar__logout-icon"
-          src="https://img.icons8.com/?size=100&id=2445&format=png&color=7E88C3"
+          class="sidebar__nav-icon sidebar__nav-icon--logout"
+          src="assets/images/icon-logout.svg"
           alt="">
+        <span class="sidebar__label">Esci</span>
       </button>
     }
 
@@ -86,6 +126,15 @@
 
   </div>
 </nav>
+
+@if (mobileMenuIsOpen()) {
+  <button
+    type="button"
+    class="sidebar__menu-backdrop"
+    aria-label="Chiudi menu di navigazione"
+    (click)="closeMobileMenu()">
+  </button>
+}
 
 @if (settingsPanelIsOpen()) {
   <app-settings-panel (closed)="closeSettingsPanel()"></app-settings-panel>

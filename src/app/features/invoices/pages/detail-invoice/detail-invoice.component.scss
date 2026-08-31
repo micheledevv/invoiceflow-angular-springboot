@@ -1,7 +1,7 @@
 .invoice-detail-page {
   width: 100%;
-  min-height: 100vh;
-  padding-top: 30px;
+  min-height: 100dvh;
+  padding: 48px 32px 56px;
 
   display: flex;
   justify-content: center;
@@ -376,7 +376,8 @@
 
 @media (max-width: 768px) {
   .invoice-detail-page {
-    padding: 32px 24px;
+    min-height: calc(100dvh - var(--mobile-nav-height));
+    padding: 40px 24px 48px;
   }
 
   .detail-actions {
@@ -404,15 +405,26 @@
 
 @media (max-width: 560px) {
   .invoice-detail-page {
-    padding: 24px;
+    padding: 32px 16px 40px;
   }
 
   .detail-actions {
+    flex-direction: column;
     align-items: stretch;
+    padding: 20px;
   }
 
   .detail-buttons {
-    display: none;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+
+    app-actions-button,
+    app-invoice-pdf-download-button {
+      width: 100%;
+      display: block;
+    }
   }
 
   .detail-status {
@@ -443,26 +455,62 @@
   }
 
   .items-row {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 8px 16px;
-    padding: 24px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px 10px;
+    padding: 22px 20px;
 
-    p:nth-child(2),
-    p:nth-child(3) {
-      display: none;
+    .item-name {
+      grid-column: 1 / -1;
+      font-size: 14px;
     }
 
-    p:nth-child(4) {
-      text-align: right;
+    p:nth-child(n + 2)::before {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--color-text-secondary);
+      font-size: 10px;
+      line-height: 12px;
+      font-weight: 500;
+    }
+
+    p:nth-child(2)::before {
+      content: 'Q.tà';
+    }
+
+    p:nth-child(3)::before {
+      content: 'Prezzo';
+    }
+
+    p:nth-child(4)::before {
+      content: 'Totale';
     }
   }
 
+  .invoice-card {
+    padding: 24px 20px;
+  }
+
   .amount-due {
-    padding: 24px;
+    padding: 22px 20px;
   }
 
   .sender-name {
     color: var(--color-text-primary);
     font-weight: 700;
+  }
+}
+
+@media (max-width: 380px) {
+  .invoice-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .invoice-info-grid .info-block:last-child {
+    grid-column: auto;
+  }
+
+  .amount-due p:last-child {
+    font-size: 20px;
+    line-height: 26px;
   }
 }

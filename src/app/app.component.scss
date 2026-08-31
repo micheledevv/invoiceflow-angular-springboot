@@ -1,11 +1,26 @@
 .app-layout {
   display: flex;
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--color-page-bg);
   position: relative;
   transition: background-color 0.2s ease;
 
   .app-layout__content {
-    width: 100%;
+    width: calc(100% - var(--sidebar-width));
+    min-width: 0;
+    min-height: 100dvh;
+    margin-left: var(--sidebar-width);
+  }
+}
+
+@media (max-width: 1024px) {
+  .app-layout {
+    display: block;
+
+    .app-layout__content {
+      width: 100%;
+      margin-left: 0;
+      padding-top: var(--mobile-nav-height);
+    }
   }
 }

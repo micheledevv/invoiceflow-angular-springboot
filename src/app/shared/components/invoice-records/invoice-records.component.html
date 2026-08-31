@@ -1,6 +1,13 @@
-<div class="invoice-records" style="margin-top: 18px;">
+<div class="invoice-records">
   @for (invoice of invoices(); track invoice.id) {
-    <article class="invoice-record" (click)="invoiceDetail.emit(invoice)">
+    <article
+      class="invoice-record"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="'Apri fattura ' + invoice.id"
+      (keydown.enter)="invoiceDetail.emit(invoice)"
+      (keydown.space)="invoiceDetail.emit(invoice); $event.preventDefault()"
+      (click)="invoiceDetail.emit(invoice)">
       <p class="invoice-record__id">
         <span>#</span>{{ invoice.id }}
       </p>

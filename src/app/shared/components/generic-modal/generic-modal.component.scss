@@ -12,6 +12,7 @@
 
   background: var(--color-modal-overlay-bg);
   backdrop-filter: blur(8px);
+  padding: 24px;
 }
 
 .box-modal {
@@ -19,9 +20,11 @@
   justify-content: center;
   align-items: center;
 
-  width: 40%;
-  min-width: 420px;
-  height: 40vh;
+  width: min(520px, 100%);
+  min-width: 0;
+  min-height: 300px;
+  max-height: calc(100dvh - 48px);
+  padding: 40px;
 
   background-color: var(--color-card-bg);
   border-radius: 20px;
@@ -31,12 +34,11 @@
 }
 
 .main-modal {
-  width: 80%;
-  height: 80%;
+  width: 100%;
 
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  gap: 24px;
 }
 
 .heading-m {
@@ -48,8 +50,15 @@
 }
 
 @media (max-width: 640px) {
+  .container {
+    padding: 16px;
+  }
+
   .box-modal {
-    width: calc(100% - 48px);
-    min-width: 0;
+    width: 100%;
+    min-height: 0;
+    max-height: calc(100dvh - 32px);
+    padding: 28px 22px;
+    border-radius: 16px;
   }
 }

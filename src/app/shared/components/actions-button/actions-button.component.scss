@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
 .container {
   width: 100%;
   display: flex;
@@ -7,4 +12,25 @@
 
 .btn-discard-spacer {
   margin-right: auto;
+}
+
+@media (max-width: 600px) {
+  .container {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .container .btn {
+    flex: 1 1 140px;
+  }
+
+  .btn-discard-spacer {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .container .btn {
+    flex-basis: 100%;
+  }
 }

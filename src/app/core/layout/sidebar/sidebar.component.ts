@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { ThemeService } from '../theme/theme.service';
 import { AuthService } from '../../auth/auth.service';
@@ -7,7 +7,7 @@ import { SettingsPanelComponent } from '../../settings/settings-panel/settings-p
 
 @Component({
   selector: 'app-sidebar',
-  imports: [SettingsPanelComponent, RouterLink],
+  imports: [SettingsPanelComponent, RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })

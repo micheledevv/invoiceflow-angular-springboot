@@ -1,7 +1,9 @@
 package com.invoiceflow.controller;
 
 import com.invoiceflow.dto.InvoiceRequest;
+import com.invoiceflow.dto.SentInvoiceSearchCriteria;
 import com.invoiceflow.model.Invoice;
+import com.invoiceflow.model.InvoiceStatus;
 import com.invoiceflow.service.InvoicePdfService;
 import com.invoiceflow.service.InvoiceService;
 import com.invoiceflow.user.AppUser;
@@ -28,6 +30,32 @@ public class InvoiceController {
   @GetMapping
   public List<Invoice> getAllInvoices(@AuthenticationPrincipal AppUser user) {
     return invoiceService.getAllInvoices(user);
+  }
+
+  @GetMapping("/sent")
+  public List<Invoice> getSentInvoices(
+    @RequestParam(required = false) String search,
+    @RequestParam(required = false) InvoiceStatus status,
+    @RequestParam(required = false) String dateFrom,
+    @RequestParam(required = false) String dateTo,
+    @RequestParam(required = false) Double minTotal,
+    @RequestParam(required = false) Double maxTotal,
+    @RequestParam(defaultValue = "createdAt") String sortBy,
+    @RequestParam(defaultValue = "desc") String sortDirection,
+    @AuthenticationPrincipal AppUser user
+  ) {
+    SentInvoiceSearchCriteria criteria = new SentInvoiceSearchCriteria(
+      search,
+      status,
+      dateFrom,
+      dateTo,
+      minTotal,
+      maxTotal,
+      sortBy,
+      sortDirection
+    );
+
+    return invoiceService.searchSentInvoices(criteria, user);
   }
 
   @GetMapping("/{id}")

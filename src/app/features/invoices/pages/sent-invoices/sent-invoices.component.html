@@ -1,0 +1,228 @@
+<main class="sent-page">
+  <button type="button" class="go-back" (click)="goBack()">
+    <img src="assets/images/icon-arrow-left.svg" alt="">
+    Torna alla panoramica
+  </button>
+
+  <header class="sent-header">
+    <div>
+      <p class="sent-header__eyebrow">Archivio fatture</p>
+      <h1>Fatture inviate</h1>
+      <p class="sent-header__description">
+        Cerca, controlla e gestisci tutte le fatture già inviate ai clienti.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-primary-icon"
+      (click)="openCreateForm()">
+      <span class="btn-primary-icon__circle">+</span>
+      Nuova fattura
+    </button>
+  </header>
+
+  <section class="sent-stats" aria-label="Riepilogo risultati">
+    <article class="stat-card">
+      <span>Risultati</span>
+      <strong>{{ invoices().length }}</strong>
+      <small>fatture visualizzate</small>
+    </article>
+
+    <article class="stat-card stat-card--pending">
+      <span>In attesa</span>
+      <strong>{{ pendingCount() }}</strong>
+      <small>da incassare</small>
+    </article>
+
+    <article class="stat-card stat-card--paid">
+      <span>Pagate</span>
+      <strong>{{ paidCount() }}</strong>
+      <small>incassate</small>
+    </article>
+
+    <article class="stat-card stat-card--total">
+      <span>Valore filtrato</span>
+      <strong>{{ filteredTotal() | euroCurrency }}</strong>
+      <small>totale dei risultati</small>
+    </article>
+  </section>
+
+  <section class="search-panel" aria-label="Ricerca e filtri fatture">
+    <div class="search-row">
+      <label class="invoice-search" for="invoice-search">
+        <img src="assets/images/icon-search.svg" alt="">
+        <input
+          id="invoice-search"
+          type="search"
+          maxlength="100"
+          autocomplete="off"
+          placeholder="Cerca per numero, cliente, email o descrizione..."
+          [value]="searchTerm()"
+          (input)="onSearchChange($event)">
+
+        @if (searchTerm()) {
+          <button
+            type="button"
+            aria-label="Cancella ricerca"
+            (click)="clearSearch()">
+            ×
+          </button>
+        }
+      </label>
+
+      <button
+        type="button"
+        class="filter-toggle"
+        [class.filter-toggle--active]="activeFilterCount() > 0"
+        [attr.aria-expanded]="filtersAreOpen()"
+        aria-controls="invoice-filters"
+        (click)="toggleFilters()">
+        <span aria-hidden="true">☷</span>
+        Filtri
+        @if (activeFilterCount() > 0) {
+          <strong>{{ activeFilterCount() }}</strong>
+        }
+      </button>
+    </div>
+
+    @if (filtersAreOpen()) {
+      <div id="invoice-filters" class="filters-grid">
+        <label class="filter-field">
+          <span>Stato</span>
+          <select [value]="filters().status" (change)="onStatusChange($event)">
+            <option value="all">Tutti gli stati</option>
+            <option value="pending">In attesa</option>
+            <option value="paid">Pagata</option>
+          </select>
+        </label>
+
+        <label class="filter-field">
+          <span>Dal</span>
+          <input
+            type="date"
+            [value]="filters().dateFrom"
+            [attr.max]="filters().dateTo || null"
+            (change)="onFilterChange('dateFrom', $event)">
+        </label>
+
+        <label class="filter-field">
+          <span>Al</span>
+          <input
+            type="date"
+            [value]="filters().dateTo"
+            [attr.min]="filters().dateFrom || null"
+            (change)="onFilterChange('dateTo', $event)">
+        </label>
+
+        <label class="filter-field">
+          <span>Importo minimo</span>
+          <div class="amount-input">
+            <span>€</span>
+            <input
+              type="number"
+              inputmode="decimal"
+              min="0"
+              step="0.01"
+              placeholder="0,00"
+              [value]="filters().minTotal"
+              (change)="onFilterChange('minTotal', $event)">
+          </div>
+        </label>
+
+        <label class="filter-field">
+          <span>Importo massimo</span>
+          <div class="amount-input">
+            <span>€</span>
+            <input
+              type="number"
+              inputmode="decimal"
+              min="0"
+              step="0.01"
+              placeholder="Nessun limite"
+              [value]="filters().maxTotal"
+              (change)="onFilterChange('maxTotal', $event)">
+          </div>
+        </label>
+
+        <button
+          type="button"
+          class="reset-filters"
+          [disabled]="activeFilterCount() === 0"
+          (click)="resetFilters()">
+          Azzera filtri
+        </button>
+      </div>
+
+      @if (filterError(); as error) {
+        <p class="filter-error" role="alert">{{ error }}</p>
+      }
+    }
+  </section>
+
+  <section class="results-section" aria-live="polite">
+    <header class="results-header">
+      <div>
+        <h2>Risultati</h2>
+        @if (!isLoading() && !hasLoadError() && !filterError()) {
+          <p>{{ resultSummary() }}</p>
+        }
+      </div>
+
+      <label class="sort-field">
+        <span>Ordina per</span>
+        <select [value]="filters().sort" (change)="onSortChange($event)">
+          <option value="createdAt-desc">Più recenti</option>
+          <option value="createdAt-asc">Meno recenti</option>
+          <option value="paymentDue-asc">Scadenza più vicina</option>
+          <option value="total-desc">Importo più alto</option>
+          <option value="total-asc">Importo più basso</option>
+          <option value="clientName-asc">Cliente A–Z</option>
+        </select>
+      </label>
+    </header>
+
+    @if (isLoading()) {
+      <div class="loading-state" role="status">
+        <span class="loading-state__spinner"></span>
+        <p>Stiamo cercando le fatture inviate…</p>
+      </div>
+    } @else if (filterError()) {
+      <div class="empty-state empty-state--compact">
+        <h3>Controlla i filtri inseriti</h3>
+        <p>{{ filterError() }}</p>
+      </div>
+    } @else if (hasLoadError()) {
+      <div class="empty-state empty-state--compact">
+        <h3>Impossibile caricare le fatture</h3>
+        <p>Si è verificato un problema temporaneo. Riprova tra qualche istante.</p>
+        <button type="button" class="btn btn-secondary" (click)="retry()">
+          Riprova
+        </button>
+      </div>
+    } @else if (invoices().length === 0) {
+      <div class="empty-state">
+        <img src="assets/images/illustration-empty.svg" alt="">
+
+        @if (activeFilterCount() > 0) {
+          <h3>Nessuna fattura trovata</h3>
+          <p>Prova a modificare la ricerca o ad ampliare i filtri selezionati.</p>
+          <button type="button" class="btn btn-secondary" (click)="resetFilters()">
+            Azzera filtri
+          </button>
+        } @else {
+          <h3>Non hai ancora inviato fatture</h3>
+          <p>Le fatture salvate e inviate compariranno qui, pronte da consultare.</p>
+          <button type="button" class="btn btn-primary" (click)="openCreateForm()">
+            Crea la prima fattura
+          </button>
+        }
+      </div>
+    } @else {
+      <app-invoice-records
+        [invoices]="invoices()"
+        (invoiceDetail)="openInvoice($event)">
+      </app-invoice-records>
+    }
+  </section>
+</main>

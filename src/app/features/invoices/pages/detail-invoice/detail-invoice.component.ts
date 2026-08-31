@@ -94,7 +94,7 @@ export class DetailInvoiceComponent implements OnInit {
                   `La fattura #${currentInvoice.id} è stata eliminata correttamente.`
                 );
 
-                this.router.navigate(['']);
+                this.navigateBack();
               }),
               catchError(() => {
                 this.notificationService.error(
@@ -151,7 +151,7 @@ export class DetailInvoiceComponent implements OnInit {
   }
 
   protected goBack(): void {
-    this.router.navigate(['']);
+    this.navigateBack();
   }
 
   protected getStatusLabel(status: InvoiceStatus): string {
@@ -162,7 +162,7 @@ export class DetailInvoiceComponent implements OnInit {
     const invoiceId = this.route.snapshot.paramMap.get('id');
 
     if (!invoiceId) {
-      this.router.navigate(['']);
+      this.navigateBack();
       return;
     }
     
@@ -180,7 +180,7 @@ export class DetailInvoiceComponent implements OnInit {
             'Non è stato possibile recuperare il dettaglio della fattura.'
           );
 
-          this.router.navigate(['']);
+          this.navigateBack();
 
           return EMPTY;
         }),
@@ -190,5 +190,19 @@ export class DetailInvoiceComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
+  }
+
+  private navigateBack(): void {
+    const returnTo = this.route.snapshot.queryParamMap.get('returnTo');
+
+    if (
+      returnTo === '/sent-invoices'
+      || returnTo?.startsWith('/sent-invoices?')
+    ) {
+      this.router.navigateByUrl(returnTo);
+      return;
+    }
+
+    this.router.navigateByUrl('/');
   }
 }

@@ -58,6 +58,13 @@ export const routes: Routes = [
         .then((m) => m.DetailInvoiceComponent)
   },
   {
+    path: 'sent-invoices',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/invoices/pages/sent-invoices/sent-invoices.component')
+        .then((m) => m.SentInvoicesComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

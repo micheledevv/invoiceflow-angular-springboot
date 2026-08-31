@@ -1,0 +1,149 @@
+<section class="clients-page">
+
+  <button type="button" class="go-back" (click)="goBack()">
+    <img src="assets/images/icon-arrow-left.svg" alt="">
+    Torna indietro
+  </button>
+
+  <header class="clients-header">
+    <div>
+      <h1>Clienti</h1>
+      <p>
+        Gestisci l’anagrafica dei tuoi clienti e velocizza la creazione delle fatture.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-primary-icon clients-header__button"
+      (click)="openCreateClientForm()">
+      <span class="btn-primary-icon__circle">+</span>
+      Nuovo Cliente
+    </button>
+  </header>
+
+  <section class="clients-toolbar">
+    <div class="clients-search">
+      <img src="assets/images/icon-search.svg" alt="">
+      <input
+        type="text"
+        placeholder="Cerca cliente per nome, email o città..."
+        [value]="searchTerm()"
+        (input)="onSearchChange($event)">
+    </div>
+
+    <div class="clients-summary">
+      <article class="clients-summary__card">
+        <span>Clienti totali</span>
+        <strong>{{ clients().length }}</strong>
+      </article>
+
+      <article class="clients-summary__card">
+        <span>Clienti filtrati</span>
+        <strong>{{ filteredClients().length }}</strong>
+      </article>
+    </div>
+  </section>
+
+  @if (filteredClients().length > 0) {
+    <section class="clients-grid">
+      @for (client of filteredClients(); track client.id) {
+        <article
+          class="client-card"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'Apri il cliente ' + client.name"
+          (keydown.enter)="openClientDetail(client)"
+          (click)="openClientDetail(client)">
+
+          <div class="client-card__avatar">
+            {{ client.name.charAt(0).toUpperCase() }}
+          </div>
+
+          <div class="client-card__content">
+            <header class="client-card__header">
+              <div>
+                <h2>{{ client.name }}</h2>
+                <p>{{ client.email }}</p>
+              </div>
+
+              <button
+                type="button"
+                class="client-card__action"
+                aria-label="Apri cliente"
+                (click)="openClientDetail(client); $event.stopPropagation()">
+                <img src="assets/images/icon-arrow-right.svg" alt="">
+              </button>
+            </header>
+
+            <div class="client-card__details">
+              <div class="client-card__detail">
+                <span>Telefono</span>
+                <strong>{{ client.phone || 'Non inserito' }}</strong>
+              </div>
+
+              <div class="client-card__detail">
+                <span>Città</span>
+                <strong>{{ client.address.city }}</strong>
+              </div>
+
+              <div class="client-card__detail">
+                <span>Paese</span>
+                <strong>{{ client.address.country }}</strong>
+              </div>
+            </div>
+
+            <div class="client-card__address">
+              <span>Indirizzo</span>
+              <p>
+                {{ client.address.street }},
+                {{ client.address.postCode }}
+                {{ client.address.city }}
+              </p>
+            </div>
+
+            <footer class="client-card__footer">
+              <div>
+                <span>Fatture</span>
+                <strong>{{ client.invoicesCount }}</strong>
+              </div>
+
+              <div>
+                <span>Totale fatturato</span>
+                <strong>{{ client.totalBilled | euroCurrency }}</strong>
+              </div>
+            </footer>
+          </div>
+
+        </article>
+      }
+    </section>
+  } @else {
+    <section class="clients-empty">
+      <div class="clients-empty__icon">
+        👥
+      </div>
+
+      <h2>Nessun cliente trovato</h2>
+
+      @if (searchTerm()) {
+        <p>
+          Non ci sono clienti che corrispondono alla ricerca inserita.
+        </p>
+      } @else {
+        <p>
+          Non hai ancora aggiunto clienti. Crea il primo cliente per iniziare a compilare le fatture più velocemente.
+        </p>
+
+        <button
+          type="button"
+          class="btn btn-primary-icon"
+          (click)="openCreateClientForm()">
+          <span>+</span>
+          Nuovo Cliente
+        </button>
+      }
+    </section>
+  }
+
+</section>

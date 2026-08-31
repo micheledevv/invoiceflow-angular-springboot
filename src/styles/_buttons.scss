@@ -63,6 +63,16 @@
   }
 }
 
+.btn-secondary {
+  background-color: var(--color-card-secondary-bg);
+  color: var(--color-text-secondary);
+
+  &:hover {
+    background-color: var(--color-light-purple);
+    color: var(--color-dark-blue);
+  }
+}
+
 .btn-edit-light {
   background-color: var(--color-light-bg);
   color: var(--color-muted-blue);

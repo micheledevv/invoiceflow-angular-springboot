@@ -25,6 +25,8 @@ import { InvoiceFormModel } from '../../models/invoice.form.model';
 import { EuroCurrencyPipe } from '../../../../shared/pipes/euro-currency.pipe';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
+import { Client } from '../../../clients/models/client.model';
+import { ClientsService } from '../../../clients/services/clients.service';
 
 @Component({
   selector: 'app-invoice-form',
@@ -44,6 +46,7 @@ export class InvoiceFormComponent implements OnInit {
   private readonly loaderService = inject(LoaderService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
+  private readonly clientsService = inject(ClientsService);
 
   private readonly maxItems = 10;
 
@@ -57,6 +60,20 @@ export class InvoiceFormComponent implements OnInit {
     { label: 'Entro 30 giorni', value: '30' }
   ];
 
+  protected readonly clients = signal<Client[]>([]);
+
+  protected readonly clientOptions = computed<SelectOption<string>[]>(() => [
+    { label: 'Inserimento manuale', value: '' },
+    ...this.clients().map((client) => ({
+      label: `${client.name} · ${client.email}`,
+      value: client.id
+    }))
+  ]);
+
+  protected readonly isUsingSavedClient = computed(() => {
+    return this.invoiceModel().clientId.length > 0;
+  });
+
   protected readonly invoiceModel = signal<InvoiceFormModel>(this.getEmptyForm());
 
   protected readonly invoiceForm = form(this.invoiceModel, (schemaPath) => {
@@ -65,6 +82,12 @@ export class InvoiceFormComponent implements OnInit {
     readonly(schemaPath.senderAddress.city);
     readonly(schemaPath.senderAddress.postCode);
     readonly(schemaPath.senderAddress.country);
+    readonly(schemaPath.clientName, ({ valueOf }) => Boolean(valueOf(schemaPath.clientId)));
+    readonly(schemaPath.clientEmail, ({ valueOf }) => Boolean(valueOf(schemaPath.clientId)));
+    readonly(schemaPath.clientAddress.street, ({ valueOf }) => Boolean(valueOf(schemaPath.clientId)));
+    readonly(schemaPath.clientAddress.city, ({ valueOf }) => Boolean(valueOf(schemaPath.clientId)));
+    readonly(schemaPath.clientAddress.postCode, ({ valueOf }) => Boolean(valueOf(schemaPath.clientId)));
+    readonly(schemaPath.clientAddress.country, ({ valueOf }) => Boolean(valueOf(schemaPath.clientId)));
 
     required(schemaPath.senderName, {
       message: 'Il nome del mittente è obbligatorio'
@@ -269,6 +292,36 @@ export class InvoiceFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.loadClients();
+  }
+
+  protected selectClient(clientId: string): void {
+    if (!clientId) {
+      this.invoiceModel.update((currentForm) => ({
+        ...currentForm,
+        clientId: ''
+      }));
+      return;
+    }
+
+    const client = this.clients().find((candidate) => candidate.id === clientId);
+
+    if (!client) {
+      return;
+    }
+
+    this.invoiceModel.update((currentForm) => ({
+      ...currentForm,
+      clientId: client.id,
+      clientName: client.name,
+      clientEmail: client.email,
+      clientAddress: {
+        street: client.address.street,
+        city: client.address.city,
+        postCode: client.address.postCode,
+        country: client.address.country
+      }
+    }));
   }
 
   protected addItem(): void {
@@ -344,8 +397,6 @@ export class InvoiceFormComponent implements OnInit {
     this.invoiceFormService.createInvoice(invoiceToSave)
       .pipe(
         tap((createdInvoice) => {
-          console.log('Fattura creata:', createdInvoice);
-
           this.invoiceFormService.notifyInvoicesUpdated();
 
           this.notificationService.success(
@@ -401,8 +452,6 @@ export class InvoiceFormComponent implements OnInit {
     this.invoiceFormService.updateInvoice(currentInvoice.id, invoiceToUpdate)
       .pipe(
         tap((updatedInvoice) => {
-          console.log('Fattura aggiornata:', updatedInvoice);
-
           this.detailInvoiceService.notifySingleInvoiceUpdated();
 
           this.notificationService.success(
@@ -447,8 +496,6 @@ export class InvoiceFormComponent implements OnInit {
     this.invoiceFormService.createInvoice(invoiceToSave)
       .pipe(
         tap((createdInvoice) => {
-          console.log('Fattura salvata come bozza:', createdInvoice);
-
           this.invoiceFormService.notifyInvoicesUpdated();
 
           this.notificationService.success(
@@ -495,6 +542,7 @@ export class InvoiceFormComponent implements OnInit {
     const paymentTerms = Number(formValue.paymentTerms);
 
     return {
+      clientId: formValue.clientId || null,
       id: config.id,
       createdAt: formValue.createdAt,
       paymentDue: this.calculatePaymentDue(formValue.createdAt, paymentTerms),
@@ -542,6 +590,7 @@ export class InvoiceFormComponent implements OnInit {
 
   private patchFormWithInvoice(invoice: Invoice): void {
     this.invoiceModel.set({
+      clientId: invoice.clientId ?? '',
       senderName: invoice.senderName ?? '',
 
       senderAddress: {
@@ -581,6 +630,7 @@ export class InvoiceFormComponent implements OnInit {
     const currentUser = this.authService.currentUser();
 
     return {
+      clientId: '',
       senderName: currentUser?.fullName ?? '',
 
       senderAddress: {
@@ -629,5 +679,31 @@ export class InvoiceFormComponent implements OnInit {
     date.setDate(date.getDate() + paymentTerms);
 
     return date.toISOString().split('T')[0];
+  }
+
+  private loadClients(): void {
+    this.clientsService.getAllClients()
+      .pipe(
+        tap((clients) => {
+          this.clients.set(clients);
+
+          const clientId = this.mode() === 'create'
+            ? this.invoiceFormService.initialClientId()
+            : this.invoiceModel().clientId;
+
+          if (clientId) {
+            this.selectClient(clientId);
+          }
+        }),
+        catchError(() => {
+          this.notificationService.warning(
+            'Clienti non disponibili',
+            'Puoi comunque inserire manualmente i dati del cliente.'
+          );
+
+          return EMPTY;
+        })
+      )
+      .subscribe();
   }
 }

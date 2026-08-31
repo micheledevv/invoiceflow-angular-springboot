@@ -49,7 +49,26 @@
       </section>
 
       <section class="invoice-form-section">
-        <h2 class="invoice-form-section__title">Cliente</h2>
+        <div class="invoice-form-section__heading">
+          <div>
+            <h2 class="invoice-form-section__title">Cliente</h2>
+            <p>Seleziona un cliente salvato oppure compila i dati manualmente.</p>
+          </div>
+        </div>
+
+        <app-select-input
+          label="Cliente salvato:"
+          id="saved-client"
+          [field]="invoiceForm.clientId"
+          [options]="clientOptions()"
+          (valueChanged)="selectClient($event)">
+        </app-select-input>
+
+        @if (isUsingSavedClient()) {
+          <p class="invoice-form-client-notice">
+            I dati sono sincronizzati con l’anagrafica selezionata. Scegli “Inserimento manuale” per modificarli solo in questa fattura.
+          </p>
+        }
 
         <app-generic-input
           label="Nome cliente:"

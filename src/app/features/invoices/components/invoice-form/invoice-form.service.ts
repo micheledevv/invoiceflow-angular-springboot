@@ -14,18 +14,21 @@ export class InvoiceFormService {
 
   readonly isFormOpen = signal<boolean>(false);
   readonly mode = signal<'create' | 'edit'>('create');
+  readonly initialClientId = signal<string | null>(null);
 
   readonly updateGetInvoices = new Subject<void>();
   notifyInvoicesUpdated(): void {
     this.updateGetInvoices.next();
   }
 
-  setCreateMode(): void {
+  setCreateMode(clientId: string | null = null): void {
     this.mode.set('create');
+    this.initialClientId.set(clientId);
   }
 
   setEditMode(): void {
     this.mode.set('edit');
+    this.initialClientId.set(null);
   }
 
   openForm(): void {
@@ -34,6 +37,7 @@ export class InvoiceFormService {
 
   closeForm(): void {
     this.isFormOpen.set(false);
+    this.initialClientId.set(null);
   }
 
   toggleForm(): void {

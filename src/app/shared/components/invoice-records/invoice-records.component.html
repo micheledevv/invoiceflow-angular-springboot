@@ -17,7 +17,7 @@
         {{ invoice.total | euroCurrency }}
       </p>
 
-      <div class="invoice-record__status invoice-record__status--{{ invoice.status }}">
+      <div class="invoice-record__status invoice-status invoice-status--{{ invoice.status }}">
         <span></span>
         {{ getStatusLabel(invoice.status) }}
       </div>

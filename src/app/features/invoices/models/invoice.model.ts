@@ -15,6 +15,7 @@ export type InvoiceItem = {
 };
 
 export type Invoice = {
+  clientId: string | null;
   id: string;
   createdAt: string;
   paymentDue: string;

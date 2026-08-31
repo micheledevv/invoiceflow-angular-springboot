@@ -1,4 +1,6 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { form } from '@angular/forms/signals';
 
 import { GenericInputComponent } from './generic-input.component';
 
@@ -14,6 +16,9 @@ describe('GenericInputComponent', () => {
 
     fixture = TestBed.createComponent(GenericInputComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('label', 'Nome');
+    const field = TestBed.runInInjectionContext(() => form(signal('')));
+    fixture.componentRef.setInput('field', field);
     fixture.detectChanges();
   });
 

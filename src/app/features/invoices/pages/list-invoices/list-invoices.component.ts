@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { finalize, tap } from 'rxjs';
@@ -11,6 +11,7 @@ import { InvoiceFormService } from '../../components/invoice-form/invoice-form.s
 import { ListInvoicesService } from './list-invoices.service';
 
 import { Invoice, InvoiceStatus } from '../../models/invoice.model';
+import { MessagesLoader } from '../../../../shared/components/loader/models/text.messages.model';
 
 type InvoiceStatusFilter = InvoiceStatus | 'all';
 
@@ -36,12 +37,6 @@ export class ListInvoicesComponent implements OnInit {
   private readonly listInvoicesService = inject(ListInvoicesService);
   private readonly invoiceFormService = inject(InvoiceFormService);
   private readonly loaderService = inject(LoaderService);
-
-  constructor(){
-    effect(() => {
-      console.log(this.filtersModel().selectedStatus)
-    })
-  }
 
   private readonly invoices = signal<Invoice[]>([]);
 
@@ -124,7 +119,7 @@ export class ListInvoicesComponent implements OnInit {
   }
 
   private getInvoices(): void {
-    this.loaderService.show();
+    this.loaderService.show(MessagesLoader.loadingInvoices);
 
     this.listInvoicesService.getInvoices()
       .pipe(

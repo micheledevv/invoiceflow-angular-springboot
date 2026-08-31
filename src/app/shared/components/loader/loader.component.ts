@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { LoaderService } from './loader.service';
 
 @Component({
@@ -7,6 +7,10 @@ import { LoaderService } from './loader.service';
   templateUrl: './loader.component.html',
   styleUrl: './loader.component.scss'
 })
-export class LoaderComponent {
+export class LoaderComponent  {
   readonly loaderService = inject(LoaderService);
+  constructor(){}
+
+
+ 
 }

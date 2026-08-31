@@ -4,6 +4,8 @@ import com.invoiceflow.dto.ClientAddressRequest;
 import com.invoiceflow.dto.InvoiceItemRequest;
 import com.invoiceflow.dto.InvoiceRequest;
 import com.invoiceflow.dto.SenderAddressRequest;
+import com.invoiceflow.client.Client;
+import com.invoiceflow.client.ClientRepository;
 import com.invoiceflow.model.Address;
 import com.invoiceflow.model.Invoice;
 import com.invoiceflow.model.InvoiceItem;
@@ -19,12 +21,14 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
 public class InvoiceService {
 
   private final InvoiceRepository invoiceRepository;
+  private final ClientRepository clientRepository;
 
   public List<Invoice> getAllInvoices(AppUser user) {
     return invoiceRepository.findByUser(user);
@@ -49,8 +53,11 @@ public class InvoiceService {
       );
     }
 
-    Invoice invoice = buildInvoiceFromRequest(request);
+    Client linkedClient = getLinkedClient(request.clientId(), user);
+
+    Invoice invoice = buildInvoiceFromRequest(request, linkedClient);
     invoice.setUser(user);
+    invoice.setClient(linkedClient);
     invoice.prepareItemsForSave();
 
     return invoiceRepository.save(invoice);
@@ -59,20 +66,77 @@ public class InvoiceService {
   @Transactional
   public Invoice updateInvoice(String id, InvoiceRequest request, AppUser user) {
     Invoice invoice = getInvoiceById(id, user);
+    Client linkedClient = getLinkedClient(request.clientId(), user);
 
     invoice.setCreatedAt(request.createdAt().trim());
     invoice.setPaymentTerms(request.paymentTerms());
     invoice.setPaymentDue(calculatePaymentDue(request.createdAt(), request.paymentTerms()));
     invoice.setDescription(normalizeText(request.description()));
-    invoice.setClientName(normalizeText(request.clientName()));
-    invoice.setClientEmail(request.clientEmail().trim());
     invoice.setSenderName(normalizeText(request.senderName()));
     invoice.setStatus(request.status());
     invoice.setSenderAddress(mapSenderAddress(request.senderAddress()));
-    invoice.setClientAddress(mapClientAddress(request.clientAddress()));
+    invoice.setClient(linkedClient);
+
+    if (linkedClient != null) {
+      invoice.setClientName(linkedClient.getName());
+      invoice.setClientEmail(linkedClient.getEmail());
+      invoice.setClientAddress(copyAddress(linkedClient.getAddress()));
+    } else {
+      invoice.setClientName(normalizeText(request.clientName()));
+      invoice.setClientEmail(normalizeEmail(request.clientEmail()));
+      invoice.setClientAddress(mapClientAddress(request.clientAddress()));
+    }
+
     invoice.replaceItems(mapItems(request.items()));
 
     return invoiceRepository.save(invoice);
+  }
+
+  private Invoice buildInvoiceFromRequest(InvoiceRequest request, Client linkedClient) {
+    Invoice invoice = new Invoice();
+
+    invoice.setId(request.id().trim());
+    invoice.setCreatedAt(request.createdAt().trim());
+    invoice.setPaymentTerms(request.paymentTerms());
+    invoice.setPaymentDue(calculatePaymentDue(request.createdAt(), request.paymentTerms()));
+    invoice.setDescription(normalizeText(request.description()));
+    invoice.setSenderName(normalizeText(request.senderName()));
+    invoice.setStatus(request.status());
+    invoice.setSenderAddress(mapSenderAddress(request.senderAddress()));
+    invoice.setItems(mapItems(request.items()));
+
+    if (linkedClient != null) {
+      invoice.setClientName(linkedClient.getName());
+      invoice.setClientEmail(linkedClient.getEmail());
+      invoice.setClientAddress(copyAddress(linkedClient.getAddress()));
+    } else {
+      invoice.setClientName(normalizeText(request.clientName()));
+      invoice.setClientEmail(normalizeEmail(request.clientEmail()));
+      invoice.setClientAddress(mapClientAddress(request.clientAddress()));
+    }
+
+    return invoice;
+  }
+
+  private Client getLinkedClient(String clientId, AppUser user) {
+    if (clientId == null || clientId.isBlank()) {
+      return null;
+    }
+
+    return clientRepository.findByIdAndUser(clientId.trim(), user)
+      .orElseThrow(() -> new ResponseStatusException(
+        HttpStatus.NOT_FOUND,
+        "Cliente selezionato non trovato"
+      ));
+  }
+
+  private Address copyAddress(Address address) {
+    return new Address(
+      address.getStreet(),
+      address.getCity(),
+      address.getPostCode(),
+      address.getCountry()
+    );
   }
 
   @Transactional
@@ -87,25 +151,6 @@ public class InvoiceService {
     invoice.setStatus(InvoiceStatus.paid);
 
     return invoiceRepository.save(invoice);
-  }
-
-  private Invoice buildInvoiceFromRequest(InvoiceRequest request) {
-    Invoice invoice = new Invoice();
-
-    invoice.setId(request.id().trim());
-    invoice.setCreatedAt(request.createdAt().trim());
-    invoice.setPaymentTerms(request.paymentTerms());
-    invoice.setPaymentDue(calculatePaymentDue(request.createdAt(), request.paymentTerms()));
-    invoice.setDescription(normalizeText(request.description()));
-    invoice.setClientName(normalizeText(request.clientName()));
-    invoice.setClientEmail(request.clientEmail().trim());
-    invoice.setSenderName(normalizeText(request.senderName()));
-    invoice.setStatus(request.status());
-    invoice.setSenderAddress(mapSenderAddress(request.senderAddress()));
-    invoice.setClientAddress(mapClientAddress(request.clientAddress()));
-    invoice.setItems(mapItems(request.items()));
-
-    return invoice;
   }
 
   private Address mapSenderAddress(SenderAddressRequest request) {
@@ -166,5 +211,9 @@ public class InvoiceService {
 
   private String normalizeText(String value) {
     return value.trim().replaceAll("\\s+", " ");
+  }
+
+  private String normalizeEmail(String value) {
+    return value.trim().toLowerCase(Locale.ROOT);
   }
 }

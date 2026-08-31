@@ -16,6 +16,34 @@ export const routes: Routes = [
         .then((m) => m.RegisterComponent)
   },
   {
+    path: 'clients',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/clients/clients-list/clients-list.component')
+        .then((m) => m.ClientsListComponent)
+  },
+  {
+    path: 'clients/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/clients/client-create/client-create.component')
+        .then((m) => m.ClientCreateComponent)
+  },
+  {
+    path: 'clients/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/clients/client-detail/client-detail.component')
+        .then((m) => m.ClientDetailComponent)
+  },
+  {
+    path: 'clients/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/clients/client-edit/client-edit.component')
+        .then((m) => m.ClientEditComponent)
+  },
+  {
     path: '',
     canActivate: [authGuard],
     loadComponent: () =>

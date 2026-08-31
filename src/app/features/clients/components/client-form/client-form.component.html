@@ -1,0 +1,130 @@
+<form class="client-form" (submit)="submitForm(); $event.preventDefault()">
+
+  <section class="client-form__section">
+    <div class="client-form__section-header">
+      <h2>Dati cliente</h2>
+      <p>Inserisci le informazioni principali del cliente.</p>
+    </div>
+
+    <app-generic-input
+      label="Nome cliente:"
+      [isRequired]="true"
+      id="clientName"
+      placeholder="Mario Rossi"
+      [field]="clientForm.name">
+    </app-generic-input>
+
+    <app-generic-input
+      label="Email:"
+      [isRequired]="true"
+      id="clientEmail"
+      type="email"
+      placeholder="mario.rossi@test.it"
+      [field]="clientForm.email">
+    </app-generic-input>
+
+    <div class="client-form__grid">
+      <app-generic-input
+        label="Telefono:"
+        id="clientPhone"
+        placeholder="+39 333 123 4567"
+        [field]="clientForm.phone">
+      </app-generic-input>
+
+      <app-generic-input
+        label="Partita IVA:"
+        id="clientVatNumber"
+        placeholder="IT12345678901"
+        [field]="clientForm.vatNumber">
+      </app-generic-input>
+    </div>
+
+    <app-generic-input
+      label="Codice fiscale:"
+      id="clientTaxCode"
+      placeholder="RSSMRA90A01H501Z"
+      [field]="clientForm.taxCode">
+    </app-generic-input>
+  </section>
+
+  <section class="client-form__section">
+    <div class="client-form__section-header">
+      <h2>Indirizzo</h2>
+      <p>Questi dati potranno essere usati per precompilare le fatture.</p>
+    </div>
+
+    <app-generic-input
+      label="Indirizzo:"
+      [isRequired]="true"
+      id="clientStreet"
+      placeholder="Via Roma, 24"
+      [field]="clientForm.address.street">
+    </app-generic-input>
+
+    <div class="client-form__grid client-form__grid--three">
+      <app-generic-input
+        label="Città:"
+        [isRequired]="true"
+        id="clientCity"
+        placeholder="Milano"
+        [field]="clientForm.address.city">
+      </app-generic-input>
+
+      <app-generic-input
+        label="CAP:"
+        [isRequired]="true"
+        id="clientPostCode"
+        placeholder="12345"
+        [onlyNumbers]="true"
+        [field]="clientForm.address.postCode">
+      </app-generic-input>
+
+      <app-generic-input
+        label="Paese:"
+        [isRequired]="true"
+        id="clientCountry"
+        placeholder="Italia"
+        [field]="clientForm.address.country">
+      </app-generic-input>
+    </div>
+  </section>
+
+  <section class="client-form__section">
+    <div class="client-form__section-header">
+      <h2>Note</h2>
+      <p>Aggiungi eventuali informazioni utili sul cliente.</p>
+    </div>
+
+    <div class="client-notes">
+      <label for="clientNotes">Note:</label>
+
+      <textarea
+        id="clientNotes"
+        rows="5"
+        maxlength="250"
+        placeholder="Esempio: cliente ricorrente, preferenze di pagamento, informazioni utili..."
+        [value]="clientModel().notes"
+        (input)="updateNotes($event)">
+      </textarea>
+
+      <span>{{ clientModel().notes.length }}/250</span>
+    </div>
+  </section>
+
+  <footer class="client-form__actions">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="cancelled.emit()">
+      Annulla
+    </button>
+
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="submitIsDisabled()">
+      {{ isSubmitting() ? 'Salvataggio...' : submitLabel() }}
+    </button>
+  </footer>
+
+</form>

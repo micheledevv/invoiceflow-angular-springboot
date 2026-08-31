@@ -15,6 +15,7 @@ import { ItalianDatePipe } from '../../../../shared/pipes/italian-date.pipe';
 import { EuroCurrencyPipe } from '../../../../shared/pipes/euro-currency.pipe';
 import { NotificationService } from '../../../../shared/services/notification.service';
 import { InvoicePdfDownloadButtonComponent } from '../../components/invoice-pdf-download-button/invoice-pdf-download-button.component';
+import { MessagesLoader } from '../../../../shared/components/loader/models/text.messages.model';
 
 @Component({
   selector: 'app-detail-invoice',
@@ -164,8 +165,8 @@ export class DetailInvoiceComponent implements OnInit {
       this.router.navigate(['']);
       return;
     }
-
-    this.loaderService.show();
+    
+    this.loaderService.show(MessagesLoader.loadingDetailClient);
 
     this.detailInvoiceService.getInvoice(invoiceId)
       .pipe(

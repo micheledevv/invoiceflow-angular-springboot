@@ -1,6 +1,6 @@
-import { Component, computed, Inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { inject } from '@angular/core';
 
 import { EuroCurrencyPipe } from '../../../shared/pipes/euro-currency.pipe';
 import { ClientsService } from '../services/clients.service';
@@ -8,27 +8,7 @@ import { catchError, EMPTY, finalize, tap } from 'rxjs';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { LoaderService } from '../../../shared/components/loader/loader.service';
 import { MessagesLoader } from '../../../shared/components/loader/models/text.messages.model';
-
-type ClientAddress = {
-  street: string;
-  city: string;
-  postCode: string;
-  country: string;
-};
-
-export type Client = {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  vatNumber?: string;
-  taxCode?: string;
-  address: ClientAddress;
-  invoicesCount?: number;
-  totalBilled?: number;
-  notes?: string;
-  createdAt: string;
-};
+import { Client } from '../models/client.model';
 
 @Component({
   selector: 'app-clients-list',
@@ -37,11 +17,11 @@ export type Client = {
   styleUrl: './clients-list.component.scss'
 })
 export class ClientsListComponent implements OnInit {
-  constructor(){}
-
-  protected readonly clientsService = inject(ClientsService)
-  protected readonly notificationService = inject(NotificationService)
-  protected readonly loaderService = inject(LoaderService)
+  private readonly clientsService = inject(ClientsService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly loaderService = inject(LoaderService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.loadClients();
@@ -65,17 +45,15 @@ export class ClientsListComponent implements OnInit {
         }),
         finalize(() => {
           this.loaderService.hide();
-        })
+        }),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
   }
-  private readonly router = inject(Router);
 
   protected readonly searchTerm = signal('');
 
-  protected readonly clients = signal<Client[]>([
-  
-  ]);
+  protected readonly clients = signal<Client[]>([]);
 
   protected readonly filteredClients = computed(() => {
     const searchValue = this.searchTerm().trim().toLowerCase();

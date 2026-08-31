@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, input, linkedSignal, output } from '@angular/core';
 import {
   email,
   form,
@@ -10,7 +10,6 @@ import {
 
 import { GenericInputComponent } from '../../../../shared/components/generic-input/generic-input.component';
 import { ClientFormValue } from '../../models/client.model';
-import { ClientsService } from '../../services/clients.service';
 
 @Component({
   selector: 'app-client-form',
@@ -19,26 +18,15 @@ import { ClientsService } from '../../services/clients.service';
   styleUrl: './client-form.component.scss'
 })
 export class ClientFormComponent {
-  protected readonly clientsService = inject(ClientsService)
+  readonly initialValue = input<ClientFormValue | null>(null);
   readonly submitLabel = input('Salva cliente');
   readonly isSubmitting = input(false);
 
   readonly formSubmit = output<ClientFormValue>();
   readonly cancelled = output<void>();
 
-  protected readonly clientModel = signal<ClientFormValue>({
-    name: '',
-    email: '',
-    phone: '',
-    vatNumber: '',
-    taxCode: '',
-    address: {
-      street: '',
-      city: '',
-      postCode: '',
-      country: ''
-    },
-    notes: ''
+  protected readonly clientModel = linkedSignal(() => {
+    return this.initialValue() ?? this.getEmptyClientFormValue();
   });
 
   protected readonly clientForm = form(this.clientModel, (schemaPath) => {
@@ -153,7 +141,7 @@ export class ClientFormComponent {
 
     return {
       name: this.normalize(value.name),
-      email: value.email.trim(),
+      email: value.email.trim().toLowerCase(),
       phone: value.phone.trim(),
       vatNumber: value.vatNumber.trim(),
       taxCode: value.taxCode.trim(),
@@ -164,6 +152,23 @@ export class ClientFormComponent {
         country: this.normalize(value.address.country)
       },
       notes: value.notes.trim()
+    };
+  }
+
+  private getEmptyClientFormValue(): ClientFormValue {
+    return {
+      name: '',
+      email: '',
+      phone: '',
+      vatNumber: '',
+      taxCode: '',
+      address: {
+        street: '',
+        city: '',
+        postCode: '',
+        country: ''
+      },
+      notes: ''
     };
   }
 

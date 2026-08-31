@@ -20,7 +20,8 @@
     class="form-control form-select"
     [class.form-control--error]="firstError()"
     [id]="id()"
-    [formField]="field()">
+    [formField]="field()"
+    (change)="valueChanged.emit($any($event.target).value)">
 
     @for (option of options(); track option.value) {
       <option [value]="option.value">

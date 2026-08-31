@@ -1,1 +1,33 @@
-<p>client-edit works!</p>
+<section class="client-edit-page">
+
+  <button
+    type="button"
+    class="client-edit-page__back"
+    (click)="cancel()">
+    <img src="assets/images/icon-arrow-left.svg" alt="">
+    Torna al cliente
+  </button>
+
+  @if (client(); as selectedClient) {
+    <header class="client-edit-page__header">
+      <div>
+        <span>Modifica cliente</span>
+        <h1>{{ selectedClient.name }}</h1>
+        <p>
+          Aggiorna i dati anagrafici e le informazioni di contatto del cliente.
+        </p>
+      </div>
+    </header>
+
+    @if (clientFormValue(); as formValue) {
+      <app-client-form
+        [initialValue]="formValue"
+        submitLabel="Salva modifiche"
+        [isSubmitting]="isSubmitting()"
+        (formSubmit)="updateClient($event)"
+        (cancelled)="cancel()">
+      </app-client-form>
+    }
+  }
+
+</section>

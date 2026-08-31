@@ -1,4 +1,5 @@
 export type InvoiceFormModel = {
+  clientId: string;
   senderName: string;
 
   senderAddress: {

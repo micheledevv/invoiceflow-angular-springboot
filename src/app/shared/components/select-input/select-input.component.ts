@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 
 export interface SelectOption<T = string> {
@@ -19,6 +19,7 @@ export class SelectInputComponent {
 
   id = input<string>('');
   options = input<SelectOption<string>[]>([]);
+  valueChanged = output<string>();
 
   firstError = computed(() => {
     const state = this.field()();

@@ -1,6 +1,8 @@
 package com.invoiceflow.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.invoiceflow.client.Client;
 import com.invoiceflow.user.AppUser;
 import jakarta.persistence.*;
 import lombok.*;
@@ -59,6 +61,7 @@ public class Invoice {
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
+  @Builder.Default
   private List<InvoiceItem> items = new ArrayList<>();
 
   private Double total;
@@ -79,6 +82,16 @@ public class Invoice {
     }
 
     calculateTotal();
+  }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "client_id")
+  @JsonIgnore
+  private Client client;
+
+  @JsonProperty("clientId")
+  public String getClientId() {
+    return client != null ? client.getId() : null;
   }
 
   public void replaceItems(List<InvoiceItem> newItems) {

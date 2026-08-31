@@ -91,54 +91,6 @@
     text-overflow: ellipsis;
   }
 
-  &__status {
-    width: 104px;
-    height: 40px;
-    border-radius: 6px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    font-size: 12px;
-    font-weight: 700;
-
-    span {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    &--paid {
-      color: var(--color-status-paid);
-      background-color: rgba(51, 214, 159, 0.06);
-
-      span {
-        background-color: var(--color-status-paid);
-      }
-    }
-
-    &--pending {
-      color: var(--color-status-pending);
-      background-color: rgba(255, 143, 0, 0.06);
-
-      span {
-        background-color: var(--color-status-pending);
-      }
-    }
-
-    &--draft {
-      color: var(--color-status-draft);
-      background-color: rgba(55, 59, 83, 0.06);
-
-      span {
-        background-color: var(--color-status-draft);
-      }
-    }
-  }
-
   &__arrow {
     width: 16px;
     height: 16px;
@@ -296,16 +248,5 @@
 
   100% {
     box-shadow: 0 0 0 0 rgba(255, 87, 87, 0);
-  }
-}
-
-.theme-dark {
-  .invoice-record__status--draft {
-    color: var(--color-light-purple);
-    background-color: rgba(223, 227, 250, 0.06);
-
-    span {
-      background-color: var(--color-light-purple);
-    }
   }
 }

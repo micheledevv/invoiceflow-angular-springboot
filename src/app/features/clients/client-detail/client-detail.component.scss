@@ -100,7 +100,6 @@
     letter-spacing: -1px;
 
     overflow-wrap: anywhere;
-    word-break: break-word;
   }
 
   p {
@@ -113,7 +112,6 @@
     font-weight: 500;
 
     overflow-wrap: anywhere;
-    word-break: break-word;
   }
 }
 
@@ -166,7 +164,6 @@
     font-weight: 700;
 
     overflow-wrap: anywhere;
-    word-break: break-word;
   }
 }
 
@@ -294,7 +291,6 @@
     text-decoration: none;
 
     overflow-wrap: anywhere;
-    word-break: break-word;
   }
 
   a:hover {
@@ -322,7 +318,6 @@
     font-weight: 700;
 
     overflow-wrap: anywhere;
-    word-break: break-word;
   }
 
   span {
@@ -333,7 +328,6 @@
     font-weight: 700;
 
     overflow-wrap: anywhere;
-    word-break: break-word;
   }
 }
 
@@ -487,5 +481,115 @@
     .btn {
       width: 100%;
     }
+  }
+}
+
+.client-invoices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.client-invoice-row {
+  min-width: 0;
+  padding: 16px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px 120px 104px;
+  align-items: center;
+  gap: 18px;
+
+  background-color: var(--color-page-bg);
+  border: 1px solid transparent;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+
+  > * {
+    min-width: 0;
+  }
+}
+
+.client-invoice-row__main {
+  strong {
+    display: block;
+
+    color: var(--color-text-primary);
+
+    font-size: 13px;
+    line-height: 17px;
+    font-weight: 700;
+
+    span {
+      color: var(--color-muted-blue);
+    }
+  }
+
+  p {
+    margin: 5px 0 0;
+
+    color: var(--color-text-secondary);
+
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.client-invoice-row__date,
+.client-invoice-row__total {
+  span {
+    display: block;
+    margin-bottom: 4px;
+
+    color: var(--color-text-secondary);
+
+    font-size: 10px;
+    line-height: 13px;
+    font-weight: 700;
+  }
+
+  strong {
+    display: block;
+
+    color: var(--color-text-primary);
+
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 700;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.theme-dark {
+  .client-invoice-row {
+    background-color: rgba(20, 22, 37, 0.45);
+  }
+}
+
+@media (max-width: 820px) {
+  .client-invoice-row {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .client-invoice-row__status {
+    width: 100%;
   }
 }

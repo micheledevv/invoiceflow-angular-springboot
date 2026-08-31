@@ -14,6 +14,7 @@ describe('InvoiceRecordsComponent', () => {
 
     fixture = TestBed.createComponent(InvoiceRecordsComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('invoices', []);
     fixture.detectChanges();
   });
 

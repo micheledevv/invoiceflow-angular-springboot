@@ -51,6 +51,34 @@
   font-weight: 700;
 }
 
+.invoice-form-section__heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+
+  p {
+    margin-top: 6px;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    line-height: 17px;
+    font-weight: 500;
+  }
+}
+
+.invoice-form-client-notice {
+  margin-top: -12px;
+  padding: 12px 14px;
+
+  border-radius: 8px;
+  background-color: rgba(124, 93, 250, 0.08);
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+
 .invoice-form-items-title {
   color: var(--color-text-muted);
 

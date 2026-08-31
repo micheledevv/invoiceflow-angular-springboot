@@ -13,6 +13,12 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 public record InvoiceRequest(
+  @Pattern(
+    regexp = "^CL-[A-Z]{2}[0-9]{4}$",
+    message = "L'id cliente deve avere il formato CL-AB1234"
+  )
+  String clientId,
+
   @NotBlank(message = "L'id fattura è obbligatorio")
   @Pattern(regexp = "^[A-Z]{2}[0-9]{4}$", message = "L'id fattura deve avere il formato AB1234")
   String id,

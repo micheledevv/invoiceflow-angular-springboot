@@ -1,6 +1,8 @@
 package com.invoiceflow.client;
 
 import com.invoiceflow.model.Address;
+import com.invoiceflow.model.Invoice;
+import com.invoiceflow.repository.InvoiceRepository;
 import com.invoiceflow.user.AppUser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -10,29 +12,44 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
 public class ClientService {
 
-  private final ClientRepository clientRepository;
+  private static final String CLIENT_ID_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  private static final SecureRandom RANDOM = new SecureRandom();
 
-  public List<Client> getAllClients(AppUser user) {
-    return clientRepository.findByUserOrderByCreatedAtDescNameAsc(user);
+  private final ClientRepository clientRepository;
+  private final InvoiceRepository invoiceRepository;
+
+  public List<ClientResponse> getAllClients(AppUser user) {
+    return clientRepository.findByUserOrderByCreatedAtDescNameAsc(user)
+      .stream()
+      .map((client) -> mapToClientResponse(client, user))
+      .toList();
   }
 
-  public Client getClientById(String id, AppUser user) {
-    return clientRepository.findByIdAndUser(id, user)
-      .orElseThrow(() -> new ResponseStatusException(
-        HttpStatus.NOT_FOUND,
-        "Cliente non trovato"
-      ));
+  public ClientResponse getClientById(String id, AppUser user) {
+    Client client = getClientEntityById(id, user);
+
+    return mapToClientResponse(client, user);
+  }
+
+  public List<ClientInvoiceResponse> getInvoicesByClient(String id, AppUser user) {
+    Client client = getClientEntityById(id, user);
+
+    return invoiceRepository.findByClientAndUserOrderByCreatedAtDesc(client, user)
+      .stream()
+      .map(this::mapToClientInvoiceResponse)
+      .toList();
   }
 
   @Transactional
-  public Client createClient(ClientRequest request, AppUser user) {
-    String normalizedEmail = request.email().trim().toLowerCase();
+  public ClientResponse createClient(ClientRequest request, AppUser user) {
+    String normalizedEmail = normalizeEmail(request.email());
 
     if (clientRepository.existsByEmailAndUser(normalizedEmail, user)) {
       throw new ResponseStatusException(
@@ -56,7 +73,81 @@ public class ClientService {
       .user(user)
       .build();
 
-    return clientRepository.save(client);
+    Client savedClient = clientRepository.save(client);
+
+    return mapToClientResponse(savedClient, user);
+  }
+
+  @Transactional
+  public ClientResponse updateClient(String id, ClientRequest request, AppUser user) {
+    Client client = getClientEntityById(id, user);
+
+    String normalizedEmail = normalizeEmail(request.email());
+
+    if (clientRepository.existsByEmailAndUserAndIdNot(normalizedEmail, user, id)) {
+      throw new ResponseStatusException(
+        HttpStatus.CONFLICT,
+        "Esiste già un altro cliente con questa email"
+      );
+    }
+
+    client.setName(normalizeText(request.name()));
+    client.setEmail(normalizedEmail);
+    client.setPhone(normalizeOptionalText(request.phone()));
+    client.setVatNumber(normalizeOptionalText(request.vatNumber()));
+    client.setTaxCode(normalizeOptionalText(request.taxCode()));
+    client.setAddress(mapAddress(request.address()));
+    client.setNotes(normalizeOptionalText(request.notes()));
+
+    Client updatedClient = clientRepository.save(client);
+
+    return mapToClientResponse(updatedClient, user);
+  }
+
+  @Transactional
+  public void deleteClient(String id, AppUser user) {
+    Client client = getClientEntityById(id, user);
+
+    invoiceRepository.detachClient(client, user);
+    clientRepository.delete(client);
+  }
+
+  private Client getClientEntityById(String id, AppUser user) {
+    return clientRepository.findByIdAndUser(id, user)
+      .orElseThrow(() -> new ResponseStatusException(
+        HttpStatus.NOT_FOUND,
+        "Cliente non trovato"
+      ));
+  }
+
+  private ClientResponse mapToClientResponse(Client client, AppUser user) {
+    Long invoicesCount = invoiceRepository.countByClientAndUser(client, user);
+    Double totalBilled = invoiceRepository.sumTotalByClientAndUser(client, user);
+
+    return new ClientResponse(
+      client.getId(),
+      client.getName(),
+      client.getEmail(),
+      client.getPhone(),
+      client.getVatNumber(),
+      client.getTaxCode(),
+      client.getAddress(),
+      client.getNotes(),
+      invoicesCount,
+      totalBilled != null ? totalBilled : 0.0,
+      client.getCreatedAt()
+    );
+  }
+
+  private ClientInvoiceResponse mapToClientInvoiceResponse(Invoice invoice) {
+    return new ClientInvoiceResponse(
+      invoice.getId(),
+      invoice.getCreatedAt(),
+      invoice.getPaymentDue(),
+      invoice.getDescription(),
+      invoice.getStatus(),
+      invoice.getTotal()
+    );
   }
 
   private Address mapAddress(ClientAddressRequest request) {
@@ -69,19 +160,15 @@ public class ClientService {
   }
 
   private String generateClientId() {
-    String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    Random random = new Random();
+    String id;
 
-    String prefix = "" + letters.charAt(random.nextInt(letters.length()))
-      + letters.charAt(random.nextInt(letters.length()));
+    do {
+      String prefix = "" + CLIENT_ID_LETTERS.charAt(RANDOM.nextInt(CLIENT_ID_LETTERS.length()))
+        + CLIENT_ID_LETTERS.charAt(RANDOM.nextInt(CLIENT_ID_LETTERS.length()));
+      int number = RANDOM.nextInt(9000) + 1000;
 
-    int number = random.nextInt(9000) + 1000;
-
-    String id = "CL-" + prefix + number;
-
-    if (clientRepository.existsById(id)) {
-      return generateClientId();
-    }
+      id = "CL-" + prefix + number;
+    } while (clientRepository.existsById(id));
 
     return id;
   }
@@ -96,5 +183,9 @@ public class ClientService {
     }
 
     return normalizeText(value);
+  }
+
+  private String normalizeEmail(String value) {
+    return value.trim().toLowerCase(Locale.ROOT);
   }
 }

@@ -50,6 +50,10 @@
       @for (client of filteredClients(); track client.id) {
         <article
           class="client-card"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'Apri il cliente ' + client.name"
+          (keydown.enter)="openClientDetail(client)"
           (click)="openClientDetail(client)">
 
           <div class="client-card__avatar">
@@ -101,12 +105,12 @@
             <footer class="client-card__footer">
               <div>
                 <span>Fatture</span>
-                <strong>{{ client.invoicesCount ?? 0 }}</strong>
+                <strong>{{ client.invoicesCount }}</strong>
               </div>
 
               <div>
                 <span>Totale fatturato</span>
-                <strong>{{ (client.totalBilled ?? 0) | euroCurrency }}</strong>
+                <strong>{{ client.totalBilled | euroCurrency }}</strong>
               </div>
             </footer>
           </div>

@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { finalize, tap } from 'rxjs';
@@ -37,12 +37,6 @@ export class ListInvoicesComponent implements OnInit {
   private readonly listInvoicesService = inject(ListInvoicesService);
   private readonly invoiceFormService = inject(InvoiceFormService);
   private readonly loaderService = inject(LoaderService);
-
-  constructor(){
-    effect(() => {
-      console.log(this.filtersModel().selectedStatus)
-    })
-  }
 
   private readonly invoices = signal<Invoice[]>([]);
 
